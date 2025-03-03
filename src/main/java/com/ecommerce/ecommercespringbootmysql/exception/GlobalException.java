@@ -1,5 +1,6 @@
 package com.ecommerce.ecommercespringbootmysql.exception;
 
+import com.ecommerce.ecommercespringbootmysql.model.dao.response.AppResponse;
 import com.ecommerce.ecommercespringbootmysql.utils.ErrorCode;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,96 +23,96 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalException {
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException ex, WebRequest request) {
+    public ResponseEntity<AppResponse> handlingRuntimeException(RuntimeException ex, WebRequest request) {
 
         ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
         // Create a custom API response object
-        ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), request.getDescription(false));
+        AppResponse response = new AppResponse(errorCode.getCode(), errorCode.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
 //    @ExceptionHandler(AuthorizationDeniedException.class)
-//    public ResponseEntity<ApiResponse> handleAuthorizationDeniedException(AuthorizationDeniedException e) {
+//    public ResponseEntity<AppResponse> handleAuthorizationDeniedException(AuthorizationDeniedException e) {
 //        ErrorCode errorCode = ErrorCode.ACCESS_DENIED;
-//        ApiResponse apiResponse = ApiResponse.builder()
+//        AppResponse AppResponse = AppResponse.builder()
 //                .statusCode(errorCode.getCode())
 //                .message(errorCode.getMessage())
 //                .build();
-//        return ResponseEntity.status(errorCode.getCode()).body(apiResponse);
+//        return ResponseEntity.status(errorCode.getCode()).body(AppResponse);
 //
 //    }
 //
 //    @ExceptionHandler(BadCredentialsException.class)
-//    public ResponseEntity<ApiResponse> handleBadCredentialsException(BadCredentialsException e) {
+//    public ResponseEntity<AppResponse> handleBadCredentialsException(BadCredentialsException e) {
 //        ErrorCode errorCode = ErrorCode.BAD_CREDENTIALS;
-//        ApiResponse apiResponse = ApiResponse.builder()
+//        AppResponse AppResponse = AppResponse.builder()
 //                .statusCode(errorCode.getCode())
 //                .message(errorCode.getMessage())
 //                .build();
-//        return ResponseEntity.status(errorCode.getCode()).body(apiResponse);
+//        return ResponseEntity.status(errorCode.getCode()).body(AppResponse);
 //
 //    }
 
 
     @ExceptionHandler(MissingRequestCookieException.class)
-    public ResponseEntity<ApiResponse> handleMissingRequestCookieException(MissingRequestCookieException ex, WebRequest request) {
+    public ResponseEntity<AppResponse> handleMissingRequestCookieException(MissingRequestCookieException ex, WebRequest request) {
 
         ErrorCode errorCode = ErrorCode.MISSING_REQUEST_COOKIE;
-        ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), request.getDescription(false));
+        AppResponse response = new AppResponse(errorCode.getCode(), errorCode.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<ApiResponse> handleNumberFormatException(NumberFormatException ex, WebRequest request) {
+    public ResponseEntity<AppResponse> handleNumberFormatException(NumberFormatException ex, WebRequest request) {
 
         ErrorCode errorCode = ErrorCode.WRONG_INPUT;
-        ApiResponse response = new ApiResponse(errorCode.getCode(), errorCode.getMessage(), request.getDescription(false));
+        AppResponse response = new AppResponse(errorCode.getCode(), errorCode.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
+    ResponseEntity<AppResponse> handlingRuntimeException(RuntimeException exception) {
         log.error("Exception: ", exception);
-        ApiResponse apiResponse = new ApiResponse();
+        AppResponse AppResponse = new AppResponse();
 
-        apiResponse.setStatusCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        AppResponse.setStatusCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
+        AppResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity.badRequest().body(AppResponse);
     }
 
 
     @ExceptionHandler(value = MaxUploadSizeExceededException.class)
-    ResponseEntity<ApiResponse> handlingMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
+    ResponseEntity<AppResponse> handlingMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
         log.error("Exception: ", exception);
-        ApiResponse apiResponse = new ApiResponse();
+        AppResponse AppResponse = new AppResponse();
 
-        apiResponse.setStatusCode(ErrorCode.INVALID_FILE_SIZE.getCode());
-        apiResponse.setMessage(ErrorCode.INVALID_FILE_SIZE.getMessage());
+        AppResponse.setStatusCode(ErrorCode.INVALID_FILE_SIZE.getCode());
+        AppResponse.setMessage(ErrorCode.INVALID_FILE_SIZE.getMessage());
 
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity.badRequest().body(AppResponse);
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
+    ResponseEntity<AppResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
+        AppResponse AppResponse = new AppResponse();
 
-        apiResponse.setStatusCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
+        AppResponse.setStatusCode(errorCode.getCode());
+        AppResponse.setMessage(errorCode.getMessage());
 
-        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(AppResponse);
     }
 
     @ExceptionHandler({
             MethodArgumentNotValidException.class
     })
-    public ResponseEntity<ApiResponse<Object>> validationError(MethodArgumentNotValidException ex) {
+    public ResponseEntity<AppResponse<Object>> validationError(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         final List<FieldError> fieldErrors = result.getFieldErrors();
 
-        ApiResponse<Object> res = new ApiResponse<>();
+        AppResponse<Object> res = new AppResponse<>();
 
         List<String> errors = fieldErrors.stream().map(f -> f.getDefaultMessage()).collect(Collectors.toList());
         res.setStatusCode(400);
@@ -122,19 +123,19 @@ public class GlobalException {
 
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResponse<String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<AppResponse<String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
 
         ErrorCode errorCode = ErrorCode.WRONG_INPUT;
         if (ex.getCause() != null && ex.getCause().getCause() instanceof InvalidFormatException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(ApiResponse.<String>builder()
+                    .body(AppResponse.<String>builder()
                             .statusCode(errorCode.getCode())
                             .data(errorCode.getMessage())
                             .build());
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.<String>builder()
+                .body(AppResponse.<String>builder()
                         .statusCode(errorCode.getCode())
                         .data(errorCode.getMessage())
                         .build());
