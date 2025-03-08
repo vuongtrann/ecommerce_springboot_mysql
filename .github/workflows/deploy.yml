@@ -10,16 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 🔔 Gửi thông báo lên Discord khi bắt đầu deploy
-      - name: 🔔 Notify Discord for Start Deploy
+      - name: 🔔 Notify Discord for start deploy
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -n "$WEBHOOK" ]; then
             curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "content": "🚀 **Bắt đầu deploy!**\n🛠 Service: Spring Boot\n📂 Branch: `${{ github.ref_name }}`\n🕒 Thời gian: '$(date +"%Y-%m-%d %H:%M:%S")'"
-            }' \
+            -d '{"content": "🚀  Bắt đầu Deploy Spring Boot lên VPS!"}' \
             "$WEBHOOK"
           fi
       # 1️⃣ Clone source code từ GitHub
@@ -104,18 +101,15 @@ jobs:
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
       # 🔔 Gửi thông báo lên Discord khi deploy thành công
-      - name: 🔔 Notify Discord for Success
+      - name: 🔔 Notify Discord for success
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -n "$WEBHOOK" ]; then
             curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "content": "✅ **Deploy thành công!**\n🛠 Service: Spring Boot\n📂 Branch: `${{ github.ref_name }}`\n🆔 Commit: `${{ github.sha }}`\n🕒 Thời gian: '$(date +"%Y-%m-%d %H:%M:%S")'"
-            }' \
+            -d '{"content": "🚀 Deploy Spring Boot thành công lên VPS!"}' \
             "$WEBHOOK"
           fi
-  
 
   # Nếu có lỗi, gửi thông báo lên Discord
 #  failure:
