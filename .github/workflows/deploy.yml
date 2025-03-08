@@ -67,13 +67,14 @@ jobs:
 
       # 9️⃣ Copy Docker Image lên VPS
       - name: 📦 Copy image to VPS
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          source: "myapp.tar"
-          target: "/home/user/app/"
+        env:
+          VPS_IP: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          echo "${VPS_SSH_KEY}" > ssh_key
+          chmod 600 ssh_key
+          scp -o StrictHostKeyChecking=no -i ssh_key myapp.tar ${VPS_USER}@${VPS_IP}:/home/user/app/
 
       # 🔟 Deploy trên VPS mà không bị trùng port
       - name: 🚀 Load Docker Image & Restart Container
