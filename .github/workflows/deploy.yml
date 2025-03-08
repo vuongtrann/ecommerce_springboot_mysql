@@ -11,7 +11,7 @@ jobs:
 
     steps:
       # 1️⃣ Clone source code từ GitHub
-      - name: 1️⃣  Checkout repository
+      - name: 1️⃣ Checkout repository
         uses: actions/checkout@v3
 
       # 2️⃣ Build Docker Image
@@ -44,21 +44,19 @@ jobs:
             docker rm spring_boot || true
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
-      # 5️⃣ Gửi thông báo lên Slack sau khi deploy thành công
-      - name: 5️⃣ Notify Slack for success
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: "🚀 Deploy Spring Boot thành công lên VPS!"
-          color: good  # Tùy chọn: 'good' (xanh), 'warning' (vàng), 'danger' (đỏ)
+      # 5️⃣ Gửi thông báo lên Discord khi deploy thành công
+      - name: 5️⃣ Notify Discord for success
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d '{"content": "🚀 Deploy Spring Boot thành công lên VPS!"}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-    # 6️⃣ Gửi thông báo lên Slack nếu có lỗi trong workflow
+    # 6️⃣ Gửi thông báo lên Discord nếu có lỗi trong workflow
   failure:
     runs-on: ubuntu-latest
     steps:
-      - name: 6️⃣ Notify Slack for failure
-        uses: rtCamp/action-slack-notify@v2
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: "⚠️ Deploy Spring Boot thất bại!"
-          color: danger  # Đỏ để cảnh báo
+      - name: 6️⃣ Notify Discord for failure
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+            -d '{"content": "⚠️ Deploy Spring Boot thất bại!"}' \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
