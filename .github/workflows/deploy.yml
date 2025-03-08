@@ -1,0 +1,64 @@
+name: Deploy Spring Boot to VPS
+
+on:
+  push:
+    branches:
+      - main  # Chạy khi push lên nhánh `main`
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Clone source code từ GitHub
+      - name: 1️⃣  Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Build Docker Image
+      - name: 2️⃣ Build Docker Image
+        run: |
+          docker build -t myapp:latest .
+          docker save myapp:latest -o myapp.tar
+
+      # 3️⃣ Copy Docker Image lên VPS
+      - name: 3️⃣ Copy image to VPS
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "myapp.tar"
+          target: "/home/user/app/"
+
+      # 4️⃣ Deploy trên VPS mà không bị trùng port
+      - name: 4️⃣ Load Docker Image & Restart Container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/user/app
+            docker load -i myapp.tar
+            docker stop spring_boot || true
+            docker rm spring_boot || true
+            docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
+
+      # 5️⃣ Gửi thông báo lên Slack sau khi deploy thành công
+      - name: 5️⃣ Notify Slack for success
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: "🚀 Deploy Spring Boot thành công lên VPS!"
+          color: good  # Tùy chọn: 'good' (xanh), 'warning' (vàng), 'danger' (đỏ)
+
+    # 6️⃣ Gửi thông báo lên Slack nếu có lỗi trong workflow
+  failure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 6️⃣ Notify Slack for failure
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+          message: "⚠️ Deploy Spring Boot thất bại!"
+          color: danger  # Đỏ để cảnh báo
