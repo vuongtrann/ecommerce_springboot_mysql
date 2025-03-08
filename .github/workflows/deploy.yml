@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3️⃣ Cài đặt Maven (nếu cần)
+      # 3️⃣ Cài đặt Maven
       - name: 3️⃣ Install Maven
         run: sudo apt-get install -y maven
 
@@ -41,20 +41,32 @@ jobs:
       - name: 6️⃣ Verify JAR file exists
         run: |
           ls -la target/
-          if [ ! -f target/*.jar ]; then
+          JAR_FILE=$(ls target/*.jar | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
             echo "❌ Lỗi: Không tìm thấy file JAR trong thư mục target/"
             exit 1
           fi
+          echo "✅ Tìm thấy file JAR: $JAR_FILE"
 
       # 7️⃣ Build Docker Image
-      - name: 7️⃣ Build Docker Image
+      - name: 🏗 Build Docker Image
         run: |
           mv target/*.jar target/myapp.jar
           docker build -t myapp:latest .
           docker save myapp:latest -o myapp.tar
+          sudo chmod 644 myapp.tar  # Đảm bảo quyền truy cập
 
-      # 8️⃣ Copy Docker Image lên VPS
-      - name: 8️⃣ Copy image to VPS
+      # 8️⃣ Kiểm tra file Docker Image tar
+      - name: ✅ Verify Docker image tar file
+        run: |
+          ls -la
+          if [ ! -f myapp.tar ]; then
+            echo "❌ Lỗi: Không tìm thấy myapp.tar"
+            exit 1
+          fi
+
+      # 9️⃣ Copy Docker Image lên VPS
+      - name: 📦 Copy image to VPS
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -63,8 +75,8 @@ jobs:
           source: "myapp.tar"
           target: "/home/user/app/"
 
-      # 9️⃣ Deploy trên VPS mà không bị trùng port
-      - name: 9️⃣ Load Docker Image & Restart Container
+      # 🔟 Deploy trên VPS mà không bị trùng port
+      - name: 🚀 Load Docker Image & Restart Container
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -78,8 +90,8 @@ jobs:
             docker rm spring_boot || true
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
-      # 🔟 Gửi thông báo lên Discord khi deploy thành công
-      - name: 🔟 Notify Discord for success
+      # 🔔 Gửi thông báo lên Discord khi deploy thành công
+      - name: 🔔 Notify Discord for success
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
@@ -89,6 +101,7 @@ jobs:
             "$WEBHOOK"
           fi
 
+  # Nếu có lỗi, gửi thông báo lên Discord
 #  failure:
 #    runs-on: ubuntu-latest
 #    steps:
