@@ -14,6 +14,20 @@ jobs:
       - name: 1️⃣ Checkout repository
         uses: actions/checkout@v3
 
+      # 1️⃣.5 Build Spring Boot Application
+      - name: 1️⃣.5 Build Spring Boot Application
+        run: |
+          chmod +x mvnw  # Nếu dùng Maven Wrapper
+          ./mvnw clean package -DskipTests  # Build ứng dụng
+
+      # 1️⃣.6 Verify JAR file exists
+      - name: 1️⃣.6 Verify JAR file exists
+        run: |
+          if [ ! -f target/myapp.jar ]; then
+            echo "❌ Lỗi: Không tìm thấy target/myapp.jar"
+            exit 1
+          fi
+
       # 2️⃣ Build Docker Image
       - name: 2️⃣ Build Docker Image
         run: |
@@ -38,6 +52,9 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            # Đảm bảo Docker đang chạy trên VPS
+            sudo systemctl start docker || sudo service docker start
+            
             cd /home/user/app
             docker load -i myapp.tar
             docker stop spring_boot || true
@@ -46,17 +63,24 @@ jobs:
 
       # 5️⃣ Gửi thông báo lên Discord khi deploy thành công
       - name: 5️⃣ Notify Discord for success
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST -H "Content-Type: application/json" \
+          if [ -n "$WEBHOOK" ]; then
+            curl -X POST -H "Content-Type: application/json" \
             -d '{"content": "🚀 Deploy Spring Boot thành công lên VPS!"}' \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+            "$WEBHOOK"
+          fi
 
-    # 6️⃣ Gửi thông báo lên Discord nếu có lỗi trong workflow
   failure:
     runs-on: ubuntu-latest
     steps:
       - name: 6️⃣ Notify Discord for failure
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -X POST -H "Content-Type: application/json" \
+          if [ -n "$WEBHOOK" ]; then
+            curl -X POST -H "Content-Type: application/json" \
             -d '{"content": "⚠️ Deploy Spring Boot thất bại!"}' \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+            "$WEBHOOK"
+          fi
