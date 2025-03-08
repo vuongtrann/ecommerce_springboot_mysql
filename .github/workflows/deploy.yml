@@ -14,35 +14,47 @@ jobs:
       - name: 1️⃣ Checkout repository
         uses: actions/checkout@v3
 
-      # 1️⃣.5 Thiết lập JDK 21
-      - name: 1️⃣.5 Set up JDK 21
+      # 2️⃣ Thiết lập JDK 21
+      - name: 2️⃣ Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin' # Hoặc 'zulu', 'adopt'
+          distribution: 'temurin'
           java-version: '21'
 
-      # 2️⃣ Build Spring Boot Application
-      - name: 2️⃣ Build Spring Boot Application
-        run: |
-          chmod +x mvnw  # Nếu dùng Maven Wrapper
-          ./mvnw clean package -DskipTests  # Build ứng dụng
+      # 3️⃣ Cài đặt Maven (nếu cần)
+      - name: 3️⃣ Install Maven
+        run: sudo apt-get install -y maven
 
-      # 3️⃣ Verify JAR file exists
-      - name: 3️⃣ Verify JAR file exists
+      # 4️⃣ Xóa thư mục cũ & Kiểm tra lại source code
+      - name: 4️⃣ Clean old builds
         run: |
-          if [ ! -f target/myapp.jar ]; then
-            echo "❌ Lỗi: Không tìm thấy target/myapp.jar"
+          rm -rf target
+          ls -la
+
+      # 5️⃣ Build Spring Boot Application
+      - name: 5️⃣ Build Spring Boot Application
+        run: |
+          chmod +x mvnw || true
+          ./mvnw clean package -DskipTests || mvn clean package -DskipTests
+
+      # 6️⃣ Kiểm tra lại file JAR
+      - name: 6️⃣ Verify JAR file exists
+        run: |
+          ls -la target/
+          if [ ! -f target/*.jar ]; then
+            echo "❌ Lỗi: Không tìm thấy file JAR trong thư mục target/"
             exit 1
           fi
 
-      # 4️⃣ Build Docker Image
-      - name: 4️⃣ Build Docker Image
+      # 7️⃣ Build Docker Image
+      - name: 7️⃣ Build Docker Image
         run: |
+          mv target/*.jar target/myapp.jar
           docker build -t myapp:latest .
           docker save myapp:latest -o myapp.tar
 
-      # 5️⃣ Copy Docker Image lên VPS
-      - name: 5️⃣ Copy image to VPS
+      # 8️⃣ Copy Docker Image lên VPS
+      - name: 8️⃣ Copy image to VPS
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -51,8 +63,8 @@ jobs:
           source: "myapp.tar"
           target: "/home/user/app/"
 
-      # 6️⃣ Deploy trên VPS mà không bị trùng port
-      - name: 6️⃣ Load Docker Image & Restart Container
+      # 9️⃣ Deploy trên VPS mà không bị trùng port
+      - name: 9️⃣ Load Docker Image & Restart Container
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -66,8 +78,8 @@ jobs:
             docker rm spring_boot || true
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
-      # 7️⃣ Gửi thông báo lên Discord khi deploy thành công
-      - name: 7️⃣ Notify Discord for success
+      # 🔟 Gửi thông báo lên Discord khi deploy thành công
+      - name: 🔟 Notify Discord for success
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
@@ -80,7 +92,7 @@ jobs:
 #  failure:
 #    runs-on: ubuntu-latest
 #    steps:
-#      - name: 8️⃣ Notify Discord for failure
+#      - name: ⚠️ Notify Discord for failure
 #        env:
 #          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
 #        run: |
