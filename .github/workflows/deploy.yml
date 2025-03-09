@@ -10,15 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔔 Notify Discord for start deploy
+      - name: 🔔 Notify Discord for Deploy Start
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -n "$WEBHOOK" ]; then
             curl -X POST -H "Content-Type: application/json" \
-            -d '{"content": "🚀  Bắt đầu Deploy Spring Boot lên VPS!"}' \
+            -d '{
+              "username": "Deploy Bot",
+              "avatar_url": "https://cdn-icons-png.flaticon.com/512/2631/2631166.png",
+              "embeds": [{
+                "title": "🚀 Deployment Started!",
+                "description": "Spring Boot backend is being deployed to **VPS**.",
+                "color": 15258703,
+                "fields": [
+                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
+                  { "name": "📂 Branch", "value": "'${{ github.ref_name }}'", "inline": true },
+                  { "name": "🆔 Commit", "value": "'${{ github.sha }}'", "inline": false },
+                  { "name": "🕒 Time", "value": "'$(date +"%Y-%m-%d %H:%M:%S")'", "inline": false }
+                ],
+                "footer": {
+                  "text": "GitHub Actions | Automate Everything"
+                }
+              }]
+            }' \
             "$WEBHOOK"
           fi
+
       # 1️⃣ Clone source code từ GitHub
       - name: 1️⃣ Checkout repository
         uses: actions/checkout@v3
@@ -101,15 +119,34 @@ jobs:
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
       # 🔔 Gửi thông báo lên Discord khi deploy thành công
-      - name: 🔔 Notify Discord for success
+      - name: 🔔 Notify Discord for Success
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -n "$WEBHOOK" ]; then
             curl -X POST -H "Content-Type: application/json" \
-            -d '{"content": "🚀 Deploy Spring Boot thành công lên VPS!"}' \
+            -d '{
+              "username": "Deploy Bot",
+              "avatar_url": "https://cdn-icons-png.flaticon.com/512/2631/2631166.png",
+              "embeds": [{
+                "title": "✅ Deployment Successful!",
+                "description": "Spring Boot backend đã deploy thành công lên **VPS** 🎉",
+                "color": 3066993,
+                "fields": [
+                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
+                  { "name": "📂 Branch", "value": "'${{ github.ref_name }}'", "inline": true },
+                  { "name": "🆔 Commit", "value": "'${{ github.sha }}'", "inline": false },
+                  { "name": "🕒 Time", "value": "'$(date +"%Y-%m-%d %H:%M:%S")'", "inline": false },
+                  { "name": "⚡ Status", "value": "**Thành công** ✅", "inline": true }
+                ],
+                "footer": {
+                  "text": "GitHub Actions | CI/CD Automation"
+                }
+              }]
+            }' \
             "$WEBHOOK"
           fi
+  
 
   # Nếu có lỗi, gửi thông báo lên Discord
 #  failure:
@@ -124,3 +161,139 @@ jobs:
 #            -d '{"content": "⚠️ Deploy Spring Boot thất bại!"}' \
 #            "$WEBHOOK"
 #          fi
+
+
+#v2
+#
+#name: Deploy Spring Boot to VPS
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      # 🔔 Gửi thông báo lên Discord khi bắt đầu deploy
+#      - name: 🔔 Notify Discord for Start Deploy
+#        env:
+#          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+#        run: |
+#          if [ -n "$WEBHOOK" ]; then
+#            curl -X POST -H "Content-Type: application/json" \
+#            -d '{
+#              "content": "🚀 **Bắt đầu deploy!**\n🛠 Service: Spring Boot\n📂 Branch: `${{ github.ref_name }}`\n🕒 Thời gian: '$(date +"%Y-%m-%d %H:%M:%S")'"
+#            }' \
+#            "$WEBHOOK"
+#          fi
+#      # 1️⃣ Clone source code từ GitHub
+#      - name: 1️⃣ Checkout repository
+#        uses: actions/checkout@v3
+#
+#      # 2️⃣ Thiết lập JDK 21
+#      - name: 2️⃣ Set up JDK 21
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'temurin'
+#          java-version: '21'
+#
+#      # 3️⃣ Cài đặt Maven
+#      - name: 3️⃣ Install Maven
+#        run: sudo apt-get install -y maven
+#
+#      # 4️⃣ Xóa thư mục cũ & Kiểm tra lại source code
+#      - name: 4️⃣ Clean old builds
+#        run: |
+#          rm -rf target
+#          ls -la
+#
+#      # 5️⃣ Build Spring Boot Application
+#      - name: 5️⃣ Build Spring Boot Application
+#        run: |
+#          chmod +x mvnw || true
+#          ./mvnw clean package -DskipTests || mvn clean package -DskipTests
+#
+#      # 6️⃣ Kiểm tra lại file JAR
+#      - name: 6️⃣ Verify JAR file exists
+#        run: |
+#          ls -la target/
+#          JAR_FILE=$(ls target/*.jar | head -n 1)
+#          if [ -z "$JAR_FILE" ]; then
+#            echo "❌ Lỗi: Không tìm thấy file JAR trong thư mục target/"
+#            exit 1
+#          fi
+#          echo "✅ Tìm thấy file JAR: $JAR_FILE"
+#
+#      # 7️⃣ Build Docker Image
+#      - name: 🏗 Build Docker Image
+#        run: |
+#          mv target/*.jar target/myapp.jar
+#          docker build -t myapp:latest .
+#          docker save myapp:latest -o myapp.tar
+#          sudo chmod 644 myapp.tar  # Đảm bảo quyền truy cập
+#
+#      # 8️⃣ Kiểm tra file Docker Image tar
+#      - name: ✅ Verify Docker image tar file
+#        run: |
+#          ls -la
+#          if [ ! -f myapp.tar ]; then
+#            echo "❌ Lỗi: Không tìm thấy myapp.tar"
+#            exit 1
+#          fi
+#
+#      # 9️⃣ Copy Docker Image lên VPS
+#      - name: 📦 Copy image to VPS
+#        env:
+#          VPS_IP: ${{ secrets.VPS_HOST }}
+#          VPS_USER: ${{ secrets.VPS_USER }}
+#          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+#        run: |
+#          echo "${VPS_SSH_KEY}" > ssh_key
+#          chmod 600 ssh_key
+#          scp -o StrictHostKeyChecking=no -i ssh_key myapp.tar ${VPS_USER}@${VPS_IP}:/home/user/app/
+#
+#      # 🔟 Deploy trên VPS mà không bị trùng port
+#      - name: 🚀 Load Docker Image & Restart Container
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.VPS_HOST }}
+#          username: ${{ secrets.VPS_USER }}
+#          key: ${{ secrets.VPS_SSH_KEY }}
+#          script: |
+#            sudo systemctl start docker || sudo service docker start
+#            cd /home/user/app
+#            docker load -i myapp.tar
+#            docker stop spring_boot || true
+#            docker rm spring_boot || true
+#            docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
+#
+#      # 🔔 Gửi thông báo lên Discord khi deploy thành công
+#      - name: 🔔 Notify Discord for Success
+#        env:
+#          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+#        run: |
+#          if [ -n "$WEBHOOK" ]; then
+#            curl -X POST -H "Content-Type: application/json" \
+#            -d '{
+#              "content": "✅ **Deploy thành công!**\n🛠 Service: Spring Boot\n📂 Branch: `${{ github.ref_name }}`\n🆔 Commit: `${{ github.sha }}`\n🕒 Thời gian: '$(date +"%Y-%m-%d %H:%M:%S")'"
+#            }' \
+#            "$WEBHOOK"
+#          fi
+#
+#
+#  # Nếu có lỗi, gửi thông báo lên Discord
+##  failure:
+##    runs-on: ubuntu-latest
+##    steps:
+##      - name: ⚠️ Notify Discord for failure
+##        env:
+##          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+##        run: |
+##          if [ -n "$WEBHOOK" ]; then
+##            curl -X POST -H "Content-Type: application/json" \
+##            -d '{"content": "⚠️ Deploy Spring Boot thất bại!"}' \
+##            "$WEBHOOK"
+##          fi
