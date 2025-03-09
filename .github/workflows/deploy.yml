@@ -15,27 +15,28 @@ jobs:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -n "$WEBHOOK" ]; then
+            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
             curl -X POST -H "Content-Type: application/json" \
             -d '{
               "username": "Deploy Bot",
               "avatar_url": "https://cdn-icons-png.flaticon.com/512/2631/2631166.png",
               "embeds": [{
                 "title": "🚀 Deployment Started!",
-                "description": "Spring Boot backend is being deployed to **VPS**.",
+                "description": "Spring Boot backend đang được deploy lên **VPS**.",
                 "color": 15258703,
                 "fields": [
                   { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
-                  { "name": "📂 Branch", "value": "'${{ github.ref_name }}'", "inline": true },
-                  { "name": "🆔 Commit", "value": "'${{ github.sha }}'", "inline": false },
-                  { "name": "🕒 Time", "value": "'$(date +"%Y-%m-%d %H:%M:%S")'", "inline": false }
+                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
+                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
+                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false }
                 ],
                 "footer": {
                   "text": "GitHub Actions | Automate Everything"
                 }
               }]
-            }' \
-            "$WEBHOOK"
+            }' "$WEBHOOK"
           fi
+      
 
       # 1️⃣ Clone source code từ GitHub
       - name: 1️⃣ Checkout repository
@@ -119,11 +120,13 @@ jobs:
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
       # 🔔 Gửi thông báo lên Discord khi deploy thành công
+      # 🔔 Gửi thông báo lên Discord khi deploy thành công
       - name: 🔔 Notify Discord for Success
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -n "$WEBHOOK" ]; then
+            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
             curl -X POST -H "Content-Type: application/json" \
             -d '{
               "username": "Deploy Bot",
@@ -134,17 +137,16 @@ jobs:
                 "color": 3066993,
                 "fields": [
                   { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
-                  { "name": "📂 Branch", "value": "'${{ github.ref_name }}'", "inline": true },
-                  { "name": "🆔 Commit", "value": "'${{ github.sha }}'", "inline": false },
-                  { "name": "🕒 Time", "value": "'$(date +"%Y-%m-%d %H:%M:%S")'", "inline": false },
+                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
+                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
+                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false },
                   { "name": "⚡ Status", "value": "**Thành công** ✅", "inline": true }
                 ],
                 "footer": {
                   "text": "GitHub Actions | CI/CD Automation"
                 }
               }]
-            }' \
-            "$WEBHOOK"
+            }' "$WEBHOOK"
           fi
   
 
