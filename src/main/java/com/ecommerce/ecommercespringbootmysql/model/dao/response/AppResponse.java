@@ -16,7 +16,7 @@ public class AppResponse <T>{
     private Object message;
     private T data;
 
-    private static <T> AppResponse<T> builderResponse(SuccessCode successCode, T data) {
+    public static <T> AppResponse<T> builderResponse(SuccessCode successCode, T data) {
         return AppResponse.<T>builder()
                 .statusCode(successCode.getCode())
                 .message(successCode.getMessage())
