@@ -11,6 +11,8 @@ public enum ErrorCode {
 
     /** Category */
     CATEGORY_NOT_FOUND(404, "Category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_ALREADY_EXISTS(400, "Category already exists", HttpStatus.BAD_REQUEST),
+
 
 
     /** File */
@@ -26,7 +28,6 @@ public enum ErrorCode {
 
 
 ;
-
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;

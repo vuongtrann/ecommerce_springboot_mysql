@@ -20,7 +20,7 @@ public class CategoryForm {
 
     private String banner;
 
-    private List<String> parentId;
+    private String parentId;
 
     private List<String> childId;
 

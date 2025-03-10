@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.swing.plaf.ListUI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,4 +28,12 @@ public class Category extends BaseEntity {
     // Quan hệ One-to-Many: Một category có thể có nhiều category con
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Category> children = new ArrayList<>();
+
+
+    public Category(String name, Category parent, List<Category> children) {
+        this.name = name;
+        this.parent = parent;
+        this.children = children;
+    }
+
 }
