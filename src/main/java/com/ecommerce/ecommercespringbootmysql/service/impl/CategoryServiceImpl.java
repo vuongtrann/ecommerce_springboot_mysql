@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> findAll() {
-        return List.of();
+        return categoryRepository.findAll();
     }
 
     @Override
@@ -76,11 +76,63 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category update(CategoryForm form) {
-        return null;
+    public Category update(String id,CategoryForm form) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        boolean existsCategory = categoryRepository.existsByName(form.getName());
+
+        if (existsCategory) {
+            throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
+        }
+
+
+        // Tìm parent category (nếu có)
+        Category parentCategory = (form.getParentId() != null)
+                ? categoryRepository.findById(form.getParentId()).orElse(null)
+                : null;
+
+        // Tìm danh sách child categories (nếu có)
+        List<Category> childCategories = form.getChildId() != null
+                ? categoryRepository.findAllById(form.getChildId())
+                : new ArrayList<>();
+
+        category.setParent(parentCategory);
+        category.setChildren(childCategories);
+
+        if (parentCategory != null) {
+            parentCategory.getChildren().add(category);
+        }
+        for (Category childCategory : childCategories) {
+            childCategory.setParent(category);
+        }
+
+        category.setName(form.getName());
+        category.setSlug(slugify.generateSlug(form.getName()));
+        category.setUpdatedAt(Instant.now().toEpochMilli());
+
+        categoryRepository.save(category);
+
+        return category;
     }
 
-    private Category save(Category category) {
-        return categoryRepository.save(category);
+    @Override
+    public void setActivate(String id, boolean isActive) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        category.setStatus(isActive ? Status.ACTIVE : Status.INACTIVE);
+        category.setUpdatedAt(Instant.now().toEpochMilli());
+        categoryRepository.save(category);
     }
+
+    @Override
+    public void delete(String id) {
+         Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+         /*** TODO
+          * 1. Xóa category khỏi danh sách children của parent category
+          * 2. Xóa category khỏi danh sách parent của children categories
+          * 3. Xóa category
+          * 4. Kiem tra xem category có sản phẩm không, nếu có thì không xóa
+          */
+
+         categoryRepository.delete(category);
+    }
+
 }

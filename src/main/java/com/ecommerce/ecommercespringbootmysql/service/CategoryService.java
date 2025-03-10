@@ -12,5 +12,7 @@ public interface CategoryService {
     Optional<Category> findById(String id);
     Optional<Category> findBySlug(String slug);
     Category create(CategoryForm form);
-    Category update(CategoryForm form);
+    Category update(String id, CategoryForm form);
+    void setActivate(String id, boolean isActive);
+    void delete(String id);
 }
