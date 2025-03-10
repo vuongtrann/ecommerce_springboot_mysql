@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "product")
+@Table(name = "product")
 @Getter
 @Setter
 @NoArgsConstructor
