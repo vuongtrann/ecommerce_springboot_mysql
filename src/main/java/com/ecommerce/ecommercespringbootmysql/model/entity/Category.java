@@ -21,7 +21,7 @@ public class Category extends BaseEntity {
     private String slug;
 
     //Quan hệ many-to-one : một category có thể có nhiểu category cha
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
