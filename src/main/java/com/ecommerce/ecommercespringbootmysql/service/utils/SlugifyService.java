@@ -1,7 +1,9 @@
 package com.ecommerce.ecommercespringbootmysql.service.utils;
 
 import com.github.slugify.Slugify;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +12,9 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SlugifyService {
-    private final Slugify slugify = Slugify.builder().build();
+    Slugify slugify = Slugify.builder().build();
 
     // Phương thức loại bỏ dấu tiếng Việt
     public String removeVietnameseAccents(String str) {

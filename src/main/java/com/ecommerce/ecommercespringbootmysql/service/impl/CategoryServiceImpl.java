@@ -8,7 +8,9 @@ import com.ecommerce.ecommercespringbootmysql.service.CategoryService;
 import com.ecommerce.ecommercespringbootmysql.service.utils.SlugifyService;
 import com.ecommerce.ecommercespringbootmysql.utils.ErrorCode;
 import com.ecommerce.ecommercespringbootmysql.utils.Status;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -19,10 +21,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryRepository categoryRepository;
-    private final SlugifyService slugify;
+    /***/
+    CategoryRepository categoryRepository;
+    SlugifyService slugify;
 
     @Override
     public List<Category> findAll() {
