@@ -62,11 +62,19 @@ public class ProductServiceImpl implements ProductSerice {
 
     @Override
     public Optional<Product> findById(String id) {
-        return Optional.empty();
+        Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        /***TODO
+         * Cần caching lại khi gọi findByID để sử dụng cho việc sản phẩm nổi bật, sản phẩm vừa xem
+         * */
+        return Optional.of(product);
     }
 
     @Override
     public Optional<Product> findBySlug(String slug) {
-        return Optional.empty();
+        Product product = productRepository.findProductBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        /***TODO
+         * Cần caching lại khi gọi findByID để sử dụng cho việc sản phẩm nổi bật, sản phẩm vừa xem
+         * */
+        return Optional.of(product);
     }
 }
