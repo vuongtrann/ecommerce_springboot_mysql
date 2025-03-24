@@ -17,6 +17,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Product extends BaseEntity {
     private String name;
+    private String nameUnsigned;
     private String description;
     private String slug;
     private String primaryImageURL;
