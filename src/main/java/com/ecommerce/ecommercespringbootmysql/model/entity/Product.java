@@ -26,6 +26,7 @@ public class Product extends BaseEntity {
     @Column(name = "image_url")
     private List<String> imageURLs;
     private String sku;
+    private int quantity;
     private int quantityAvailable;
     private int soldQuantity;
     private double originalPrice; //gia goc

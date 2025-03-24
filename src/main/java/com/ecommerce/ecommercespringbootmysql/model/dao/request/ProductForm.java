@@ -25,9 +25,7 @@ public class ProductForm {
 
     private String sku;
 
-    private int quantityAvailable;
-
-    private int soldQuantity;
+    private int quantity;
 
     @NotBlank(message = "Original price is required")
     @Size(min = 1, message = "Original price must be greater than 0")
