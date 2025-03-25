@@ -20,7 +20,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"parent", "children","products"})  // Loại bỏ cả hai thuộc tính
+//@JsonIgnoreProperties({"parent", "children","products"})  // Loại bỏ cả hai thuộc tính
 public class Category extends BaseEntity {
     private String name;
     private String slug;
@@ -28,10 +28,12 @@ public class Category extends BaseEntity {
     //Quan hệ many-to-one : một category có thể có nhiểu category cha
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
+    @JsonBackReference
     private Category parent;
 
     // Quan hệ One-to-Many: Một category có thể có nhiều category con
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Category> children = new ArrayList<>();
 
 
