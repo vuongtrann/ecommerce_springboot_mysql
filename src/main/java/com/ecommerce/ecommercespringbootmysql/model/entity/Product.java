@@ -1,10 +1,7 @@
 package com.ecommerce.ecommercespringbootmysql.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -20,11 +17,16 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Product extends BaseEntity {
     private String name;
+    private String nameUnsigned;
     private String description;
     private String slug;
     private String primaryImageURL;
-    private List<String> imagesURL;
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> imageURLs;
     private String sku;
+    private int quantity;
     private int quantityAvailable;
     private int soldQuantity;
     private double originalPrice; //gia goc
@@ -34,4 +36,21 @@ public class Product extends BaseEntity {
     private String sellingType;
     private double avgRating;
     private int noOfRating;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "product_category",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "product_tag",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags;
+
 }
