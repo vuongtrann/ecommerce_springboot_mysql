@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface CategoryService {
     List<Category> findAll();
     Optional<Category> findById(String id);
+    List<Category> findByIdIn(List<String> ids);
     Optional<Category> findBySlug(String slug);
     Category create(CategoryForm form);
     Category update(String id, CategoryForm form);

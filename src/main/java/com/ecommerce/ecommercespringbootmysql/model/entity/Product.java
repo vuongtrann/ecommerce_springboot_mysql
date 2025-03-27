@@ -2,6 +2,8 @@ package com.ecommerce.ecommercespringbootmysql.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -17,7 +19,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Product extends BaseEntity {
     private String name;
-    private String nameUnsigned;
     private String description;
     private String slug;
     private String primaryImageURL;
@@ -28,7 +29,7 @@ public class Product extends BaseEntity {
     private String sku;
     private int quantity;
     private int quantityAvailable;
-    private int soldQuantity;
+    private int soldQuantity = 0;
     private double originalPrice; //gia goc
     private double sellingPrice; //gia ban
     private double discountedPrice; //gia giam
@@ -53,4 +54,16 @@ public class Product extends BaseEntity {
     )
     private List<Tag> tags;
 
+    public Product( String name, String description, String slug, String sku, int quantity,  double originalPrice,  double sellingPrice,  double discountedPrice, String sellingType, List<Category> categories) {
+        this.name = name;
+        this.description = description;
+        this.slug = slug;
+        this.sku = sku;
+        this.quantity = quantity;
+        this.originalPrice = originalPrice;
+        this.sellingPrice = sellingPrice;
+        this.discountedPrice = discountedPrice;
+        this.sellingType = sellingType;
+        this.categories = categories;
+    }
 }

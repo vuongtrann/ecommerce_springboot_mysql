@@ -47,13 +47,13 @@ public class ProductForm {
 
     private List<String> categories = new ArrayList<>();
 
-    private String brand ;
-
-    private boolean hasVariants;
-
-    private List<String> variants = new ArrayList<>();
-
-    private List<String> collections = new ArrayList<>();
-
-    private Map<String, String> specifications ;
+//    private String brand ;
+//
+//    private boolean hasVariants;
+//
+//    private List<String> variants = new ArrayList<>();
+//
+//    private List<String> collections = new ArrayList<>();
+//
+//    private Map<String, String> specifications ;
 }
