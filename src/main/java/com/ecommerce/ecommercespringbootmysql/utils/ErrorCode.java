@@ -30,7 +30,12 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(404,"Product not found !" , HttpStatus.NOT_FOUND ),
     PRODUCT_ALREADY_EXISTS(400,"Product already exists !" , HttpStatus.BAD_REQUEST ),
     PRODUCT_NOT_FOUND_BY_SLUG(404,"Product not found by slug !" , HttpStatus.NOT_FOUND ),
-    PRODUCT_CANNOT_DELETE(400,"Can not delete this product, please change status first !" , HttpStatus.BAD_REQUEST ),;
+    PRODUCT_CANNOT_DELETE(400,"Can not delete this product, please change status first !" , HttpStatus.BAD_REQUEST ),
+
+    TAG_NOT_FOUND(404, "Tag not found !", HttpStatus.NOT_FOUND),
+    TAG_ALREADY_EXISTS(400,"Tag already exists !" , HttpStatus.BAD_REQUEST ),
+    TAG_CANNOT_DELETE(400,"Can not delete tag !" , HttpStatus.BAD_REQUEST ),
+    TAG_STATUS_IS_ACTIVE(400,"Tag status is active , please change status first !" , HttpStatus.BAD_REQUEST ),;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
