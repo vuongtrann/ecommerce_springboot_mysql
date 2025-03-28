@@ -1,15 +1,20 @@
 package com.ecommerce.ecommercespringbootmysql.service.impl;
 
+import com.ecommerce.ecommercespringbootmysql.exception.AppException;
 import com.ecommerce.ecommercespringbootmysql.model.dao.request.BannerForm;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Banner;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Collection;
 import com.ecommerce.ecommercespringbootmysql.repository.BannerRepository;
 import com.ecommerce.ecommercespringbootmysql.service.BannerService;
+import com.ecommerce.ecommercespringbootmysql.utils.ErrorCode;
+import com.ecommerce.ecommercespringbootmysql.utils.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +29,8 @@ public class BannerImpl implements BannerService {
     }
 
     @Override
-    public Banner findById(String id) {
-        return bannerRepository.findById(id).orElse(null);
+    public Optional<Banner> findById(String id) {
+        return Optional.of(bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BANNER_NOT_FOUND)));
     }
 
     @Override
@@ -45,13 +50,17 @@ public class BannerImpl implements BannerService {
 
     @Override
     public void deleteBanner(String id) {
-        Banner banner = bannerRepository.findById(id).orElse(null);
-        bannerRepository.deleteById(id);
+        Banner banner = bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+        if (!banner.getStatus().equals("ACTIVE")) {
+            throw new AppException(ErrorCode.BANNER_CANNOT_DELETE);
+        }
+        banner.setStatus(Status.DELETED);
+        bannerRepository.save(banner);
     }
 
     @Override
     public Banner updateBanner(String id,BannerForm bannerForm) {
-       Banner banner = bannerRepository.findById(id).orElse(null);
+       Banner banner = bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BANNER_NOT_FOUND));
        banner.setTitle(bannerForm.getTitle());
        banner.setDescription(bannerForm.getDescription());
        Banner savedBanner = bannerRepository.save(banner);
