@@ -39,11 +39,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findByIdIn(List<String> ids) {
-        return categoryRepository.findAllByIdIn(ids);
-    }
-
-    @Override
     public Optional<Category> findBySlug(String slug) {
         return  categoryRepository.findBySlug(slug);
     }
