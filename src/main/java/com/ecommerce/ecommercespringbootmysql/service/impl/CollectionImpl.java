@@ -44,12 +44,7 @@ public class CollectionImpl implements CollectionService {
 
     @Override
     public Page<CollectionProjection> getAllCollections(int page, int size, String sortBy, String direction) {
-        Sort sort = Sort.by(sortBy, direction);
-        if(direction.equalsIgnoreCase("desc")) {
-            sort = sort.descending();
-        } else if(direction.equalsIgnoreCase("asc")) {
-            sort = sort.ascending();
-        }
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return collectionRepository.findAllCollectionBy(pageable);
     }
@@ -72,7 +67,7 @@ public class CollectionImpl implements CollectionService {
         collection.setCollectionName(collectionForm.getCollectionName());
         collection.setCollectionDescription(collectionForm.getCollectionDescription());
         collection.setCollectionImage(collectionForm.getCollectionImage());
-        collection.setCollectionSlug(slugify.generateSlug(collectionForm.getCollectionSlug()));
+        collection.setSlug(slugify.generateSlug(collectionForm.getCollectionSlug()));
         Collection savedCollection = collectionRepository.save(collection);
         return savedCollection;
     }

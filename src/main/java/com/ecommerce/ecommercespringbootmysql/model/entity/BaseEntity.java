@@ -40,5 +40,4 @@ public abstract class BaseEntity {
     private String updatedBy;
 
     private Status status = Status.ACTIVE;
-
 }

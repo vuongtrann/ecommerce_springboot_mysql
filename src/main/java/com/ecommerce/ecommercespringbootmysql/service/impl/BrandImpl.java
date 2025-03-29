@@ -45,12 +45,7 @@ public class BrandImpl implements BrandService {
 
     @Override
     public Page<BrandProjection> getAllBrands(int page, int size, String sortBy, String direction) {
-        Sort sort = Sort.by(sortBy, direction);
-        if(direction.equalsIgnoreCase("desc")) {
-            sort = sort.descending();
-        } else if(direction.equalsIgnoreCase("asc")) {
-            sort = sort.ascending();
-        }
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return brandRepository.findAllBrandBy(pageable);
     }
