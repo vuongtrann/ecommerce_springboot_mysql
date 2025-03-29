@@ -4,6 +4,7 @@ import com.ecommerce.ecommercespringbootmysql.exception.AppException;
 import com.ecommerce.ecommercespringbootmysql.model.dao.request.BrandForm;
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.BrandProjection;
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.CollectionProjection;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Banner;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Brand;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Collection;
 import com.ecommerce.ecommercespringbootmysql.repository.BrandRepository;
@@ -37,7 +38,9 @@ public class BrandImpl implements BrandService {
 
     @Override
     public Optional<Brand> findById(String id) {
-        return Optional.of(brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND)));
+        Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
+
+        return Optional.of(brand);
     }
 
     @Override

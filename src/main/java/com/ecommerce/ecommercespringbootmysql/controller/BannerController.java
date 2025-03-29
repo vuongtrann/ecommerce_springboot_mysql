@@ -43,7 +43,6 @@ public class BannerController {
 
     @DeleteMapping("/{bannerId}")
     public ResponseEntity<AppResponse<String>> deleteBanner(@PathVariable String bannerId) {
-
        bannerService.deleteBanner(bannerId);
         return ResponseEntity.ok(
                 AppResponse.builderResponse(

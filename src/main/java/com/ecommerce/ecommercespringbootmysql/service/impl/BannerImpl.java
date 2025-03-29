@@ -4,6 +4,7 @@ import com.ecommerce.ecommercespringbootmysql.exception.AppException;
 import com.ecommerce.ecommercespringbootmysql.model.dao.request.BannerForm;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Banner;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Collection;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.repository.BannerRepository;
 import com.ecommerce.ecommercespringbootmysql.service.BannerService;
 import com.ecommerce.ecommercespringbootmysql.utils.ErrorCode;
@@ -30,7 +31,9 @@ public class BannerImpl implements BannerService {
 
     @Override
     public Optional<Banner> findById(String id) {
-        return Optional.of(bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BANNER_NOT_FOUND)));
+        Banner banner = bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BANNER_NOT_FOUND));
+
+        return Optional.of(banner);
     }
 
     @Override
@@ -50,10 +53,11 @@ public class BannerImpl implements BannerService {
 
     @Override
     public void deleteBanner(String id) {
-        Banner banner = bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+        Banner banner = bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BANNER_NOT_FOUND));
         if (!banner.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.BANNER_CANNOT_DELETE);
         }
+
         banner.setStatus(Status.DELETED);
         bannerRepository.save(banner);
     }

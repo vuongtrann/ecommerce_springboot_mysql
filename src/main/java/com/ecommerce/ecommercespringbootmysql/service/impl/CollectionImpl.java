@@ -3,6 +3,7 @@ package com.ecommerce.ecommercespringbootmysql.service.impl;
 import com.ecommerce.ecommercespringbootmysql.exception.AppException;
 import com.ecommerce.ecommercespringbootmysql.model.dao.request.CollectionForm;
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.CollectionProjection;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Brand;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Collection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.repository.CollectionRepository;
@@ -36,7 +37,9 @@ public class CollectionImpl implements CollectionService {
 
     @Override
     public Optional<Collection> findById(String id) {
-        return Optional.of(collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND)));
+        Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+
+        return Optional.of(collection);
     }
 
     @Override
