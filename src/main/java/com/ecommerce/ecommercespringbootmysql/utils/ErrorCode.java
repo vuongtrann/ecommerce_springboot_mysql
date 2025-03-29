@@ -35,7 +35,16 @@ public enum ErrorCode {
     TAG_NOT_FOUND(404, "Tag not found !", HttpStatus.NOT_FOUND),
     TAG_ALREADY_EXISTS(400,"Tag already exists !" , HttpStatus.BAD_REQUEST ),
     TAG_CANNOT_DELETE(400,"Can not delete tag !" , HttpStatus.BAD_REQUEST ),
-    TAG_STATUS_IS_ACTIVE(400,"Tag status is active , please change status first !" , HttpStatus.BAD_REQUEST ),;
+    TAG_STATUS_IS_ACTIVE(400,"Tag status is active , please change status first !" , HttpStatus.BAD_REQUEST ),
+
+    COLLECTION_NOT_FOUND(404,"Collection not found !" , HttpStatus.NOT_FOUND ),
+    COLLECTION_CANNOT_DELETE(400,"Collection already exists !" , HttpStatus.BAD_REQUEST ),
+
+    BRAND_NOT_FOUND(404,"Brand not found !" , HttpStatus.NOT_FOUND ),
+    BRAND_CANNOT_DELETE(400,"Brand not found !" , HttpStatus.BAD_REQUEST ),
+
+    BANNER_NOT_FOUND(404,"Banner not found !" , HttpStatus.NOT_FOUND ),
+    BANNER_CANNOT_DELETE(400,"Banner not found !" , HttpStatus.BAD_REQUEST ),;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
