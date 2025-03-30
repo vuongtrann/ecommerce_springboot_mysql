@@ -18,4 +18,9 @@ public class Banner extends BaseEntity {
     String description;
     String imageURL;
     String position;
+
+    public Banner(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
 }

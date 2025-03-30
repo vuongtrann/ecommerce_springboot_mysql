@@ -17,5 +17,5 @@ public class Collection extends BaseEntity{
     private String collectionName;
     private String collectionDescription;
     private String collectionImage;
-    private String collectionSlug;
+    private String slug;
 }
