@@ -23,4 +23,24 @@ public class UserServiceImpl implements UserService {
     public void save(User user) {
         userRepositiory.save(user);
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepositiory.findByUsername(username);
+    }
+
+    @Override
+    public User findByVerificationToken(String token) {
+        return userRepositiory.findByVerificationToken(token);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepositiory.findByEmail(email);
+    }
+
+    @Override
+    public boolean existsByUserName(String userName) {
+        return userRepositiory.existsByUsername(userName);
+    }
 }

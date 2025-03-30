@@ -12,14 +12,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Service
 @RequiredArgsConstructor
 //@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
-    private final SpringTemplateEngine templateEngine;
+    private final org.thymeleaf.spring6.SpringTemplateEngine templateEngine;
 
     @Value("${spring.mail.username}")
     private String myEmail;
@@ -49,16 +49,15 @@ public class MailServiceImpl implements MailService {
     public void sendRegistrationConfirmMail(String to, String confirmLink, String firstname, String lastname) {
         String subject = "Xác nhận đăng ký tài khoản";
 
-        // Tạo context và thêm biến confirmLink, firstname, lastname
         Context context = new Context();
-        context.setVariable("confirmLink", confirmLink);
         context.setVariable("firstname", firstname);
         context.setVariable("lastname", lastname);
+        context.setVariable("confirmLink", confirmLink);
 
-        // Render template thành chuỗi
-        String text = templateEngine.process("registration-confirm", context);
+        String content = templateEngine.process("registration-confirmation", context);
+//        sendEmail(to, "Xác nhận đăng ký", content);
 
         // Gửi mail
-        sendMail(to, subject, text);
+        sendMail(to, subject, content);
     }
 }

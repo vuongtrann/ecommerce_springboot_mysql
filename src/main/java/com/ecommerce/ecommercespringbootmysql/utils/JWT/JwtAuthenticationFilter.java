@@ -1,6 +1,6 @@
 package com.ecommerce.ecommercespringbootmysql.utils.JWT;
 
-import com.spring.ecommerce.lvtn.service.Util.CustomUserDetailsService;
+import com.ecommerce.ecommercespringbootmysql.service.utils.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

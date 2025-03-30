@@ -20,5 +20,4 @@ public interface AuthService {
     public void changeUserName(String email, String newUserName);
     public boolean existsByEmail(String email);
     public boolean existsByUserName(String userName);
-
 }
