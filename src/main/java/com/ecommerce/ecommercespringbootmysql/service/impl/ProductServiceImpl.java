@@ -2,6 +2,8 @@ package com.ecommerce.ecommercespringbootmysql.service.impl;
 
 import com.ecommerce.ecommercespringbootmysql.exception.AppException;
 import com.ecommerce.ecommercespringbootmysql.model.dao.request.ProductForm;
+import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.ProductProjection;
+import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.TagProjection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Category;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.repository.ProductRepository;
@@ -13,6 +15,10 @@ import com.ecommerce.ecommercespringbootmysql.utils.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +41,13 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public Product save(Product product) {
         return productRepository.save(product);
+    }
+
+    @Override
+    public Page<ProductProjection> findAll(int page, int size, String sortBy, String direction) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return productRepository.findAllProjectedBy(pageable);
     }
 
     @Override
@@ -114,7 +127,7 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public void delete(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        if (!product.getStatus().equals("ACTIVE")) {
+        if (product.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.PRODUCT_CANNOT_DELETE);
         }
         /**TODO

@@ -75,7 +75,7 @@ public class CollectionImpl implements CollectionService {
     @Override
     public void deleteCollection(String id) {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
-        if (!collection.getStatus().equals("ACTIVE")) {
+        if (collection.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.COLLECTION_CANNOT_DELETE);
         }
         collection.setStatus(Status.DELETED);

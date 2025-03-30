@@ -43,7 +43,7 @@ public enum ErrorCode {
     INVALID_VERIFICATION_TOKEN(400,"Invalid verification token" , HttpStatus.BAD_REQUEST ),
     USER_NOT_FOUND(404,"User not found !" , HttpStatus.NOT_FOUND );
     COLLECTION_NOT_FOUND(404,"Collection not found !" , HttpStatus.NOT_FOUND ),
-    COLLECTION_CANNOT_DELETE(400,"Collection already exists !" , HttpStatus.BAD_REQUEST ),
+    COLLECTION_CANNOT_DELETE(400,"Collection Cannot delete !" , HttpStatus.BAD_REQUEST ),
 
     BRAND_NOT_FOUND(404,"Brand not found !" , HttpStatus.NOT_FOUND ),
     BRAND_CANNOT_DELETE(400,"Brand not found !" , HttpStatus.BAD_REQUEST ),

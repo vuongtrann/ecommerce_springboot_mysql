@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CollectionForm {
-    /***TODO : Tiến làm cái này */
+
 
     private String collectionName;
     private String collectionDescription;
