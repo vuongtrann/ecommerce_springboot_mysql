@@ -73,7 +73,7 @@ public class BrandImpl implements BrandService {
 
     public void deleteBrand(String id) {
         Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
-        if (!brand.getStatus().equals("ACTIVE")) {
+        if (brand.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.BRAND_CANNOT_DELETE);
         }
         brand.setStatus(Status.DELETED);

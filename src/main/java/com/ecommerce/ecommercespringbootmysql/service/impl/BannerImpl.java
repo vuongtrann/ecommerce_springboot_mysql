@@ -54,7 +54,7 @@ public class BannerImpl implements BannerService {
     @Override
     public void deleteBanner(String id) {
         Banner banner = bannerRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BANNER_NOT_FOUND));
-        if (!banner.getStatus().equals("ACTIVE")) {
+        if (banner.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.BANNER_CANNOT_DELETE);
         }
 

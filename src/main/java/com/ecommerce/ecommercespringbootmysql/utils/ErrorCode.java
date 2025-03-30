@@ -38,7 +38,7 @@ public enum ErrorCode {
     TAG_STATUS_IS_ACTIVE(400,"Tag status is active , please change status first !" , HttpStatus.BAD_REQUEST ),
 
     COLLECTION_NOT_FOUND(404,"Collection not found !" , HttpStatus.NOT_FOUND ),
-    COLLECTION_CANNOT_DELETE(400,"Collection already exists !" , HttpStatus.BAD_REQUEST ),
+    COLLECTION_CANNOT_DELETE(400,"Collection Cannot delete !" , HttpStatus.BAD_REQUEST ),
 
     BRAND_NOT_FOUND(404,"Brand not found !" , HttpStatus.NOT_FOUND ),
     BRAND_CANNOT_DELETE(400,"Brand not found !" , HttpStatus.BAD_REQUEST ),
