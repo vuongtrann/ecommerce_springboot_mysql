@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chào mừng đến với hệ thống</title>
+</head>
+<body>
+<h1>Chào mừng <span th:text="${firstname}"></span> <span th:text="${lastname}"></span> đến với Ecommerce!</h1>
+<p>Để hoàn tất việc đăng ký tài khoản, vui lòng click vào link bên dưới:</p>
+<a th:href="${confirmLink}">Xác nhận đăng ký</a>
+<p>Bạn có thể đăng nhập và bắt đầu khám phá các dịch vụ của chúng tôi.</p>
+<p>Trân trọng,</p>
+<p>Đội ngũ hỗ trợ</p>
+</body>
+</html>
