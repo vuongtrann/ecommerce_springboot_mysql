@@ -38,6 +38,7 @@ public class Category extends BaseEntity {
 
 
     @ManyToMany(mappedBy = "categories")
+    @JsonBackReference
     private List<Product> products;
 
     public Category(String name, Category parent, List<Category> children) {

@@ -1,5 +1,7 @@
 package com.ecommerce.ecommercespringbootmysql.model.dao.request;
 
+import com.ecommerce.ecommercespringbootmysql.model.dao.request.Variant.ProductVariantForm;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.ProductVariant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -49,9 +51,9 @@ public class ProductForm {
 
 //    private String brand ;
 //
-//    private boolean hasVariants;
+    private boolean hasVariants;
 //
-//    private List<String> variants = new ArrayList<>();
+    private List<ProductVariantForm> variants = new ArrayList<>();
 //
 //    private List<String> collections = new ArrayList<>();
 //

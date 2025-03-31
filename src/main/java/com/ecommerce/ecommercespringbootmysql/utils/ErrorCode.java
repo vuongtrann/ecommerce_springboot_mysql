@@ -41,7 +41,7 @@ public enum ErrorCode {
     INVALID_CREDENTIALS(400,"Invalid credentials !" , HttpStatus.BAD_REQUEST ),
     ACCOUNT_NOT_VERIFIED(400,"Account not verified !" , HttpStatus.FORBIDDEN ),
     INVALID_VERIFICATION_TOKEN(400,"Invalid verification token" , HttpStatus.BAD_REQUEST ),
-    USER_NOT_FOUND(404,"User not found !" , HttpStatus.NOT_FOUND );
+    USER_NOT_FOUND(404,"User not found !" , HttpStatus.NOT_FOUND ),
     COLLECTION_NOT_FOUND(404,"Collection not found !" , HttpStatus.NOT_FOUND ),
     COLLECTION_CANNOT_DELETE(400,"Collection Cannot delete !" , HttpStatus.BAD_REQUEST ),
 
@@ -49,7 +49,8 @@ public enum ErrorCode {
     BRAND_CANNOT_DELETE(400,"Brand not found !" , HttpStatus.BAD_REQUEST ),
 
     BANNER_NOT_FOUND(404,"Banner not found !" , HttpStatus.NOT_FOUND ),
-    BANNER_CANNOT_DELETE(400,"Banner not found !" , HttpStatus.BAD_REQUEST ),;
+    BANNER_CANNOT_DELETE(400,"Banner not found !" , HttpStatus.BAD_REQUEST ),
+    VARIANT_TYPE_NOT_FOUND(404,"Variant type not found !" , HttpStatus.NOT_FOUND );
 
   private final int code;
     private final String message;

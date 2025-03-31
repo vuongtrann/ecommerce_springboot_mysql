@@ -7,6 +7,7 @@ import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.Coll
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.ProductProjection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Collection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantType;
 import com.ecommerce.ecommercespringbootmysql.repository.ProductRepository;
 import com.ecommerce.ecommercespringbootmysql.service.ProductSerice;
 import com.ecommerce.ecommercespringbootmysql.utils.SuccessCode;
@@ -16,6 +17,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -66,6 +69,30 @@ public class ProductController {
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,
                         productService.update(productId,productForm)
+                )
+        );
+    }
+
+
+
+
+
+    /**Variant Type*/
+    @GetMapping("/variant-type")
+    public ResponseEntity<AppResponse<List<VariantType>>> getVariantTypes() {
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        productService.getVariantTypes()
+                )
+        );
+    }
+    @PostMapping("/variant-type")
+    public ResponseEntity<AppResponse<VariantType>> createVariantType(@RequestBody VariantType variantType) {
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.CREATED,
+                        productService.createVariantType(variantType)
                 )
         );
     }

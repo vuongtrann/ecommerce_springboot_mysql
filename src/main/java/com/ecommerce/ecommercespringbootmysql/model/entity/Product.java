@@ -1,12 +1,16 @@
 package com.ecommerce.ecommercespringbootmysql.model.entity;
 
+import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.ProductVariant;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "product")
@@ -32,13 +36,15 @@ public class Product extends BaseEntity {
     private int soldQuantity = 0;
     private double originalPrice; //gia goc
     private double sellingPrice; //gia ban
-    private double discountedPrice; //gia giam
+    private double discountedPrice=0; //gia giam
     private int noOfView;
     private String sellingType;
     private double avgRating;
     private int noOfRating;
+    private Boolean hasVariants = false;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonManagedReference
     @JoinTable(
             name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"),
@@ -53,6 +59,10 @@ public class Product extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonBackReference
+    private List<ProductVariant> variants = new ArrayList<>();
 
     public Product( String name, String description, String slug, String sku, int quantity,  double originalPrice,  double sellingPrice,  double discountedPrice, String sellingType, List<Category> categories) {
         this.name = name;

@@ -4,6 +4,7 @@ import com.ecommerce.ecommercespringbootmysql.model.dao.request.ProductForm;
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.ProductProjection;
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.TagProjection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantType;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,5 +22,11 @@ public interface ProductSerice {
     Optional<Product> findBySlug(String slug);
 
 
+
+    /**Variant Type*/
+    List<VariantType> getVariantTypes();
+    Optional<VariantType> getVariantType(Long id);
+    VariantType createVariantType(VariantType variantType);
+    VariantType updateVariantType(String id, VariantType variantType);
 
 }
