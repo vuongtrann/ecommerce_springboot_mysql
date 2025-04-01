@@ -199,8 +199,10 @@ public class ProductServiceImpl implements ProductSerice {
         ProductVariant productVariant = new ProductVariant();
         productVariant.setSku(variantForm.getSku());
         productVariant.setQuantityAvailable(variantForm.getQuantityAvailable());
-        productVariant.setPrice(variantForm.getPrice());
-        productVariant.setSalePrice(variantForm.getSalePrice());
+        productVariant.setOriginalPrice(variantForm.getOriginalPrice());
+        productVariant.setSellingPrice(variantForm.getSellingPrice());
+        productVariant.setDiscountedPrice(variantForm.getDiscountedPrice());
+
         productVariant.setProduct(product);
 
         // 🔹 Lưu ProductVariant trước khi tạo VariantOptions
@@ -212,7 +214,7 @@ public class ProductServiceImpl implements ProductSerice {
             VariantOption variantOption = new VariantOption();
             variantOption.setValue(optionForm.getValue());
             variantOption.setVariantType(variantType);
-            variantOption.setProductVariant(productVariant);
+
 
             variantOption = variantOptionRepository.save(variantOption); // 🔹 Lưu VariantOption vào DB trước
             variantOptions.add(variantOption);
