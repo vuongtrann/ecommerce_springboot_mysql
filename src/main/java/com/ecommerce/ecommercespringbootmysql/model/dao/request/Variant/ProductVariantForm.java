@@ -8,8 +8,10 @@ import java.util.List;
 public class ProductVariantForm {
     private String sku;
     private int quantityAvailable;
-    private double price;
-    private double salePrice;
+
+    private double sellingPrice; //gia ban
+    private double originalPrice; //gia goc
+    private double discountedPrice=0; //gia giam
     private List<String> imageURLs;
     private List<VariantOptionForm> variantOptions;
 }

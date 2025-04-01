@@ -1,5 +1,6 @@
 package com.ecommerce.ecommercespringbootmysql.model.entity.Variant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,5 +26,6 @@ public class VariantOption {
 
     @ManyToOne
     @JoinColumn(name = "product_variant_id")
+    @JsonIgnore
     private ProductVariant productVariant;
 }
