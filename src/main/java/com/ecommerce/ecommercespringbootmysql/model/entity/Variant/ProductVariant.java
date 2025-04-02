@@ -38,9 +38,7 @@ public class ProductVariant extends BaseEntity {
     private String sellingType;
     private double avgRating;
     private int noOfRating;
-    private Boolean hasVariants = false;
-
-
+//    private Boolean hasVariants = false
 
 
 
