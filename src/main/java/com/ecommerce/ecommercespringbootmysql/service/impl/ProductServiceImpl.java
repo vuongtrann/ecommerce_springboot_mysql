@@ -66,6 +66,9 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public Product create(ProductForm form) {
         List<Category> categories = categoryService.findByIdIn(form.getCategories());
+        if (Objects.isNull(categories) || categories.isEmpty()) {
+            throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
 
         // 👉 Bước 1: Lưu Product trước để có ID
         Product product = new Product(
