@@ -14,6 +14,8 @@ import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -42,7 +44,9 @@ public class User {
     @JsonIgnore
     boolean isEnabled;
     @JsonIgnore
-    String forgotPasswordToken;
+    String resetPasswordToken;
+    @JsonIgnore
+    Instant resetPasswordTokenExpiry;
     @JsonIgnore
     String verificationToken;
     @JsonIgnore

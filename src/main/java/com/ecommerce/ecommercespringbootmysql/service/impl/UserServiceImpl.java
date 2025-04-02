@@ -1,8 +1,10 @@
 package com.ecommerce.ecommercespringbootmysql.service.impl;
 
+import com.ecommerce.ecommercespringbootmysql.exception.AppException;
 import com.ecommerce.ecommercespringbootmysql.model.entity.User;
 import com.ecommerce.ecommercespringbootmysql.repository.UserRepositiory;
 import com.ecommerce.ecommercespringbootmysql.service.UserService;
+import com.ecommerce.ecommercespringbootmysql.utils.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -42,5 +44,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByUserName(String userName) {
         return userRepositiory.existsByUsername(userName);
+    }
+
+    @Override
+    public User findByResetPasswordToken(String token) {
+        return userRepositiory.findByResetPasswordToken(token).orElseThrow(()-> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
     }
 }

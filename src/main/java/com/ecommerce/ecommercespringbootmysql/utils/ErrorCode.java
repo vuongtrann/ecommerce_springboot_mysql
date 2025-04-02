@@ -51,7 +51,9 @@ public enum ErrorCode {
     BANNER_NOT_FOUND(404,"Banner not found !" , HttpStatus.NOT_FOUND ),
     BANNER_CANNOT_DELETE(400,"Banner not found !" , HttpStatus.BAD_REQUEST ),
     VARIANT_TYPE_NOT_FOUND(404,"Variant type not found !" , HttpStatus.NOT_FOUND ),
-    ACCOUNT_ALREADY_VERIFIED(400,"Account already verified !" , HttpStatus.BAD_REQUEST );
+    ACCOUNT_ALREADY_VERIFIED(400,"Account already verified !" , HttpStatus.BAD_REQUEST ),
+    ACCOUNT_NOT_FOUND(400,"Account not found !" , HttpStatus.NOT_FOUND ),
+    INVALID_OR_EXPIRED_TOKEN(400,"Invalid or expired token !" ,HttpStatus.BAD_REQUEST );
 
   private final int code;
     private final String message;

@@ -14,4 +14,6 @@ public interface UserService {
     User findByEmail(String email);
 
     boolean existsByUserName(String userName);
+
+    User findByResetPasswordToken(String token);
 }

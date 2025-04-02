@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 @Service
@@ -141,19 +142,30 @@ public class AuthServiceImpl implements AuthService {
         if (user == null) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
-        String randomPassword = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        user.setPassword(passwordEncoder.encode(randomPassword));
+
+        String token = generateVerificationToken(email);
+        user.setResetPasswordToken(token);
+        user.setResetPasswordTokenExpiry(Instant.now().plus(15, ChronoUnit.MINUTES));
         userService.save(user);
 
-        String subject = "Password Reset";
-        String body = String.format("Hi %s,\n\nYour new password is: %s\n\nPlease change your password after login.",
-                user.getEmail(), randomPassword);
+        String subject = "Password Reset Request";
+        String resetUrl = serverUrl + "/api/v1/auth/reset-password?token=" + token;
+        String body = String.format("Hi %s,\n\nYou have requested to reset your password. Please click the link below to reset your password.\n\n%s",
+                user.getEmail(), resetUrl);
+
         mailService.sendMail(user.getEmail(), subject, body);
     }
 
     @Override
     public void resetPassword(String token, String newPassword) {
-
+        User user = userService.findByResetPasswordToken(token);
+        if (user == null || user.getResetPasswordTokenExpiry().isBefore(Instant.now())) {
+            throw new AppException(ErrorCode.INVALID_OR_EXPIRED_TOKEN);
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetPasswordToken(null);
+        user.setResetPasswordTokenExpiry(null);
+        userService.save(user);
     }
 
     @Override

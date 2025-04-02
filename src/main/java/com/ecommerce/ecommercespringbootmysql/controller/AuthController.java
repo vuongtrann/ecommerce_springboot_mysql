@@ -63,11 +63,19 @@ public class AuthController {
                 SuccessCode.CHANGE_PASSWORD, null
         ));
     }
-    @PostMapping("/forgot-password/{email}")
-    public ResponseEntity<AppResponse<String>> forgotPassword(@PathVariable String email) {
+    @PostMapping("/forgot-password")
+    public ResponseEntity<AppResponse<String>> forgotPassword(@RequestParam String email) {
         authservice.forgotPassword(email);
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.FORGOT_PASSWORD, null
+        ));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<AppResponse<String>> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        authservice.resetPassword(token, newPassword);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.RESET_PASSWORD, null
         ));
     }
     @GetMapping("/exists/email/{email}")
