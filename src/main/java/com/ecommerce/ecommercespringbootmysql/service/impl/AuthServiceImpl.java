@@ -95,7 +95,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void resendVerifyEmail(String email) {
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+        if (user.isEnabled()) {
+            throw new AppException(ErrorCode.ACCOUNT_ALREADY_VERIFIED);
+        }
 
+        String token = generateVerificationToken(email);
+        user.setVerificationToken(token);
+
+        userService.save(user);
+
+        String confirmationUrl = serverUrl + "/api/v1/auth/verify-email?token=" + token;
+        mailService.sendRegistrationConfirmMail(email, confirmationUrl, user.getFirstName(), user.getLastName());
     }
 
     @Override
