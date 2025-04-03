@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity(name = "product")
 @Table(name = "product")
@@ -52,6 +53,11 @@ public class Product extends BaseEntity {
     )
     private List<Category> categories;
 
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Image> images = new ArrayList<>();
+
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_tag",
@@ -64,7 +70,7 @@ public class Product extends BaseEntity {
 //    @JsonBackReference
     private List<ProductVariant> variants = new ArrayList<>();
 
-    public Product( String name, String description, String slug, String sku, int quantity,  double originalPrice,  double sellingPrice,  double discountedPrice, String sellingType, List<Category> categories) {
+    public Product( String name, String description, String slug, String sku,int quantity,  double originalPrice,  double sellingPrice,  double discountedPrice, String sellingType, List<Category> categories) {
         this.name = name;
         this.description = description;
         this.slug = slug;
@@ -75,5 +81,9 @@ public class Product extends BaseEntity {
         this.discountedPrice = discountedPrice;
         this.sellingType = sellingType;
         this.categories = categories;
+        this.imageURLs = getImages().stream()
+                .map(Image::getUrl)
+                .collect(Collectors.toList());
+
     }
 }
