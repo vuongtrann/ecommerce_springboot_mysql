@@ -1,16 +1,17 @@
 package com.ecommerce.ecommercespringbootmysql.model.dao.request;
 
 import com.ecommerce.ecommercespringbootmysql.model.dao.request.Variant.ProductVariantForm;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Image;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.ProductVariant;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
+@Getter
+@Setter
 @Data
 public class ProductForm {
     @NotBlank(message = "Name is required")
@@ -48,14 +49,17 @@ public class ProductForm {
     private double avgRating;
 
     private List<String> categories = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
 //    private String brand ;
 //
     private boolean hasVariants;
 //
     private List<ProductVariantForm> variants = new ArrayList<>();
+
 //
 //    private List<String> collections = new ArrayList<>();
 //
 //    private Map<String, String> specifications ;
+
 }

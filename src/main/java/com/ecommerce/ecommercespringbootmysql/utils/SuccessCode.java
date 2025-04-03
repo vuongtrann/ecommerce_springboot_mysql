@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatusCode;
 public enum SuccessCode {
 
     CREATED(201, "Created Successfully!", HttpStatus.CREATED),
+    CREATED_IMAGE_PRODUCT(201,"Created Image Product Successfully!" , HttpStatus.CREATED ),
     DELETED (200, "Deleted Successfully!", HttpStatus.OK),
     UPDATED(200, "Updated Successfully", HttpStatus.OK),
     FETCHED(200, "Get Successfully" , HttpStatus.OK), UPLOADED( 200, "Uploaded Successfully", HttpStatus.OK),
@@ -26,7 +27,7 @@ public enum SuccessCode {
 
     CAN_NOT_ADD_PAYMENT_METHOD(400, "Can not add payment method", HttpStatus.BAD_REQUEST),
     CAN_NOT_CREATE_CUSTOMER(400, "Can not create customer", HttpStatus.BAD_REQUEST),
-    FORGOT_PASSWORD(200, "New random password have sent to your email", HttpStatus.OK),;
+    FORGOT_PASSWORD(200, "New random password have sent to your email", HttpStatus.OK);
 
     private final int code;
     private final String message;

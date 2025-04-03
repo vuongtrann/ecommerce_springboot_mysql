@@ -7,14 +7,12 @@ import com.ecommerce.ecommercespringbootmysql.model.dao.request.Variant.VariantO
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.ProductProjection;
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.TagProjection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Category;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Image;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.ProductVariant;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantOption;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantType;
-import com.ecommerce.ecommercespringbootmysql.repository.ProductRepository;
-import com.ecommerce.ecommercespringbootmysql.repository.ProductVariantRepository;
-import com.ecommerce.ecommercespringbootmysql.repository.VariantOptionRepository;
-import com.ecommerce.ecommercespringbootmysql.repository.VariantTypeRepository;
+import com.ecommerce.ecommercespringbootmysql.repository.*;
 import com.ecommerce.ecommercespringbootmysql.service.CategoryService;
 import com.ecommerce.ecommercespringbootmysql.service.ProductSerice;
 import com.ecommerce.ecommercespringbootmysql.service.utils.SlugifyService;
@@ -46,6 +44,7 @@ public class ProductServiceImpl implements ProductSerice {
     CategoryService categoryService;
     SlugifyService slugify;
 
+
     VariantTypeRepository variantTypeRepository;
     VariantOptionRepository variantOptionRepository;
     ProductVariantRepository productVariantRepository;
@@ -66,6 +65,10 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public Product create(ProductForm form) {
         List<Category> categories = categoryService.findByIdIn(form.getCategories());
+        if (Objects.isNull(categories) || categories.isEmpty()) {
+            throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
+        }
+
 
         // 👉 Bước 1: Lưu Product trước để có ID
         Product product = new Product(
@@ -80,6 +83,8 @@ public class ProductServiceImpl implements ProductSerice {
                 form.getSellingType(),
                 categories
         );
+
+
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);
         product.setCreatedAt(Instant.now().toEpochMilli());

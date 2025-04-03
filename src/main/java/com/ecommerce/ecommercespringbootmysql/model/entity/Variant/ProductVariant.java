@@ -1,6 +1,7 @@
 package com.ecommerce.ecommercespringbootmysql.model.entity.Variant;
 
 import com.ecommerce.ecommercespringbootmysql.model.entity.BaseEntity;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Image;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -38,9 +39,7 @@ public class ProductVariant extends BaseEntity {
     private String sellingType;
     private double avgRating;
     private int noOfRating;
-    private Boolean hasVariants = false;
-
-
+//    private Boolean hasVariants = false
 
 
 
@@ -53,4 +52,7 @@ public class ProductVariant extends BaseEntity {
     @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<VariantOption> variantOptions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images = new ArrayList<>();
 }
