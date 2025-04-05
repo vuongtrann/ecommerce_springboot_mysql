@@ -178,6 +178,17 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    public void changeStatus(String id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        if (product.getStatus() == Status.ACTIVE) {
+            product.setStatus(Status.INACTIVE);
+        } else {
+            product.setStatus(Status.ACTIVE);
+        }
+        productRepository.save(product);
+    }
+
+    @Override
     public List<VariantType> getVariantTypes() {
         return variantTypeRepository.findAll();
     }

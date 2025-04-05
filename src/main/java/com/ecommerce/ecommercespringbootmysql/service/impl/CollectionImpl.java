@@ -81,4 +81,15 @@ public class CollectionImpl implements CollectionService {
         collection.setStatus(Status.DELETED);
         collectionRepository.save(collection);
     }
+
+    @Override
+    public void changeStatus(String id) {
+        Collection collection = collectionRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+        if (collection.getStatus() == Status.ACTIVE) {
+            collection.setStatus(Status.INACTIVE);
+        } else {
+            collection.setStatus(Status.ACTIVE);
+        }
+        collectionRepository.save(collection);
+    }
 }

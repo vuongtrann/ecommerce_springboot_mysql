@@ -7,6 +7,7 @@ import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.Coll
 import com.ecommerce.ecommercespringbootmysql.model.entity.Banner;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Brand;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Collection;
+import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.repository.BrandRepository;
 import com.ecommerce.ecommercespringbootmysql.service.BrandService;
 import com.ecommerce.ecommercespringbootmysql.service.utils.SlugifyService;
@@ -80,6 +81,16 @@ public class BrandImpl implements BrandService {
         brandRepository.save(brand);
     }
 
+    @Override
+    public void changeStatus(String id) {
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        if (brand.getStatus() == Status.ACTIVE) {
+            brand.setStatus(Status.INACTIVE);
+        } else {
+            brand.setStatus(Status.ACTIVE);
+        }
+        brandRepository.save(brand);
+    }
 
 
 }
