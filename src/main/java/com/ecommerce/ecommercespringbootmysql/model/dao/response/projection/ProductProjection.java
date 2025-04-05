@@ -1,6 +1,7 @@
 package com.ecommerce.ecommercespringbootmysql.model.dao.response.projection;
 
 import com.ecommerce.ecommercespringbootmysql.model.entity.Image;
+import com.ecommerce.ecommercespringbootmysql.utils.Status;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -28,4 +29,5 @@ public interface ProductProjection {
      String getSellingType();
      double getAvgRating();
      int getNoOfRating();
+     Status getStatus();
 }

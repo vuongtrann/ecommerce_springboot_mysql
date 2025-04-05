@@ -15,5 +15,5 @@ public interface CollectionService {
     Collection createCollection(CollectionForm collectionForm);
     Collection updateCollection(String id,CollectionForm collectionForm);
     void deleteCollection(String id);
-
+    void changeStatus(String id);
 }

@@ -23,7 +23,6 @@ import java.util.List;
 @RequestMapping("/api/v1/brand")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class BrandController {
-    /***TODO: Tiến dựa theo mấy cái controller trước làm cái này tương tự , làm xong hết xóa line này */
     private final BrandService brandService;
 
 
@@ -66,6 +65,17 @@ public class BrandController {
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,
                         brandService.updateBrand(brandId,brandForm)
+                )
+        );
+    }
+
+    @PutMapping("/{brandId}/status")
+    public ResponseEntity<AppResponse<String>> changeStatus(@PathVariable String brandId) {
+        brandService.changeStatus(brandId);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.UPDATED,
+                        "Changed status successfully !"
                 )
         );
     }

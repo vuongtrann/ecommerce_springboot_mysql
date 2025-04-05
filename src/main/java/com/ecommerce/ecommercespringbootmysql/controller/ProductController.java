@@ -10,6 +10,7 @@ import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantType;
 import com.ecommerce.ecommercespringbootmysql.repository.ProductRepository;
 import com.ecommerce.ecommercespringbootmysql.service.ProductSerice;
+import com.ecommerce.ecommercespringbootmysql.utils.Status;
 import com.ecommerce.ecommercespringbootmysql.utils.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +70,17 @@ public class ProductController {
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,
                         productService.update(productId,productForm)
+                )
+        );
+    }
+
+    @PutMapping("/{productId}/status")
+    public ResponseEntity<AppResponse<String>> changeStatus(@PathVariable String productId) {
+        productService.changeStatus(productId);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.UPDATED,
+                        "Changed status successfully !"
                 )
         );
     }

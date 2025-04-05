@@ -68,4 +68,15 @@ public class CollectionController {
         );
     }
 
+    @PutMapping("/{collectionId}/status")
+    public ResponseEntity<AppResponse<String>> changeStatus(@PathVariable String collectionId) {
+        collectionService.changeStatus(collectionId);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.UPDATED,
+                        "Changed status successfully !"
+                )
+        );
+    }
+
 }

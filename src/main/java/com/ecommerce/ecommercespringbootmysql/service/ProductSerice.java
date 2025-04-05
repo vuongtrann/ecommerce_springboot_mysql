@@ -5,6 +5,7 @@ import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.Prod
 import com.ecommerce.ecommercespringbootmysql.model.dao.response.projection.TagProjection;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Product;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantType;
+import com.ecommerce.ecommercespringbootmysql.utils.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +21,7 @@ public interface ProductSerice {
     void delete(String id);
     Optional<Product> findById(String id);
     Optional<Product> findBySlug(String slug);
-
+    void changeStatus(String id);
 
 
     /**Variant Type*/

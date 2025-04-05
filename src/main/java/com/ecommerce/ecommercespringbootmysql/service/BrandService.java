@@ -16,5 +16,6 @@ public interface BrandService {
     Brand createBrand(BrandForm brandForm);
     Brand updateBrand(String id ,BrandForm brandForm);
     void deleteBrand(String id);
+    void changeStatus(String id);
 
 }
