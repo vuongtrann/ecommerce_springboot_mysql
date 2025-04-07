@@ -1,6 +1,7 @@
 package com.ecommerce.app.service;
 
 import com.ecommerce.app.model.dao.request.ProductForm;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Variant.VariantType;
@@ -13,11 +14,12 @@ import java.util.Optional;
 public interface ProductSerice {
     Page<ProductProjection> findAll(int page, int size, String sortBy, String direction);
     Product save(Product product);
-    Product create(ProductForm form);
+    ProductResponse create(ProductForm form);
     Product update(String id, ProductForm form);
     Product uploadImage(String id, List<MultipartFile> files);
     void delete(String id);
     Optional<Product> findById(String id);
+    ProductResponse getProductById(String id);
     Optional<Product> findBySlug(String slug);
     void changeStatus(String id);
 

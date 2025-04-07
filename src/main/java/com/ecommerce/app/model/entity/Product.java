@@ -23,10 +23,10 @@ public class Product extends BaseEntity {
     private String description;
     private String slug;
     private String primaryImageURL;
-    @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url")
-    private List<String> imageURLs;
+//    @ElementCollection
+//    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+//    @Column(name = "image_url")
+//    private List<String> imageURLs;
     private String sku;
     private int quantity;
     private int quantityAvailable;
@@ -66,20 +66,4 @@ public class Product extends BaseEntity {
 //    @JsonBackReference
     private List<ProductVariant> variants = new ArrayList<>();
 
-    public Product( String name, String description, String slug, String sku,int quantity,  double originalPrice,  double sellingPrice,  double discountedPrice, String sellingType, List<Category> categories) {
-        this.name = name;
-        this.description = description;
-        this.slug = slug;
-        this.sku = sku;
-        this.quantity = quantity;
-        this.originalPrice = originalPrice;
-        this.sellingPrice = sellingPrice;
-        this.discountedPrice = discountedPrice;
-        this.sellingType = sellingType;
-        this.categories = categories;
-        this.imageURLs = getImages().stream()
-                .map(Image::getUrl)
-                .collect(Collectors.toList());
-
-    }
 }

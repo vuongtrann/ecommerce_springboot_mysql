@@ -4,18 +4,21 @@ import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.ProductForm;
 import com.ecommerce.app.model.dao.request.Variant.ProductVariantForm;
 import com.ecommerce.app.model.dao.request.Variant.VariantOptionForm;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.ecommerce.app.model.entity.Variant.VariantOption;
 import com.ecommerce.app.model.entity.Variant.VariantType;
+import com.ecommerce.app.model.mapper.ProductMapper;
 import com.ecommerce.app.repository.*;
 import com.ecommerce.app.service.CategoryService;
 import com.ecommerce.app.service.ProductSerice;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.ErrorCode;
 import com.ecommerce.app.utils.Status;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -60,27 +63,29 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
-    public Product create(ProductForm form) {
+    @Transactional
+    public ProductResponse create(ProductForm form) {
         List<Category> categories = categoryService.findByIdIn(form.getCategories());
         if (Objects.isNull(categories) || categories.isEmpty()) {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
 
-        // 👉 Bước 1: Lưu Product trước để có ID
-        Product product = new Product(
-                form.getName(),
-                form.getDescription(),
-                slugify.generateSlug(form.getName() + "-" + Instant.now().getEpochSecond()),
-                form.getSku(),
-                form.getQuantity(),
-                form.getOriginalPrice(),
-                form.getSellingPrice(),
-                form.getDiscountedPrice(),
-                form.getSellingType(),
-                categories
-        );
+//        // 👉 Bước 1: Lưu Product trước để có ID
+//        Product product = new Product(
+//                form.getName(),
+//                form.getDescription(),
+//                slugify.generateSlug(form.getName() + "-" + Instant.now().getEpochSecond()),
+//                form.getSku(),
+//                form.getQuantity(),
+//                form.getOriginalPrice(),
+//                form.getSellingPrice(),
+//                form.getDiscountedPrice(),
+//                form.getSellingType(),
+//                categories
+//        );
 
+        Product product = ProductMapper.toEntity(form, categories, null, null);
 
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);
@@ -101,7 +106,9 @@ public class ProductServiceImpl implements ProductSerice {
             product.getVariants().addAll(variants);        }
 
         // 👉 Bước 3: Cập nhật lại Product sau khi thêm variants
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+
+        return ProductMapper.toResponse(saved);
     }
 
     @Override
@@ -163,6 +170,12 @@ public class ProductServiceImpl implements ProductSerice {
          * Cần caching lại khi gọi findByID để sử dụng cho việc sản phẩm nổi bật, sản phẩm vừa xem
          * */
         return Optional.of(product);
+    }
+
+    @Override
+    public ProductResponse getProductById(String id) {
+        ProductResponse productResponse = ProductMapper.toResponse(findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+        return productResponse;
     }
 
     @Override

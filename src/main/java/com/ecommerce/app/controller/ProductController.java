@@ -2,6 +2,7 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.ProductForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Variant.VariantType;
@@ -35,9 +36,18 @@ public class ProductController {
     ) {
         return ResponseEntity.ok(productService.findAll( page, size, sortBy, direction));
     }
+    @GetMapping("/{productId}")
+    public ResponseEntity<AppResponse<ProductResponse>> getProductById(@PathVariable String productId) {
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        productService.getProductById(productId)
+                )
+        );
+    }
 
     @PostMapping
-    public ResponseEntity<AppResponse<Product>> addProduct(@RequestBody ProductForm productForm) {
+    public ResponseEntity<AppResponse<ProductResponse>> addProduct(@RequestBody ProductForm productForm) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.CREATED,
