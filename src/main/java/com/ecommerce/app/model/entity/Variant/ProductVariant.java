@@ -25,8 +25,6 @@ public class ProductVariant extends BaseEntity {
     private String description;
     private String slug;
     private String primaryImageURL;
-    @ElementCollection
-    private List<String> imageURLs;
     private String sku;
     private int quantity;
 

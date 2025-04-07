@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
+import com.ecommerce.app.model.dao.response.dto.Variant.ProductVariantResponse;
 import com.ecommerce.app.model.dao.response.projection.CollectionProjection;
 import com.ecommerce.app.model.dao.response.projection.TagProjection;
 import com.ecommerce.app.utils.Status;
@@ -41,6 +42,6 @@ public class ProductResponse {
     private List<CategoryResponse> categories;
     private List<TagProjection> tags;
     private List<CollectionProjection> collections;
-    private List<String> variants;
+    private List<ProductVariantResponse> variants;
     private List<String> images;
 }

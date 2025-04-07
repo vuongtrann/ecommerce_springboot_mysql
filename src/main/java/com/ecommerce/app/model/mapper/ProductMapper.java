@@ -3,6 +3,9 @@ package com.ecommerce.app.model.mapper;
 import com.ecommerce.app.model.dao.request.ProductForm;
 import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
 import com.ecommerce.app.model.dao.response.dto.ProductResponse;
+import com.ecommerce.app.model.dao.response.dto.Variant.ProductVariantResponse;
+import com.ecommerce.app.model.dao.response.dto.Variant.VariantOptionResponse;
+import com.ecommerce.app.model.dao.response.dto.Variant.VariantTypeResponse;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.model.entity.Image;
 import com.ecommerce.app.model.entity.Product;
@@ -10,30 +13,29 @@ import com.ecommerce.app.model.entity.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
-    
-    public static Product toEntity(ProductForm request, List<Category> categories, List<Tag> tags, List<Image> images) {
+
+    public static Product toEntity(ProductForm request, List<Category> categories, List<Tag> tags) {
         return Product.builder()
-                .name(request.getName() == null ? request.getName().trim() : null)
-                .description(request.getDescription() == null ? request.getDescription().trim() : null)
-//                .slug(request.getSlug()== null ? request.getSlug().trim():null)
-                .primaryImageURL(request.getPrimaryImageURL() == null ? request.getPrimaryImageURL().trim() : null)
-                .sku(request.getSku() == null ? request.getSku().trim() : null)
+                .name(request.getName() != null ? request.getName().trim() : null)
+                .description(request.getDescription() != null ? request.getDescription().trim() : null)
+                .primaryImageURL(request.getPrimaryImageURL() != null ? request.getPrimaryImageURL().trim() : null)
+                .sku(request.getSku() != null ? request.getSku().trim() : null)
                 .quantity(request.getQuantity())
-                .originalPrice(request.getOriginalPrice() == 0 ? null : request.getOriginalPrice())
-                .sellingPrice(request.getSellingPrice() == 0 ? null : request.getSellingPrice())
-                .discountedPrice(request.getDiscountedPrice() == 0 ? null : request.getDiscountedPrice())
+                .originalPrice(request.getOriginalPrice() != 0 ? request.getOriginalPrice() : null)
+                .sellingPrice(request.getSellingPrice() != 0 ? request.getSellingPrice() : null)
+                .discountedPrice(request.getDiscountedPrice() != 0 ? request.getDiscountedPrice() : null)
                 .noOfView(0)
-                .sellingType(request.getSellingType() == null ? request.getSellingType().trim() : null)
+                .sellingType(request.getSellingType() != null ? request.getSellingType().trim() : null)
                 .avgRating(0)
                 .categories(categories)
                 .tags(tags)
-                .images(images)
                 .build();
     }
 
@@ -77,25 +79,48 @@ public class ProductMapper {
 //                )
 //
 //                // Ánh xạ danh sách images vào ProductResponse
-//                .images(product.getImages().stream()
-//                        .map(img -> ImageResponse.builder()
-//                                .id(img.getId())
-//                                .url(img.getUrl())
-//                                .build())
-//                        .collect(Collectors.toList())
-//                )
+                .images(product.getImages() != null
+                        ? product.getImages().stream()
+                        .map(Image::getUrl)
+                        .collect(Collectors.toList())
+                        : new ArrayList<>())
 //
-//                // Ánh xạ danh sách variants vào ProductResponse
-//                .variants(product.getVariants().stream()
-//                        .map(variant -> ProductVariantResponse.builder()
-//                                .id(variant.getId())
-//                                .name(variant.getName())
-//                                .sku(variant.getSku())
-//                                .price(variant.getPrice())
-//                                .quantity(variant.getQuantity())
-//                                .build())
-//                        .collect(Collectors.toList())
-//                )
+// ánh xạ variants
+                .variants(product.getHasVariants() != null && product.getHasVariants() && product.getVariants() != null
+                        ? product.getVariants().stream()
+                        .map(variant -> ProductVariantResponse.builder()
+                                .id(variant.getId())
+                                .name(variant.getName())
+                                .sku(variant.getSku())
+                                .quantity(variant.getQuantity())
+                                .quantityAvailable(variant.getQuantityAvailable())
+                                .originalPrice(variant.getOriginalPrice())
+                                .sellingPrice(variant.getSellingPrice())
+                                .discountedPrice(variant.getDiscountedPrice())
+                                .primaryImageURL(variant.getPrimaryImageURL())
+                                .images(variant.getImages() != null
+                                        ? variant.getImages().stream()
+                                        .map(Image::getUrl)
+                                        .collect(Collectors.toList())
+                                        : new ArrayList<>())
+                                .variantOptions(variant.getVariantOptions() != null
+                                        ? variant.getVariantOptions().stream()
+                                        .map(option -> VariantOptionResponse.builder()
+                                                .id(option.getId())
+                                                .value(option.getValue())
+                                                .variantType(option.getVariantType() != null
+                                                        ? VariantTypeResponse.builder()
+                                                        .id(option.getVariantType().getId())
+                                                        .type(option.getVariantType().getType())
+                                                        .build()
+                                                        : null)
+                                                .build())
+                                        .collect(Collectors.toList())
+                                        : new ArrayList<>())
+                                .build())
+                        .collect(Collectors.toList())
+                        : new ArrayList<>())
+
                 .build();
     }
 

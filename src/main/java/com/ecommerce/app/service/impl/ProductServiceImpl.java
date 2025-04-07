@@ -63,7 +63,6 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
-    @Transactional
     public ProductResponse create(ProductForm form) {
         List<Category> categories = categoryService.findByIdIn(form.getCategories());
         if (Objects.isNull(categories) || categories.isEmpty()) {
@@ -71,21 +70,8 @@ public class ProductServiceImpl implements ProductSerice {
         }
 
 
-//        // 👉 Bước 1: Lưu Product trước để có ID
-//        Product product = new Product(
-//                form.getName(),
-//                form.getDescription(),
-//                slugify.generateSlug(form.getName() + "-" + Instant.now().getEpochSecond()),
-//                form.getSku(),
-//                form.getQuantity(),
-//                form.getOriginalPrice(),
-//                form.getSellingPrice(),
-//                form.getDiscountedPrice(),
-//                form.getSellingType(),
-//                categories
-//        );
 
-        Product product = ProductMapper.toEntity(form, categories, null, null);
+        Product product = ProductMapper.toEntity(form, categories, null);
 
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);
@@ -103,7 +89,8 @@ public class ProductServiceImpl implements ProductSerice {
             }
             // 🔹 Cập nhật danh sách variants mà không thay thế toàn bộ danh sách
             product.getVariants().clear();
-            product.getVariants().addAll(variants);        }
+            product.getVariants().addAll(variants);
+        }
 
         // 👉 Bước 3: Cập nhật lại Product sau khi thêm variants
         Product saved = productRepository.save(product);
