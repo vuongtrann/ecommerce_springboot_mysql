@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ecommerce</groupId>
-    <artifactId>ecommerce-springboot-mysql</artifactId>
+    <artifactId>ecommerce-springboot-postgre</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ecommerce-springboot-mysql</name>
-    <description>ecommerce-springboot-mysql</description>
+    <name>ecommerce-springboot-postgre</name>
+    <description>ecommerce-springboot-postgre</description>
     <url/>
     <licenses>
         <license/>

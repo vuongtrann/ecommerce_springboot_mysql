@@ -1,0 +1,14 @@
+package com.ecommerce.ecommercespringbootpostgre.model.dao.response.projection;
+
+import com.ecommerce.ecommercespringbootpostgre.utils.Status;
+
+public interface CollectionProjection {
+    String getId();
+    String getCollectionName();
+    String getCollectionDescription();
+    String getCollectionImage();
+    String getSlug();
+    Status getStatus();
+    Long getCreatedAt();
+    Long getUpdatedAt();
+}
