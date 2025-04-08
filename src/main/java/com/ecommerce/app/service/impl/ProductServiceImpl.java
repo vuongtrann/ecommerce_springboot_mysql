@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
-    public ProductResponse create(ProductForm form) {
+    public Product create(ProductForm form) {
         List<Category> categories = categoryService.findByIdIn(form.getCategories());
         if (Objects.isNull(categories) || categories.isEmpty()) {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
@@ -88,14 +88,18 @@ public class ProductServiceImpl implements ProductSerice {
                 variants.add(productVariantRepository.save(productVariant)); // 🔹 Lưu ProductVariant trước
             }
             // 🔹 Cập nhật danh sách variants mà không thay thế toàn bộ danh sách
+            if (product.getVariants() == null) {
+                product.setVariants(new ArrayList<>());
+            }
             product.getVariants().clear();
             product.getVariants().addAll(variants);
+            product.setHasVariants(true);
         }
 
         // 👉 Bước 3: Cập nhật lại Product sau khi thêm variants
         Product saved = productRepository.save(product);
 
-        return ProductMapper.toResponse(saved);
+        return saved;
     }
 
     @Override
@@ -161,7 +165,8 @@ public class ProductServiceImpl implements ProductSerice {
 
     @Override
     public ProductResponse getProductById(String id) {
-        ProductResponse productResponse = ProductMapper.toResponse(findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND)));
+        Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        ProductResponse productResponse = ProductMapper.toResponse(product);
         return productResponse;
     }
 

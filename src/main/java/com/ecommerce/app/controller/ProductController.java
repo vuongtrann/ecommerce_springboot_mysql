@@ -47,7 +47,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<AppResponse<ProductResponse>> addProduct(@RequestBody ProductForm productForm) {
+    public ResponseEntity<AppResponse<Product>> addProduct(@RequestBody ProductForm productForm) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.CREATED,

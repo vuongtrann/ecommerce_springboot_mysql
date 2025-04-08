@@ -21,10 +21,6 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductVariant extends BaseEntity {
-    private String name;
-    private String description;
-    private String slug;
-    private String primaryImageURL;
     private String sku;
     private int quantity;
 
@@ -33,11 +29,7 @@ public class ProductVariant extends BaseEntity {
     private double originalPrice; //gia goc
     private double sellingPrice; //gia ban
     private double discountedPrice=0; //gia giam
-    private int noOfView;
-    private String sellingType;
-    private double avgRating;
-    private int noOfRating;
-//    private Boolean hasVariants = false
+
 
 
 
@@ -47,8 +39,7 @@ public class ProductVariant extends BaseEntity {
     @JsonIgnore
     private Product product;
 
-    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL,orphanRemoval = true , fetch = FetchType.EAGER)
     private List<VariantOption> variantOptions = new ArrayList<>();
 
     @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)

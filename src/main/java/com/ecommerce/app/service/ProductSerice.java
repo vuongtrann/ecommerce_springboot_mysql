@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ProductSerice {
     Page<ProductProjection> findAll(int page, int size, String sortBy, String direction);
     Product save(Product product);
-    ProductResponse create(ProductForm form);
+    Product create(ProductForm form);
     Product update(String id, ProductForm form);
     Product uploadImage(String id, List<MultipartFile> files);
     void delete(String id);
