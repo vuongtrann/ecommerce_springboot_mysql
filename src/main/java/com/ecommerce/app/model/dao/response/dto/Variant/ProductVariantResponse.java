@@ -9,7 +9,6 @@ import java.util.List;
 @Data
 public class ProductVariantResponse {
     private String id;
-    private String name;
     private String sku;
     private int quantity;
     private int quantityAvailable;

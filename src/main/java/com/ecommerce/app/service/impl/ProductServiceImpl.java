@@ -232,6 +232,7 @@ public class ProductServiceImpl implements ProductSerice {
             VariantOption variantOption = new VariantOption();
             variantOption.setValue(optionForm.getValue());
             variantOption.setVariantType(variantType);
+            variantOption.setProductVariant(productVariant);
 
 
             variantOption = variantOptionRepository.save(variantOption); // 🔹 Lưu VariantOption vào DB trước

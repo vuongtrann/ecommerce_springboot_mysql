@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -42,6 +43,15 @@ public class ProductController {
                 AppResponse.builderResponse(
                         SuccessCode.FETCHED,
                         productService.getProductById(productId)
+                )
+        );
+    }
+    @GetMapping("/id/{productId}")
+    public ResponseEntity<AppResponse<Optional<Product>>> findProductById(@PathVariable String productId) {
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        productService.findById(productId)
                 )
         );
     }
