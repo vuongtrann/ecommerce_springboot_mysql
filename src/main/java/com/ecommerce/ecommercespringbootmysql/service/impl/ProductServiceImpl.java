@@ -14,6 +14,7 @@ import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantOption
 import com.ecommerce.ecommercespringbootmysql.model.entity.Variant.VariantType;
 import com.ecommerce.ecommercespringbootmysql.repository.*;
 import com.ecommerce.ecommercespringbootmysql.service.CategoryService;
+import com.ecommerce.ecommercespringbootmysql.service.ImageService;
 import com.ecommerce.ecommercespringbootmysql.service.ProductSerice;
 import com.ecommerce.ecommercespringbootmysql.service.utils.SlugifyService;
 import com.ecommerce.ecommercespringbootmysql.utils.ErrorCode;
@@ -45,6 +46,7 @@ public class ProductServiceImpl implements ProductSerice {
     SlugifyService slugify;
 
 
+
     VariantTypeRepository variantTypeRepository;
     VariantOptionRepository variantOptionRepository;
     ProductVariantRepository productVariantRepository;
@@ -56,11 +58,18 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    public List<Product> getProductsByCategory(String categoryId) {
+        return productRepository.findByCategoryId(categoryId);
+    }
+
+    @Override
     public Page<ProductProjection> findAll(int page, int size, String sortBy, String direction) {
+
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAllProjectedBy(pageable);
     }
+
 
     @Override
     public Product create(ProductForm form) {
@@ -68,7 +77,6 @@ public class ProductServiceImpl implements ProductSerice {
         if (Objects.isNull(categories) || categories.isEmpty()) {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
         }
-
 
         // 👉 Bước 1: Lưu Product trước để có ID
         Product product = new Product(
@@ -82,6 +90,7 @@ public class ProductServiceImpl implements ProductSerice {
                 form.getDiscountedPrice(),
                 form.getSellingType(),
                 categories
+
         );
 
 
@@ -187,6 +196,11 @@ public class ProductServiceImpl implements ProductSerice {
         }
         productRepository.save(product);
     }
+    @Override
+    public List<Product> searchProducts(String keyword){
+        return productRepository.searchByNameOrDescription(keyword);
+    }
+
 
     @Override
     public List<VariantType> getVariantTypes() {

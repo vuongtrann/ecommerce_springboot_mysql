@@ -22,6 +22,9 @@ public interface ProductSerice {
     Optional<Product> findById(String id);
     Optional<Product> findBySlug(String slug);
     void changeStatus(String id);
+    List<Product> searchProducts(String keyword);
+
+    List<Product> getProductsByCategory(String categoryId);
 
 
     /**Variant Type*/

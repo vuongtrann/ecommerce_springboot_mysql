@@ -81,9 +81,5 @@ public class Product extends BaseEntity {
         this.discountedPrice = discountedPrice;
         this.sellingType = sellingType;
         this.categories = categories;
-        this.imageURLs = getImages().stream()
-                .map(Image::getUrl)
-                .collect(Collectors.toList());
-
     }
 }

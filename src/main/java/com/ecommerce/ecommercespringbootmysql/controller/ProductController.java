@@ -41,6 +41,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAll( page, size, sortBy, direction));
     }
 
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> getProductsByCategory(@PathVariable String categoryId) {
+        List<Product> products = productService.getProductsByCategory(categoryId);
+        return ResponseEntity.ok(products);
+    }
+
     @PostMapping
     public ResponseEntity<AppResponse<Product>> addProduct(@RequestBody ProductForm productForm) {
         return ResponseEntity.ok(
@@ -54,7 +61,6 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<AppResponse<String>> deleteProduct(@PathVariable String productId) {
-
         productService.delete(productId);
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
@@ -83,6 +89,12 @@ public class ProductController {
                         "Changed status successfully !"
                 )
         );
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProduct(@RequestParam("keyword") String keyword) {
+        List<Product> products = productService.searchProducts(keyword);
+        return ResponseEntity.ok(products);
     }
 
 

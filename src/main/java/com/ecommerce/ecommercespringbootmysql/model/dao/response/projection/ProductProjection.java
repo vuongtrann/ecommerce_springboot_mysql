@@ -1,5 +1,6 @@
 package com.ecommerce.ecommercespringbootmysql.model.dao.response.projection;
 
+import com.ecommerce.ecommercespringbootmysql.model.entity.Category;
 import com.ecommerce.ecommercespringbootmysql.model.entity.Image;
 import com.ecommerce.ecommercespringbootmysql.utils.Status;
 import jakarta.persistence.CollectionTable;
@@ -16,7 +17,8 @@ public interface ProductProjection {
      String getSlug();
      String getPrimaryImageURL();
 //
-//     List<String> getImageURLs();
+//    List<String> getImageURLs();
+//     List<Category> getCategories();
      List<Image> getImages();
      String getSku();
      int getQuantity();
