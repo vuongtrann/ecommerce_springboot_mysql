@@ -48,7 +48,15 @@ public class ProductForm {
 //    private double avgRating;
 
     private List<String> categories = new ArrayList<>();
+
+    private List<String> brands = new ArrayList<>();
+
+    private List<String> collections = new ArrayList<>();
+
+    private List<String> tags = new ArrayList<>();
+
 //    private List<Image> images = new ArrayList<>();
+
 
 //    private String brand ;
 //

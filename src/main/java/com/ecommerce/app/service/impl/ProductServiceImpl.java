@@ -6,15 +6,13 @@ import com.ecommerce.app.model.dao.request.Variant.ProductVariantForm;
 import com.ecommerce.app.model.dao.request.Variant.VariantOptionForm;
 import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
-import com.ecommerce.app.model.entity.Category;
-import com.ecommerce.app.model.entity.Product;
+import com.ecommerce.app.model.entity.*;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.ecommerce.app.model.entity.Variant.VariantOption;
 import com.ecommerce.app.model.entity.Variant.VariantType;
 import com.ecommerce.app.model.mapper.ProductMapper;
 import com.ecommerce.app.repository.*;
-import com.ecommerce.app.service.CategoryService;
-import com.ecommerce.app.service.ProductSerice;
+import com.ecommerce.app.service.*;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.ErrorCode;
 import com.ecommerce.app.utils.Status;
@@ -41,7 +39,11 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductSerice {
 
     ProductRepository productRepository;
+
     CategoryService categoryService;
+    BrandService brandService;
+    CollectionService collectionService;
+    TagService tagService;
     SlugifyService slugify;
 
 
@@ -69,9 +71,17 @@ public class ProductServiceImpl implements ProductSerice {
             throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
         }
 
+        List<Brand> brands = brandService.findByIdIn(form.getBrands());
+
+        List<Collection> collections = collectionService.findByIdIn(form.getCollections());
+
+        List<Tag> tags = tagService.findByIdIn(form.getCategories());
 
 
-        Product product = ProductMapper.toEntity(form, categories, null);
+
+
+
+        Product product = ProductMapper.toEntity(form, categories, brands, collections, tags);
 
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);

@@ -4,7 +4,10 @@ import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.BrandForm;
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
 import com.ecommerce.app.model.entity.Brand;
+import com.ecommerce.app.model.entity.Category;
+import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.repository.BrandRepository;
+import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.BrandService;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.ErrorCode;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +29,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BrandImpl implements BrandService {
     private final BrandRepository  brandRepository;
+    private final ProductRepository productRepository;
     SlugifyService slugify;
 
     @Override
@@ -37,6 +42,11 @@ public class BrandImpl implements BrandService {
         Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
 
         return Optional.of(brand);
+    }
+
+    @Override
+    public List<Brand> findByIdIn(List<String> ids) {
+        return brandRepository.findAllByIdIn(ids);
     }
 
     @Override
@@ -85,6 +95,20 @@ public class BrandImpl implements BrandService {
             brand.setStatus(Status.ACTIVE);
         }
         brandRepository.save(brand);
+    }
+
+    public void addBrandToProduct(String productId, String brandId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+
+        // Tránh add trùng
+        if (!product.getBrands().contains(brand)) {
+            product.getBrands().add(brand);
+            productRepository.save(product);
+        }
     }
 
 

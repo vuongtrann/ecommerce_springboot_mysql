@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/collection")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
@@ -71,6 +73,20 @@ public class CollectionController {
                         "Changed status successfully !"
                 )
         );
+    }
+
+    @PostMapping("/product/{productId}")
+    public ResponseEntity<AppResponse<String>> addCollectionToProduct(
+            @PathVariable String productId,
+            @RequestBody Map<String, String> body) {
+
+        String collectionId = body.get("id"); // key trong JSON postman là "id"
+        collectionService.addCollectionToProduct(productId, collectionId);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                SuccessCode.ADD_COLLECTION_PRODUCT,
+                        "Check productId: " + productId
+        ));
     }
 
 }
