@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/v1/brand")
@@ -72,6 +74,20 @@ public class BrandController {
                         "Changed status successfully !"
                 )
         );
+    }
+
+    @PostMapping("/product/{productId}")
+    public ResponseEntity<AppResponse<String>>addBrandToProduct(
+            @PathVariable String productId,
+            @RequestBody Map<String, String> body) {
+
+        String brandId = body.get("id"); // key là "id" như trong postman cậu gửi
+        brandService.addBrandToProduct(productId, brandId);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                SuccessCode.ADD_BRAND_PRODUCT,
+                        "Check productId: " + productId
+        ));
     }
 
 }

@@ -3,8 +3,11 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CollectionForm;
 import com.ecommerce.app.model.dao.response.projection.CollectionProjection;
+import com.ecommerce.app.model.entity.Brand;
 import com.ecommerce.app.model.entity.Collection;
+import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.repository.CollectionRepository;
+import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.CollectionService;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.ErrorCode;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +30,7 @@ import java.util.Optional;
 public class CollectionImpl implements CollectionService {
     private final CollectionRepository collectionRepository;
     SlugifyService slugify;
+    private final ProductRepository productRepository;
 
     @Override
     public Collection saveCollection(Collection collection) {
@@ -37,6 +42,11 @@ public class CollectionImpl implements CollectionService {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
 
         return Optional.of(collection);
+    }
+
+    @Override
+    public List<Collection> findByIdIn(List<String> ids) {
+        return collectionRepository.findAllByIdIn(ids);
     }
 
     @Override
@@ -88,5 +98,21 @@ public class CollectionImpl implements CollectionService {
             collection.setStatus(Status.ACTIVE);
         }
         collectionRepository.save(collection);
+    }
+
+
+    @Override
+    public void addCollectionToProduct(String productId, String collectionId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        Collection collection = collectionRepository.findById(collectionId)
+                .orElseThrow(() ->  new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+
+// Tránh add trùng
+        if (!product.getCollections().contains(collection)) {
+            product.getCollections().add(collection);
+            productRepository.save(product);
+        }
     }
 }

@@ -1,15 +1,11 @@
 package com.ecommerce.app.model.mapper;
 
 import com.ecommerce.app.model.dao.request.ProductForm;
-import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
-import com.ecommerce.app.model.dao.response.dto.ProductResponse;
+import com.ecommerce.app.model.dao.response.dto.*;
 import com.ecommerce.app.model.dao.response.dto.Variant.ProductVariantResponse;
 import com.ecommerce.app.model.dao.response.dto.Variant.VariantOptionResponse;
 import com.ecommerce.app.model.dao.response.dto.Variant.VariantTypeResponse;
-import com.ecommerce.app.model.entity.Category;
-import com.ecommerce.app.model.entity.Image;
-import com.ecommerce.app.model.entity.Product;
-import com.ecommerce.app.model.entity.Tag;
+import com.ecommerce.app.model.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductMapper {
 
-    public static Product toEntity(ProductForm request, List<Category> categories, List<Tag> tags) {
+    public static Product toEntity(ProductForm request, List<Category> categories, List<Brand> brands, List<Collection> collections, List<Tag> tags) {
         return Product.builder()
                 .name(request.getName() != null ? request.getName().trim() : null)
                 .description(request.getDescription() != null ? request.getDescription().trim() : null)
@@ -35,6 +31,8 @@ public class ProductMapper {
                 .sellingType(request.getSellingType() != null ? request.getSellingType().trim() : null)
                 .avgRating(0)
                 .categories(categories)
+                .brands(brands)
+                .collections(collections)
                 .tags(tags)
                 .build();
     }
@@ -60,6 +58,23 @@ public class ProductMapper {
                 .noOfRating(product.getNoOfRating())
                 .hasVariants(product.getHasVariants())
 
+
+
+                .tags(
+                        product.getTags() != null
+                                ? product.getTags().stream()
+                                .map(tag -> {
+                                    TagResponse tagResponse = new TagResponse();
+                                    tagResponse.setId(tag.getId());
+                                    tagResponse.setTagName(tag.getTagName());
+                                    return tagResponse;
+                                })
+                                .collect(Collectors.toList())
+                                : null
+                )
+
+
+
                 // Ánh xạ danh sách categories vào ProductResponse
                 .categories(product.getCategories().stream()
                         .map(cat -> CategoryResponse.builder()
@@ -68,6 +83,29 @@ public class ProductMapper {
                                 .build())
                         .collect(Collectors.toList())
                 )
+
+                .brands(product.getBrands().stream()
+                        .map(brand -> BrandResponse.builder()
+                                .id(brand.getId())
+                                .name(brand.getName())
+                                .slug(brand.getSlug())
+                                .description(brand.getDescription())
+                                .build())
+                        .collect(Collectors.toList()))
+
+
+                .collections(product.getCollections().stream()
+                        .map(collection -> CollectionResponse.builder()
+                                .id(collection.getId())
+                                .collectionName(collection.getCollectionName())
+                                .collectionSlug(collection.getSlug())
+                                .collectionDescription(collection.getCollectionDescription())
+                                .collectionImage(collection.getCollectionImage())
+                                .build())
+                        .collect(Collectors.toList()))
+
+
+
 
 //                // Ánh xạ danh sách tags vào ProductResponse
 //                .tags(product.getTags().stream()

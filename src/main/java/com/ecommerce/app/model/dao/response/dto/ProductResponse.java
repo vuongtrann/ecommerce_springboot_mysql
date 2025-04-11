@@ -3,6 +3,7 @@ package com.ecommerce.app.model.dao.response.dto;
 import com.ecommerce.app.model.dao.response.dto.Variant.ProductVariantResponse;
 import com.ecommerce.app.model.dao.response.projection.CollectionProjection;
 import com.ecommerce.app.model.dao.response.projection.TagProjection;
+import com.ecommerce.app.model.entity.Banner;
 import com.ecommerce.app.utils.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -39,9 +40,13 @@ public class ProductResponse {
     private Long createdAt;
     private Long updatedAt;
 
+
     private List<CategoryResponse> categories;
-    private List<TagProjection> tags;
-    private List<CollectionProjection> collections;
+//    private List<TagProjection> tags;
+private List<TagResponse> tags;
+//    private List<CollectionProjection> collections;
+    private List<CollectionResponse> collections;
+    private List<BrandResponse> brands;
     private List<ProductVariantResponse> variants;
     private List<String> images;
 }

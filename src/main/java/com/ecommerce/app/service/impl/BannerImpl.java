@@ -3,7 +3,9 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.BannerForm;
 import com.ecommerce.app.model.entity.Banner;
+import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.repository.BannerRepository;
+import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.BannerService;
 import com.ecommerce.app.utils.ErrorCode;
 import com.ecommerce.app.utils.Status;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class BannerImpl implements BannerService {
     private final BannerRepository bannerRepository;;
 
+    private final ProductRepository productRepository;
 
     @Override
     public Banner save(Banner banner) {
@@ -33,6 +36,8 @@ public class BannerImpl implements BannerService {
 
         return Optional.of(banner);
     }
+
+
 
     @Override
     public List<Banner> getAllBanners() {
@@ -68,4 +73,6 @@ public class BannerImpl implements BannerService {
        Banner savedBanner = bannerRepository.save(banner);
        return savedBanner;
     }
+
+
 }

@@ -20,7 +20,7 @@ public class ImageController {
     public ResponseEntity<AppResponse<List<String>>> addImagesToProduct(@PathVariable String productId, @RequestBody List<String> urls) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
-                        SuccessCode.CREATED_IMAGE_PRODUCT,
+                        SuccessCode.ADD_IMAGE_PRODUCT,
                         imageService.addImagesToProduct(productId, urls)
                 )
         );

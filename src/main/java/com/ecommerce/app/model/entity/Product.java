@@ -62,8 +62,25 @@ public class Product extends BaseEntity {
     )
     private List<Tag> tags;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_collection",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "collection_id")
+    )
+    private List<Collection> collections;
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_brand",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "brand_id")
+    )
+    private List<Brand> brands;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 //    @JsonBackReference
     private List<ProductVariant> variants = new ArrayList<>();
+
 
 }
