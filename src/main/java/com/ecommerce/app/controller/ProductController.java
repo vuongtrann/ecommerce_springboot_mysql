@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -99,6 +100,26 @@ public class ProductController {
                 )
         );
     }
+
+    @PostMapping("/{productId}/upload-images")
+    public ResponseEntity<AppResponse<String>>  uploadImages(
+            @PathVariable String productId,
+            @RequestParam("files") List<MultipartFile> files
+    ) {
+        List<String> urls = productService.uploadImagesToProduct(productId, files);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.ADD_IMAGES_PRODUCT_TO_CLOUDINARY,
+                        "" + urls
+                )
+        );
+    }
+
+//    @DeleteMapping("/{productId}/images")
+//    public ResponseEntity<String> removeAllProductImages(@PathVariable String productId) {
+//        productService.removeImagesFromProduct(productId);
+//        return ResponseEntity.ok("Deleted all images for product " + productId);
+//    }
 
 
 

@@ -7,6 +7,7 @@ import com.ecommerce.app.model.dao.request.Variant.VariantOptionForm;
 import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
 import com.ecommerce.app.model.entity.*;
+import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.ecommerce.app.model.entity.Variant.VariantOption;
 import com.ecommerce.app.model.entity.Variant.VariantType;
@@ -28,10 +29,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +41,8 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductSerice {
 
     ProductRepository productRepository;
+    CloudinaryService cloudinaryService;
+    ImageRepository imageRepository;
 
     CategoryService categoryService;
     BrandService brandService;
@@ -62,6 +66,57 @@ public class ProductServiceImpl implements ProductSerice {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return productRepository.findAllProjectedBy(pageable);
+    }
+
+
+    @Override
+    public List<String> uploadImagesToProduct(String productId, List<MultipartFile> files) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        ExecutorService executor = Executors.newFixedThreadPool(4); // Tùy số core máy
+        List<CompletableFuture<String>> futures = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+                String folderName = "ecommerce/products/" + productId;
+                Map uploadResult = cloudinaryService.uploadImage(file, folderName);
+                return cloudinaryService.getUrlFromUploadResult(uploadResult);
+            }, executor);
+            futures.add(future);
+        }
+
+        List<String> urls = futures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+
+        // Dùng ảnh đầu tiên làm primaryImageURL
+        if (!urls.isEmpty()) {
+            product.setPrimaryImageURL(urls.get(0));
+        }
+
+        // Lưu ảnh vào DB
+        List<Image> images = urls.stream().map(url -> {
+            Image img = new Image();
+            img.setUrl(url);
+            img.setProduct(product);
+            return img;
+        }).collect(Collectors.toList());
+
+        imageRepository.saveAll(images);
+        productRepository.save(product); // Lưu lại primaryImageURL
+
+        executor.shutdown();
+        return urls;
+    }
+
+    @Override
+    public void removeImagesFromProduct(String productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new RuntimeException("Product not found");
+        }
+
+        imageRepository.deleteByProductId(productId);
     }
 
     @Override

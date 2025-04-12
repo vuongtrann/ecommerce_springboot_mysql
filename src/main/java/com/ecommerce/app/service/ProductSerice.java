@@ -23,6 +23,8 @@ public interface ProductSerice {
     Optional<Product> findBySlug(String slug);
     void changeStatus(String id);
 
+    List<String> uploadImagesToProduct(String productId, List<MultipartFile> files);
+    void removeImagesFromProduct(String productId);
 
     /**Variant Type*/
     List<VariantType> getVariantTypes();
