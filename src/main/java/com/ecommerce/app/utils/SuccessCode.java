@@ -31,7 +31,9 @@ public enum SuccessCode {
 
     CAN_NOT_ADD_PAYMENT_METHOD(400, "Can not add payment method", HttpStatus.BAD_REQUEST),
     CAN_NOT_CREATE_CUSTOMER(400, "Can not create customer", HttpStatus.BAD_REQUEST),
-    FORGOT_PASSWORD(200, "New random password have sent to your email", HttpStatus.OK);
+    FORGOT_PASSWORD(200, "New random password have sent to your email", HttpStatus.OK),
+
+    ADD_IMAGES_PRODUCT_TO_CLOUDINARY(200,"Add images to cloud images successfully" , HttpStatus.OK ),;
 
 
 
