@@ -115,11 +115,11 @@ public class ProductController {
         );
     }
 
-//    @DeleteMapping("/{productId}/images")
-//    public ResponseEntity<String> removeAllProductImages(@PathVariable String productId) {
-//        productService.removeImagesFromProduct(productId);
-//        return ResponseEntity.ok("Deleted all images for product " + productId);
-//    }
+    @DeleteMapping("/{productId}/images")
+    public ResponseEntity<String> removeAllProductImages(@PathVariable String productId) {
+        productService.removeImagesFromProduct(productId);
+        return ResponseEntity.ok("Deleted all images for product " + productId);
+    }
 
 
 

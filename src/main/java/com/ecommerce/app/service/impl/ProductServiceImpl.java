@@ -74,40 +74,24 @@ public class ProductServiceImpl implements ProductSerice {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        ExecutorService executor = Executors.newFixedThreadPool(4); // Tùy số core máy
-        List<CompletableFuture<String>> futures = new ArrayList<>();
+        List<String> uploadedUrls = cloudinaryService.uploadImages(files, "ecommerce/products/" + productId);
 
-        for (MultipartFile file : files) {
-            CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-                String folderName = "ecommerce/products/" + productId;
-                Map uploadResult = cloudinaryService.uploadImage(file, folderName);
-                return cloudinaryService.getUrlFromUploadResult(uploadResult);
-            }, executor);
-            futures.add(future);
+        if (!uploadedUrls.isEmpty()) {
+            product.setPrimaryImageURL(uploadedUrls.get(0)); // ảnh đầu tiên
         }
 
-        List<String> urls = futures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
-
-        // Dùng ảnh đầu tiên làm primaryImageURL
-        if (!urls.isEmpty()) {
-            product.setPrimaryImageURL(urls.get(0));
-        }
-
-        // Lưu ảnh vào DB
-        List<Image> images = urls.stream().map(url -> {
+        List<Image> imageEntities = new ArrayList<>();
+        for (String url : uploadedUrls) {
             Image img = new Image();
             img.setUrl(url);
             img.setProduct(product);
-            return img;
-        }).collect(Collectors.toList());
+            imageEntities.add(img);
+        }
 
-        imageRepository.saveAll(images);
-        productRepository.save(product); // Lưu lại primaryImageURL
+        imageRepository.saveAll(imageEntities);
+        productRepository.save(product);
 
-        executor.shutdown();
-        return urls;
+        return uploadedUrls;
     }
 
     @Override
@@ -115,7 +99,6 @@ public class ProductServiceImpl implements ProductSerice {
         if (!productRepository.existsById(productId)) {
             throw new RuntimeException("Product not found");
         }
-
         imageRepository.deleteByProductId(productId);
     }
 
