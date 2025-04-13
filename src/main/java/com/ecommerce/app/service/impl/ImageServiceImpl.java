@@ -42,27 +42,38 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
-
-
     @Override
     @Transactional
     public void deleteImageByProductIdAndUrl(String imageUrl) {
+        // Tìm ảnh theo URL
+        Image image = imageRepository.findByUrl(imageUrl)
+                .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
 
-            // Tìm ảnh theo URL
-            Image image = imageRepository.findByUrl(imageUrl)
-                    .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
-
+        Product product = image.getProduct();
+        if (product != null) {
             // Xoá trên Cloudinary
             cloudinaryService.deleteImageByUrl(imageUrl);
 
-            // Xoá trong database
-            Product product = image.getProduct();
-            if(product != null) {
+            //Xóa trong database
+            // Kiểm tra nếu ảnh xóa trùng với primaryImageURL của product
+            if (imageUrl.equals(product.getPrimaryImageURL())) {
+
+                product.getImages().remove(image);
+                Image newPrimaryImage = product.getImages().stream()
+                        .findFirst() // Lấy ảnh đầu tiên còn lại trong danh sách
+                        .orElseThrow(() -> new RuntimeException("Không có ảnh còn lại để cập nhật primary image"));
+                product.setPrimaryImageURL(newPrimaryImage.getUrl()); // Cập nhật primaryImageURL cho product
+                imageRepository.save(newPrimaryImage); // Cập nhật ảnh mới làm primary
+            } else {
                 product.getImages().remove(image);
             }
 
             imageRepository.delete(image);
+            productRepository.save(product);
         }
+    }
+
+
     @Override
     @Transactional
     public void deleteImageByVariantIdAndUrl(String imageUrl) {
