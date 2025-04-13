@@ -10,4 +10,5 @@ public interface CloudinaryService {
 
     List<String> uploadImages(List<MultipartFile> files, String folderName);
 
+    void deleteImageByUrl(String imageUrl);
 }

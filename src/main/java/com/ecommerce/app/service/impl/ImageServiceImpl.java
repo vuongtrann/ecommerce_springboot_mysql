@@ -3,21 +3,29 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.entity.Image;
 import com.ecommerce.app.model.entity.Product;
+import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.ecommerce.app.repository.ImageRepository;
 import com.ecommerce.app.repository.ProductRepository;
+import com.ecommerce.app.service.CloudinaryService;
 import com.ecommerce.app.service.ImageService;
 import com.ecommerce.app.utils.ErrorCode;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final ProductRepository productRepository;
+    private final CloudinaryService cloudinaryService;
 
     public List<String> addImagesToProduct(String productId, List<String> urls) {
         Product product = productRepository.findById(productId)
@@ -34,4 +42,46 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
+
+
+    @Override
+    @Transactional
+    public void deleteImageByProductIdAndUrl(String imageUrl) {
+
+            // Tìm ảnh theo URL
+            Image image = imageRepository.findByUrl(imageUrl)
+                    .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
+
+            // Xoá trên Cloudinary
+            cloudinaryService.deleteImageByUrl(imageUrl);
+
+            // Xoá trong database
+            Product product = image.getProduct();
+            if(product != null) {
+                product.getImages().remove(image);
+            }
+
+            imageRepository.delete(image);
+        }
+    @Override
+    @Transactional
+    public void deleteImageByVariantIdAndUrl(String imageUrl) {
+
+        // Tìm ảnh theo URL
+        Image image = imageRepository.findByUrl(imageUrl)
+                .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
+
+        // Xoá trên Cloudinary
+        cloudinaryService.deleteImageByUrl(imageUrl);
+
+        // Xoá trong database
+        ProductVariant variant = image.getProductVariant();
+        if(variant != null) {
+            variant.getImages().remove(image);
+        }
+
+        imageRepository.delete(image);
+    }
 }
+
+

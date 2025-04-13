@@ -21,6 +21,9 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -74,7 +77,8 @@ public class ProductServiceImpl implements ProductSerice {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        List<String> uploadedUrls = cloudinaryService.uploadImages(files, "ecommerce/products/" + productId);
+        String folderName = "ecommerce/products/" + productId;
+        List<String> uploadedUrls = cloudinaryService.uploadImages(files, folderName);
 
         if (!uploadedUrls.isEmpty()) {
             product.setPrimaryImageURL(uploadedUrls.get(0)); // ảnh đầu tiên
@@ -100,6 +104,30 @@ public class ProductServiceImpl implements ProductSerice {
             throw new RuntimeException("Product not found");
         }
         imageRepository.deleteByProductId(productId);
+    }
+
+
+    @Override
+    public List<String> uploadImagesToVariant(String variantId, String productId, List<MultipartFile> files) {
+
+        ProductVariant variant = productVariantRepository.findById(variantId)
+                .orElseThrow(() -> new RuntimeException("ProductVariant not found"));
+
+        String folderName = "ecommerce/products/" + productId + "/variant/" + variantId;
+
+        List<String> urls = cloudinaryService.uploadImages(files, folderName);
+
+
+        List<Image> images = urls.stream().map(url -> {
+            Image img = new Image();
+            img.setUrl(url);
+            img.setProductVariant(variant);
+            return img;
+        }).collect(Collectors.toList());
+
+        imageRepository.saveAll(images);
+
+        return urls;
     }
 
     @Override

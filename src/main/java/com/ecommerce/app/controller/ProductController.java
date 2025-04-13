@@ -115,10 +115,21 @@ public class ProductController {
         );
     }
 
-    @DeleteMapping("/{productId}/images")
+    @DeleteMapping("/{productId}/all-images")
     public ResponseEntity<String> removeAllProductImages(@PathVariable String productId) {
         productService.removeImagesFromProduct(productId);
         return ResponseEntity.ok("Deleted all images for product " + productId);
+    }
+
+
+    @PostMapping("/{variantId}/upload-image-variant")
+    public ResponseEntity<List<String>> uploadImageForVariant(
+            @PathVariable String variantId,
+            @RequestParam("productId") String productId,
+            @RequestParam("files") List<MultipartFile> files
+    ) {
+        List<String> urls = productService.uploadImagesToVariant(variantId, productId, files);
+        return ResponseEntity.ok(urls);
     }
 
 

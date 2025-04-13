@@ -4,6 +4,8 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.ecommerce.app.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CloudinaryServiceImpl implements CloudinaryService {
+
     private final Cloudinary cloudinary;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -42,6 +45,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             try {
                 return f.get();
             } catch (Exception e) {
+
                 throw new RuntimeException("Upload failed", e);
             }
         }).collect(Collectors.toList());
@@ -96,4 +100,33 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
         return "";
     }
+
+
+    @Override
+    public void deleteImageByUrl(String imageUrl) {
+        try {
+            String publicId = extractPublicIdFromUrl(imageUrl);
+            cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi xóa ảnh Cloudinary: " + e.getMessage());
+        }
+    }
+
+    private String extractPublicIdFromUrl(String imageUrl) {
+        try {
+            String[] parts = imageUrl.split("/");
+            StringBuilder publicId = new StringBuilder();
+            for (int i = 7; i < parts.length; i++) {
+                if (i == parts.length - 1) {
+                    publicId.append(parts[i], 0, parts[i].lastIndexOf("."));
+                } else {
+                    publicId.append(parts[i]).append("/");
+                }
+            }
+            return publicId.toString();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("URL không hợp lệ: " + imageUrl);
+        }
+    }
+
 }

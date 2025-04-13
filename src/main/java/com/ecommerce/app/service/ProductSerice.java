@@ -26,6 +26,9 @@ public interface ProductSerice {
     List<String> uploadImagesToProduct(String productId, List<MultipartFile> files);
     void removeImagesFromProduct(String productId);
 
+
+    List<String> uploadImagesToVariant(String variantId,String productId, List<MultipartFile> files);
+
     /**Variant Type*/
     List<VariantType> getVariantTypes();
     Optional<VariantType> getVariantType(Long id);
