@@ -45,30 +45,30 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void deleteImageByProductIdAndUrl(String imageUrl) {
-        // Tìm ảnh theo URL
         Image image = imageRepository.findByUrl(imageUrl)
                 .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
 
         Product product = image.getProduct();
         if (product != null) {
-            // Xoá trên Cloudinary
+            // Xóa ảnh trên Cloudinary
             cloudinaryService.deleteImageByUrl(imageUrl);
 
-            //Xóa trong database
-            // Kiểm tra nếu ảnh xóa trùng với primaryImageURL của product
-            if (imageUrl.equals(product.getPrimaryImageURL())) {
-
-                product.getImages().remove(image);
-                Image newPrimaryImage = product.getImages().stream()
-                        .findFirst() // Lấy ảnh đầu tiên còn lại trong danh sách
-                        .orElseThrow(() -> new RuntimeException("Không có ảnh còn lại để cập nhật primary image"));
-                product.setPrimaryImageURL(newPrimaryImage.getUrl()); // Cập nhật primaryImageURL cho product
-                imageRepository.save(newPrimaryImage); // Cập nhật ảnh mới làm primary
-            } else {
-                product.getImages().remove(image);
-            }
-
+            // Xóa ảnh trên database
+            // Xoá khỏi danh sách ảnh của product
+            List<Image> images = product.getImages();
+            images.remove(image);
             imageRepository.delete(image);
+
+            if (images.isEmpty()) {
+                product.setPrimaryImageURL(null);
+            } else {
+                // Nếu ảnh bị xóa là ảnh chính
+                if (imageUrl.equals(product.getPrimaryImageURL())) {
+                    // Cập nhật ảnh mới làm ảnh chính (lấy ảnh đầu tiên còn lại)
+                    Image newPrimary = images.get(0);
+                    product.setPrimaryImageURL(newPrimary.getUrl());
+                }
+            }
             productRepository.save(product);
         }
     }
