@@ -29,10 +29,12 @@ public class User {
     @Column(unique = true)
     private Long uid;
 
-
     String firstName;
     String lastName;
     String phone;
+
+    @Column
+    private String avatar;
 
     @Column(unique = true, nullable = false)
     String email;
@@ -56,8 +58,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
-
     @Getter
     @CreatedDate
     private Long createdAt;
@@ -71,13 +71,6 @@ public class User {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Comment> comments = new ArrayList<>();
 
-//
-//    @PrePersist
-//    public void generateUid() {
-//        if (this.uid == null) {
-//            this.uid = System.currentTimeMillis() % 1000;
-//        }
-//    }
 
     public User(String firstName, String lastName, String phone, String email, String username, String password, boolean isEnabled, String verificationToken, Role role) {
         this.firstName = firstName;

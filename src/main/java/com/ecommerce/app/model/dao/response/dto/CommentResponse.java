@@ -14,7 +14,13 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentResponse {
+    private String commentId;
+    private Long userUid;
     private String content;
     private Status status = Status.ACTIVE;
     private String productId;
+    private String firstName;
+    private String lastName;
+    private String avatar;
+    private String email;
 }
