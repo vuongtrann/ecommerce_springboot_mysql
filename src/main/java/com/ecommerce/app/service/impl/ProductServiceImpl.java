@@ -141,11 +141,7 @@ public class ProductServiceImpl implements ProductSerice {
 
         List<Collection> collections = collectionService.findByIdIn(form.getCollections());
 
-        List<Tag> tags = tagService.findByIdIn(form.getCategories());
-
-
-
-
+        List<Tag> tags = tagService.findByIdIn(form.getTags());
 
         Product product = ProductMapper.toEntity(form, categories, brands, collections, tags);
 

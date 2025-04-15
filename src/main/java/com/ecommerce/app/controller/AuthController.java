@@ -7,6 +7,7 @@ import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.service.AuthService;
+import com.ecommerce.app.service.UserService;
 import com.ecommerce.app.utils.SuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.Map;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
     AuthService authservice;
+    UserService userservice;
 
     @PostMapping("/register")
     public ResponseEntity<AppResponse<User>> register(@RequestBody @Valid RegisterForm form) {
@@ -79,5 +81,4 @@ public class AuthController {
     public ResponseEntity<Boolean> existsByUserName(@PathVariable String username) {
         return ResponseEntity.ok(authservice.existsByUserName(username));
     }
-
 }

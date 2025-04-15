@@ -49,4 +49,5 @@ private List<TagResponse> tags;
     private List<BrandResponse> brands;
     private List<ProductVariantResponse> variants;
     private List<String> images;
+    private List<CommentResponse> comments;
 }

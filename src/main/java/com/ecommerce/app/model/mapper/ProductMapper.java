@@ -105,6 +105,12 @@ public class ProductMapper {
                         .collect(Collectors.toList()))
 
 
+                .comments(product.getComments().stream()
+                        .map(comment -> CommentResponse.builder()
+                                .content(comment.getContent())
+                                .status(comment.getStatus())
+                                .build())
+                        .collect(Collectors.toList()))
 
 
 //                // Ánh xạ danh sách tags vào ProductResponse
@@ -122,6 +128,7 @@ public class ProductMapper {
                         .map(Image::getUrl)
                         .collect(Collectors.toList())
                         : new ArrayList<>())
+
 //
 // ánh xạ variants
                 .variants(product.getHasVariants() != null && product.getHasVariants() && product.getVariants() != null
