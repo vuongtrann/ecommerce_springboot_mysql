@@ -16,6 +16,7 @@ public class UserResponse {
     private Long uid;
     private String firstName;
     private String lastName;
+    private String avatarUrl;
     private String email;
-    private String phone; private
+    private String phone;
     Status status; }

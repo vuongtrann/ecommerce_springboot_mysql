@@ -13,6 +13,7 @@ public class UserMapper {
                 .uid(user.getUid())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
+                .avatarUrl(user.getAvatar() != null ? user.getAvatar() : null) // hoặc ẩn nếu muốn
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .status(user.getStatus())

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CloudinaryServiceImpl implements CloudinaryService {
 
-    private final Cloudinary cloudinary;
+    @Autowired
+    private Cloudinary cloudinary;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private static final int MAX_FILE_COUNT = 10;
@@ -126,6 +128,24 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             return publicId.toString();
         } catch (Exception e) {
             throw new IllegalArgumentException("URL không hợp lệ: " + imageUrl);
+        }
+    }
+
+
+    @Value("${cloudinary.folder.avatar}")
+    private String avatarFolder;
+
+    @Override
+    public String uploadAvatar(MultipartFile file, Long userId) {
+        try {
+            String folder = "ecommerce/users/" + userId;
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of(
+                    "folder", folder,
+                    "public_id", "avatar"
+            ));
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Upload avatar failed", e);
         }
     }
 

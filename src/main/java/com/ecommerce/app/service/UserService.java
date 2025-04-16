@@ -2,6 +2,7 @@ package com.ecommerce.app.service;
 
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
 import com.ecommerce.app.model.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,5 +24,6 @@ public interface UserService {
 
     UserResponse getUserResponseByUid(Long uid);
     Optional<User> getUserByUid(Long uid);
+    UserResponse updateAvatar(Long uid, MultipartFile avatar);
 
 }

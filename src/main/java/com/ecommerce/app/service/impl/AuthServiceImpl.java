@@ -3,10 +3,12 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.Auth.LoginForm;
 import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
+import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.model.entity.UidSequence;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.repository.UidSequenceRepository;
 import com.ecommerce.app.service.AuthService;
+import com.ecommerce.app.service.CloudinaryService;
 import com.ecommerce.app.service.MailService;
 import com.ecommerce.app.service.UserService;
 import com.ecommerce.app.utils.ErrorCode;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -26,7 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 //@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
-
+    private final CloudinaryService cloudinaryService;
     private final UserService userService;
     private final MailService mailService;
     private final JwtUtil jwtUtil;
@@ -37,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
     String serverUrl;
 
     @Override
-    public User register(RegisterForm registerForm) {
+    public User register(RegisterForm registerForm, MultipartFile avatar) {
         if (userService.existsByEmail(registerForm.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
@@ -62,6 +65,12 @@ public class AuthServiceImpl implements AuthService {
         user.setCreatedAt(Instant.now().toEpochMilli());
         user.setUpdatedAt(Instant.now().toEpochMilli());
         userService.save(user);
+
+        if (avatar != null && !avatar.isEmpty()) {
+            String avatarUrl = cloudinaryService.uploadAvatar(avatar, user.getId());
+            user.setAvatar(avatarUrl);
+            userService.save(user);
+        }
 
         String confirmationUrl = serverUrl + "/api/v1/auth/verify-email?token=" + token;
         mailService.sendRegistrationConfirmMail(registerForm.getEmail(), confirmationUrl, registerForm.getFirstName(), registerForm.getLastName());

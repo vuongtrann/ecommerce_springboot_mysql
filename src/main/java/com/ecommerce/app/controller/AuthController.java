@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -28,12 +29,21 @@ public class AuthController {
     AuthService authservice;
     UserService userservice;
 
+//    @PostMapping("/register")
+//    public ResponseEntity<AppResponse<User>> register(@RequestBody @Valid RegisterForm form) {
+//        User user = authservice.register(form);
+//        return ResponseEntity.ok( AppResponse.builderResponse(
+//                SuccessCode.REGISTER, user
+//        ));
+//    }
+
     @PostMapping("/register")
-    public ResponseEntity<AppResponse<User>> register(@RequestBody @Valid RegisterForm form) {
-        User user = authservice.register(form);
-        return ResponseEntity.ok( AppResponse.builderResponse(
-                SuccessCode.REGISTER, user
-        ));
+    public ResponseEntity<AppResponse<User>> register(
+            @ModelAttribute RegisterForm form,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar
+    ) {
+        User user = authservice.register(form, avatar);
+        return ResponseEntity.ok(AppResponse.builderResponse(SuccessCode.REGISTER, user));
     }
 
     @GetMapping("/verify-email")

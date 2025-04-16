@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,5 +28,14 @@ public class UserController {
     public ResponseEntity<UserResponse> getUserByUid(@PathVariable Long uid) {
         UserResponse userResponse = userService.getUserResponseByUid(uid);
         return ResponseEntity.ok(userResponse);
+    }
+
+    @PutMapping("/avatar/{uid}")
+    public ResponseEntity<UserResponse> updateAvatar(
+            @PathVariable Long uid,
+            @RequestParam("avatar") MultipartFile avatar
+    ) {
+        UserResponse response = userService.updateAvatar(uid, avatar);
+        return ResponseEntity.ok(response);
     }
 }
