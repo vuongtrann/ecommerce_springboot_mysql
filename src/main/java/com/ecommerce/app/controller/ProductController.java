@@ -101,6 +101,7 @@ public class ProductController {
         );
     }
 
+
     @PostMapping("/{productId}/upload-images")
     public ResponseEntity<AppResponse<String>>  uploadImages(
             @PathVariable String productId,
@@ -133,7 +134,23 @@ public class ProductController {
     }
 
 
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<ProductResponse> getProductDetail(@PathVariable String slug) {
+        ProductResponse response = productService.getProductDetail(slug);
+        return ResponseEntity.ok(response);
+    }
 
+
+    @GetMapping("/top-views")
+    public ResponseEntity<AppResponse<Page<ProductResponse>>> getTopViewedProducts(
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        boolean asc = direction.equalsIgnoreCase("asc");
+        Page<ProductResponse> result = productService.getTopViewedProducts(asc, page, size);
+        return ResponseEntity.ok(AppResponse.builderResponse(SuccessCode.FETCHED, result));
+    }
 
 
     /**Variant Type*/

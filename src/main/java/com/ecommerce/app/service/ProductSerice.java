@@ -23,6 +23,10 @@ public interface ProductSerice {
     Optional<Product> findBySlug(String slug);
     void changeStatus(String id);
 
+    ProductResponse getProductDetail(String slug);
+    Page<ProductResponse> getTopViewedProducts(boolean asc, int page, int size);
+
+
     List<String> uploadImagesToProduct(String productId, List<MultipartFile> files);
     void removeImagesFromProduct(String productId);
 

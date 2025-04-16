@@ -21,6 +21,7 @@ public class ProductMapper {
         return Product.builder()
                 .name(request.getName() != null ? request.getName().trim() : null)
                 .description(request.getDescription() != null ? request.getDescription().trim() : null)
+                .slug(request.getSlug())
                 .primaryImageURL(request.getPrimaryImageURL() != null ? request.getPrimaryImageURL().trim() : null)
                 .sku(request.getSku() != null ? request.getSku().trim() : null)
                 .quantity(request.getQuantity())
@@ -164,6 +165,20 @@ public class ProductMapper {
                         .collect(Collectors.toList())
                         : new ArrayList<>())
 
+                .build();
+    }
+
+    public static ProductResponse toSimpleResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .slug(product.getSlug())
+                .primaryImageURL(product.getPrimaryImageURL())
+                .sellingPrice(product.getSellingPrice())
+                .discountedPrice(product.getDiscountedPrice())
+                .noOfView(product.getNoOfView())
+                .avgRating(product.getAvgRating())
+                .status(product.getStatus())
                 .build();
     }
 

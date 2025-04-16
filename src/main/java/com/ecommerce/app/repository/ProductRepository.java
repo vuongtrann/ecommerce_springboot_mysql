@@ -13,4 +13,9 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @EntityGraph(attributePaths = {"images"})
     Page<ProductProjection> findAllProjectedBy(Pageable pageable);
     Optional<Product> findProductBySlug(String slug);
+
+    Page<Product> findAll(Pageable pageable);
+
+    Optional<Product> findBySlug(String slug);
+
 }

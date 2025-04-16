@@ -145,6 +145,9 @@ public class ProductServiceImpl implements ProductSerice {
 
         Product product = ProductMapper.toEntity(form, categories, brands, collections, tags);
 
+        String slug = slugify.generateSlug(form.getName());
+        product.setSlug(slug);
+
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);
         product.setCreatedAt(Instant.now().toEpochMilli());
@@ -315,5 +318,29 @@ public class ProductServiceImpl implements ProductSerice {
         productVariant.getVariantOptions().addAll(variantOptions);
 
         return productVariantRepository.save(productVariant); // Cập nhật lại ProductVariant với danh sách VariantOptions
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse getProductDetail(String slug) {
+        Product product = productRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setNoOfView(product.getNoOfView() + 1);
+        productRepository.save(product); // lưu lại lượt xem tăng
+
+        ProductResponse productResponse = ProductMapper.toSimpleResponse(product);
+        return productResponse;
+    }
+
+
+    @Override
+    public Page<ProductResponse> getTopViewedProducts(boolean asc, int page, int size) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, "noOfView");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> products = productRepository.findAll(pageable);
+
+        return products.map(ProductMapper::toSimpleResponse);
     }
 }

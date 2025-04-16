@@ -3,6 +3,7 @@ package com.ecommerce.app.model.entity;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +22,10 @@ import java.util.stream.Collectors;
 public class Product extends BaseEntity {
     private String name;
     private String description;
+
+    @Column(name = "slug", nullable = false)
     private String slug;
+
     private String primaryImageURL;
 //    @ElementCollection
 //    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
