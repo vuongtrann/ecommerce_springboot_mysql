@@ -343,4 +343,11 @@ public class ProductServiceImpl implements ProductSerice {
 
         return products.map(ProductMapper::toSimpleResponse);
     }
+
+    @Override
+    public Page<ProductResponse> getNewestProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Product> productPage = productRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return productPage.map(ProductMapper::toCreatedAtResponse);
+    }
 }

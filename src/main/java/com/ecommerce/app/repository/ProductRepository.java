@@ -18,4 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     Optional<Product> findBySlug(String slug);
 
+    Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
 }

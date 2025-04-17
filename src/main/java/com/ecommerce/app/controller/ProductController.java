@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -150,6 +151,22 @@ public class ProductController {
         boolean asc = direction.equalsIgnoreCase("asc");
         Page<ProductResponse> result = productService.getTopViewedProducts(asc, page, size);
         return ResponseEntity.ok(AppResponse.builderResponse(SuccessCode.FETCHED, result));
+    }
+
+
+
+    @GetMapping("/newest")
+    public ResponseEntity<AppResponse<Page<ProductResponse>>> getNewestProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<ProductResponse> result = productService.getNewestProducts(page, size);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        result
+                )
+        );
     }
 
 

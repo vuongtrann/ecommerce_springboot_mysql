@@ -182,5 +182,20 @@ public class ProductMapper {
                 .build();
     }
 
+    public static ProductResponse toCreatedAtResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .slug(product.getSlug())
+                .primaryImageURL(product.getPrimaryImageURL())
+                .createdAt(product.getCreatedAt())
+//                .sellingPrice(product.getSellingPrice())
+//                .discountedPrice(product.getDiscountedPrice())
+//                .noOfView(product.getNoOfView())
+//                .avgRating(product.getAvgRating())
+                .status(product.getStatus())
+                .build();
+    }
+
 
 }

@@ -26,6 +26,7 @@ public interface ProductSerice {
     ProductResponse getProductDetail(String slug);
     Page<ProductResponse> getTopViewedProducts(boolean asc, int page, int size);
 
+    Page<ProductResponse> getNewestProducts(int page, int size);
 
     List<String> uploadImagesToProduct(String productId, List<MultipartFile> files);
     void removeImagesFromProduct(String productId);
