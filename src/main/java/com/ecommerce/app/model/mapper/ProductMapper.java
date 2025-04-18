@@ -1,11 +1,15 @@
 package com.ecommerce.app.model.mapper;
 
 import com.ecommerce.app.model.dao.request.ProductForm;
+import com.ecommerce.app.model.dao.request.Variant.ProductVariantForm;
 import com.ecommerce.app.model.dao.response.dto.*;
 import com.ecommerce.app.model.dao.response.dto.Variant.ProductVariantResponse;
 import com.ecommerce.app.model.dao.response.dto.Variant.VariantOptionResponse;
 import com.ecommerce.app.model.dao.response.dto.Variant.VariantTypeResponse;
 import com.ecommerce.app.model.entity.*;
+import com.ecommerce.app.model.entity.Variant.ProductVariant;
+import com.ecommerce.app.model.entity.Variant.VariantOption;
+import com.ecommerce.app.model.entity.Variant.VariantType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -172,30 +176,59 @@ public class ProductMapper {
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .description(product.getDescription())
                 .slug(product.getSlug())
                 .primaryImageURL(product.getPrimaryImageURL())
+                .sku(product.getSku())
+                .quantity(product.getQuantity())
+                .quantityAvailable(product.getQuantityAvailable())
+                .soldQuantity(product.getSoldQuantity())
                 .sellingPrice(product.getSellingPrice())
                 .discountedPrice(product.getDiscountedPrice())
                 .noOfView(product.getNoOfView())
+                .sellingType(product.getSellingType())
                 .avgRating(product.getAvgRating())
+                .noOfRating(product.getNoOfRating())
                 .status(product.getStatus())
+                .createdAt(product.getCreatedAt())
                 .build();
     }
 
-    public static ProductResponse toCreatedAtResponse(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .slug(product.getSlug())
-                .primaryImageURL(product.getPrimaryImageURL())
-                .createdAt(product.getCreatedAt())
-//                .sellingPrice(product.getSellingPrice())
-//                .discountedPrice(product.getDiscountedPrice())
-//                .noOfView(product.getNoOfView())
-//                .avgRating(product.getAvgRating())
-                .status(product.getStatus())
+    public static ProductVariant toVariantEntity(ProductVariantForm form, Product product) {
+        if (form == null) return null;
+
+        ProductVariant variant = ProductVariant.builder()
+                .sku(form.getSku())
+                .quantity(form.getQuantityAvailable())
+                .originalPrice(form.getOriginalPrice())
+                .sellingPrice(form.getSellingPrice())
+                .discountedPrice(form.getDiscountedPrice())
+                .product(product)
                 .build();
+
+        // Map variant options nếu có
+        if (form.getVariantOptions() != null && !form.getVariantOptions().isEmpty()) {
+            List<VariantOption> options = form.getVariantOptions().stream().map(optionForm -> {
+                VariantOption option = new VariantOption();
+                option.setValue(optionForm.getValue());
+
+                VariantType variantType = new VariantType();
+                variantType.setId(optionForm.getVariantTypeId()); // tạo 1 object tạm có id
+                option.setVariantType(variantType); // truyền vào entity
+
+                option.setProductVariant(variant); // rất quan trọng để liên kết ngược lại
+                return option;
+            }).collect(Collectors.toList());
+
+            variant.setVariantOptions(options);
+        }
+
+        return variant;
     }
+
+
+
+
 
 
 }

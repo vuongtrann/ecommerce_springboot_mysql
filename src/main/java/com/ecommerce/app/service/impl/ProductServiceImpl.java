@@ -17,6 +17,8 @@ import com.ecommerce.app.service.*;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.ErrorCode;
 import com.ecommerce.app.utils.Status;
+import com.github.slugify.Slugify;
+import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,12 @@ public class ProductServiceImpl implements ProductSerice {
     ProductRepository productRepository;
     CloudinaryService cloudinaryService;
     ImageRepository imageRepository;
+    ProductMapper productMapper;
+    ProductVariantRepository productVariant;
+    CategoryRepository categoryRepository;
+    BrandRepository brandRepository;
+    CollectionRepository collectionRepository;
+    TagRepository tagRepository;
 
     CategoryService categoryService;
     BrandService brandService;
@@ -147,14 +155,11 @@ public class ProductServiceImpl implements ProductSerice {
 
         String slug = slugify.generateSlug(form.getName());
         product.setSlug(slug);
-
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);
         product.setCreatedAt(Instant.now().toEpochMilli());
         product.setUpdatedAt(Instant.now().toEpochMilli());
-
         product = productRepository.save(product); // 🔹 Lưu product vào DB trước
-
         // 👉 Bước 2: Tạo và lưu ProductVariant sau khi Product đã có ID
         if (form.isHasVariants()) {
             List<ProductVariant> variants = new ArrayList<>();
@@ -170,44 +175,72 @@ public class ProductServiceImpl implements ProductSerice {
             product.getVariants().addAll(variants);
             product.setHasVariants(true);
         }
-
         // 👉 Bước 3: Cập nhật lại Product sau khi thêm variants
         Product saved = productRepository.save(product);
-
         return saved;
     }
 
     @Override
-    public Product update(String id ,ProductForm form) {
-        Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        List<Category> categories = categoryService.findByIdIn(form.getCategories());
+    public Product update(String productId ,ProductForm form) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->  new RuntimeException("Product not found"));
 
-        product.setName(form.getName());
+        // Check duplicate name
+        if (!product.getName().equalsIgnoreCase(form.getName())) {
+            if (productRepository.existsByName(form.getName())) {
+                throw new RuntimeException("Product name already exists");
+            }
+            product.setName(form.getName());
+
+            // Update slug if name changed
+            String newSlug = slugify.generateSlug(form.getName());
+            if (productRepository.existsBySlug(newSlug)) {
+                newSlug += "-" + UUID.randomUUID().toString().substring(0, 8);
+            }
+            product.setSlug(newSlug);
+        }
+
         product.setDescription(form.getDescription());
-        product.setSlug(slugify.generateSlug(form.getName()+ "-" + Instant.now().getEpochSecond()));
+        product.setPrimaryImageURL(form.getPrimaryImageURL());
         product.setSku(form.getSku());
-        product.setQuantity(form.getQuantity());
         product.setOriginalPrice(form.getOriginalPrice());
         product.setSellingPrice(form.getSellingPrice());
         product.setDiscountedPrice(form.getDiscountedPrice());
         product.setSellingType(form.getSellingType());
-        product.setCategories(categories);
-        product.setQuantityAvailable(form.getQuantity() - product.getSoldQuantity());
+        product.setQuantity(form.getQuantity());
+
+        // Handle variants
+        boolean hasVariants = form.isHasVariants();
+        if (hasVariants) {
+            product.getVariants().clear(); // ✅ Hibernate xử lý orphan
+            List<ProductVariant> newVariants = form.getVariants().stream()
+                    .map(variantForm -> productMapper.toVariantEntity(variantForm, product))
+                    .collect(Collectors.toList());
+            product.getVariants().addAll(newVariants);
+        } else {
+            product.getVariants().clear(); // ✅ Không có variant thì clear
+        }
 
 
-        /***TODO
-         * Cần check xem sản phẩm đó không trùng tên
-         * Cần check xem sản phẩm đó không trùng sku
-         * Cần check xem sản phẩm đó không trùng slug
-         * Cần xử lý variant nếu có
-         * Cần xử lý spectification nếu có
-         * cần xử lý người cập nhật nếu có
-         * */
+        // Handle categories
+        List<Category> updatedCategories = categoryRepository.findAllByIdIn(form.getCategories());
+        product.setCategories(updatedCategories);
 
-        product.setUpdatedAt(Instant.now().toEpochMilli());
+        // Handle tags
+        List<Tag> updatedTags = tagRepository.findAllByIdIn(form.getTags());
+        product.setTags(updatedTags);
 
-        Product updatedProduct = save(product);
-        return updatedProduct;
+        // Handle brands
+        List<Brand> updatedBrands = brandRepository.findAllByIdIn(form.getBrands());
+        product.setBrands(updatedBrands);
+
+        // Handle collections
+        List<Collection> updatedCollections = collectionRepository.findAllByIdIn(form.getCollections());
+        product.setCollections(updatedCollections);
+
+        Product savedProduct = productRepository.save(product);
+        return savedProduct;
+//        return productMapper.toResponse(savedProduct);
 
     }
 
@@ -348,6 +381,6 @@ public class ProductServiceImpl implements ProductSerice {
     public Page<ProductResponse> getNewestProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Product> productPage = productRepository.findAllByOrderByCreatedAtDesc(pageable);
-        return productPage.map(ProductMapper::toCreatedAtResponse);
+        return productPage.map(ProductMapper::toSimpleResponse);
     }
 }

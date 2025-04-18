@@ -20,4 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     Page<Product> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+    boolean existsByName(String name);
+    boolean existsBySlug(String slug);
+
 }
