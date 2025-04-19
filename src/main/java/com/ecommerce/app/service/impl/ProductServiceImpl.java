@@ -21,6 +21,7 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -212,6 +213,7 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    @Cacheable(value = "PRODUCT_BY_ID", key = "#id")
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         ProductResponse productResponse = ProductMapper.toResponse(product);
@@ -219,6 +221,7 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    @Cacheable(value = "PRODUCT_BY_SLUG", key = "#slug")
     public Optional<Product> findBySlug(String slug) {
         Product product = productRepository.findProductBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         /***TODO
