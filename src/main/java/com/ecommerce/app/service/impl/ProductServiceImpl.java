@@ -23,9 +23,12 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -181,6 +184,10 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    @Caching(put = {
+            @CachePut (value = "PRODUCT_BY_ID", key = "#productId"),
+            @CachePut (value = "PRODUCT_BY_SLUG", key = "#form.slug")
+    })
     public Product update(String productId ,ProductForm form) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND
@@ -251,6 +258,11 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    //Clear cache when product is deleted
+    @Caching(evict = {
+            @CacheEvict(value = "PRODUCT_BY_ID", key = "#id"),
+            @CacheEvict(value = "PRODUCT_BY_SLUG", key = "#slug")
+    })
     public void delete(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if (product.getStatus().equals("ACTIVE")) {
@@ -273,6 +285,7 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    //Cache product by id
     @Cacheable(value = "PRODUCT_BY_ID", key = "#id")
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -281,6 +294,7 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    //Cache product by slug
     @Cacheable(value = "PRODUCT_BY_SLUG", key = "#slug")
     public Optional<Product> findBySlug(String slug) {
         Product product = productRepository.findProductBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
