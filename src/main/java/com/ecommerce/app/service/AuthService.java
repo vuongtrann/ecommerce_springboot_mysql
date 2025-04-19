@@ -3,12 +3,13 @@ package com.ecommerce.app.service;
 import com.ecommerce.app.model.dao.request.Auth.LoginForm;
 import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
 import com.ecommerce.app.model.entity.User;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
 
 public interface AuthService {
-    public User register(RegisterForm registerForm);
+    public User register(RegisterForm registerForm,  MultipartFile avatar);
     public Map<String, String> login(LoginForm loginForm);
     public void verifyEmail(String token);
     public void resendVerifyEmail(String email);

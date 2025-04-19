@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,7 +71,6 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<AppResponse<String>> deleteProduct(@PathVariable String productId) {
-
         productService.delete(productId);
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
@@ -101,6 +101,7 @@ public class ProductController {
         );
     }
 
+
     @PostMapping("/{productId}/upload-images")
     public ResponseEntity<AppResponse<String>>  uploadImages(
             @PathVariable String productId,
@@ -115,14 +116,66 @@ public class ProductController {
         );
     }
 
-    @DeleteMapping("/{productId}/images")
+    @DeleteMapping("/{productId}/all-images")
     public ResponseEntity<String> removeAllProductImages(@PathVariable String productId) {
         productService.removeImagesFromProduct(productId);
         return ResponseEntity.ok("Deleted all images for product " + productId);
     }
 
 
+    @PostMapping("/{variantId}/upload-image-variant")
+    public ResponseEntity<AppResponse<List<String>>> uploadImageForVariant(
+            @PathVariable String variantId,
+            @RequestParam("productId") String productId,
+            @RequestParam("files") List<MultipartFile> files
+    ) {
+        List<String> urls = productService.uploadImagesToVariant(variantId, productId, files);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.ADD_IMAGES_PRODUCT_VARIANT_TO_CLOUDINARY,
+                        urls
+                )
+        );
+    }
 
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<AppResponse<ProductResponse>> getProductDetail(@PathVariable String slug) {
+        ProductResponse response = productService.getProductDetail(slug);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        response
+                )
+        );
+    }
+
+    @GetMapping("/top-views")
+    public ResponseEntity<AppResponse<Page<ProductResponse>>> getTopViewedProducts(
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        boolean asc = direction.equalsIgnoreCase("asc");
+        Page<ProductResponse> result = productService.getTopViewedProducts(asc, page, size);
+        return ResponseEntity.ok(AppResponse.builderResponse(SuccessCode.FETCHED, result));
+    }
+
+
+
+    @GetMapping("/newest")
+    public ResponseEntity<AppResponse<Page<ProductResponse>>> getNewestProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<ProductResponse> result = productService.getNewestProducts(page, size);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        result
+                )
+        );
+    }
 
 
     /**Variant Type*/

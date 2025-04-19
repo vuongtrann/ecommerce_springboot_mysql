@@ -32,6 +32,8 @@ public class GlobalException {
     }
 
 
+
+
 //    @ExceptionHandler(AuthorizationDeniedException.class)
 //    public ResponseEntity<AppResponse> handleAuthorizationDeniedException(AuthorizationDeniedException e) {
 //        ErrorCode errorCode = ErrorCode.ACCESS_DENIED;
