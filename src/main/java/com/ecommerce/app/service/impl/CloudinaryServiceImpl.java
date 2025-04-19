@@ -2,7 +2,9 @@ package com.ecommerce.app.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.service.CloudinaryService;
+import com.ecommerce.app.utils.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,17 +83,17 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     private void validateFiles(List<MultipartFile> files) {
         if (files.size() > MAX_FILE_COUNT) {
-            throw new IllegalArgumentException("Chỉ được upload tối đa 10 ảnh một lần.");
+            throw new AppException(ErrorCode.UPLOAD_MAX_10_FILES);
         }
 
         for (MultipartFile file : files) {
             if (file.getSize() > MAX_FILE_SIZE) {
-                throw new IllegalArgumentException("File quá lớn (>5MB): " + file.getOriginalFilename());
+                throw new AppException(ErrorCode.SIZE_MAX_5MB);
             }
 
             String ext = getFileExtension(file.getOriginalFilename());
             if (!ALLOWED_EXTENSIONS.contains(ext.toLowerCase())) {
-                throw new IllegalArgumentException("File định dạng không hỗ trợ: " + ext);
+                throw new AppException(ErrorCode.FORMAT_NOT_SUPPORTED);
             }
         }
     }
@@ -110,7 +112,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             String publicId = extractPublicIdFromUrl(imageUrl);
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi xóa ảnh Cloudinary: " + e.getMessage());
+            throw new AppException(ErrorCode.ERROR_DELETE_CLOUDINARY) ;
         }
     }
 
@@ -127,7 +129,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             }
             return publicId.toString();
         } catch (Exception e) {
-            throw new IllegalArgumentException("URL không hợp lệ: " + imageUrl);
+            throw new AppException(ErrorCode.URL_NOT_VALID);
         }
     }
 
@@ -145,7 +147,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             ));
             return uploadResult.get("secure_url").toString();
         } catch (Exception e) {
-            throw new RuntimeException("Upload avatar failed", e);
+            throw new AppException(ErrorCode.UPLOAD_AVATAR_FAIL);
         }
     }
 

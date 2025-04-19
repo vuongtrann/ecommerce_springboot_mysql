@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateAvatar(Long uid, MultipartFile avatar) {
         User user = userRepositiory
                 .findByUid(uid)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         String avatarUrl = cloudinaryService.uploadAvatar(avatar, user.getId());
         user.setAvatar(avatarUrl);

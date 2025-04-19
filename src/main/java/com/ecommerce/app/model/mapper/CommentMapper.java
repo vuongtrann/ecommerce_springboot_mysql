@@ -21,17 +21,14 @@ public class CommentMapper {
     }
 
 
-    public static CommentResponse toResponse(Comment comment) {
-        return CommentResponse.builder()
-                .content(comment.getContent())
-                .productId(comment.getProduct() != null ? comment.getProduct().getId() : null)
-                .build();
-    }
-
     public static List<CommentResponse> toResponseList(List<Comment> comments) {
         return comments.stream()
-                .map(CommentMapper::toResponse)
+                .map(CommentMapper::toUserInfoResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static Page<CommentResponse> toResponsePage(Page<Comment> comments) {
+        return comments.map(CommentMapper::toUserInfoResponse);
     }
 
 
@@ -48,7 +45,5 @@ public class CommentMapper {
                 .build();
     }
 
-    public static Page<CommentResponse> toResponsePage(Page<Comment> comments) {
-        return comments.map(CommentMapper::toUserInfoResponse);
-    }
+
 }

@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public List<String> uploadImagesToProduct(String productId, List<MultipartFile> files) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() ->new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         String folderName = "ecommerce/products/" + productId;
         List<String> uploadedUrls = cloudinaryService.uploadImages(files, folderName);
@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public void removeImagesFromProduct(String productId) {
         if (!productRepository.existsById(productId)) {
-            throw new RuntimeException("Product not found");
+            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
         }
         imageRepository.deleteByProductId(productId);
     }
@@ -119,7 +119,7 @@ public class ProductServiceImpl implements ProductSerice {
     public List<String> uploadImagesToVariant(String variantId, String productId, List<MultipartFile> files) {
 
         ProductVariant variant = productVariantRepository.findById(variantId)
-                .orElseThrow(() -> new RuntimeException("ProductVariant not found"));
+                .orElseThrow(() ->new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
 
         String folderName = "ecommerce/products/" + productId + "/variant/" + variantId;
 
@@ -183,12 +183,13 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public Product update(String productId ,ProductForm form) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() ->  new RuntimeException("Product not found"));
+                .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND
+                ));
 
         // Check duplicate name
         if (!product.getName().equalsIgnoreCase(form.getName())) {
             if (productRepository.existsByName(form.getName())) {
-                throw new RuntimeException("Product name already exists");
+                throw new AppException(ErrorCode.PRODUCT_NAME_ALREADY_EXISTS);
             }
             product.setName(form.getName());
 
@@ -212,13 +213,13 @@ public class ProductServiceImpl implements ProductSerice {
         // Handle variants
         boolean hasVariants = form.isHasVariants();
         if (hasVariants) {
-            product.getVariants().clear(); // ✅ Hibernate xử lý orphan
+            product.getVariants().clear(); //  Hibernate xử lý orphan
             List<ProductVariant> newVariants = form.getVariants().stream()
                     .map(variantForm -> productMapper.toVariantEntity(variantForm, product))
                     .collect(Collectors.toList());
             product.getVariants().addAll(newVariants);
         } else {
-            product.getVariants().clear(); // ✅ Không có variant thì clear
+            product.getVariants().clear(); // Không có variant thì clear
         }
 
 
@@ -357,7 +358,7 @@ public class ProductServiceImpl implements ProductSerice {
     @Transactional
     public ProductResponse getProductDetail(String slug) {
         Product product = productRepository.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         product.setNoOfView(product.getNoOfView() + 1);
         productRepository.save(product); // lưu lại lượt xem tăng

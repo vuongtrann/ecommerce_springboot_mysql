@@ -46,7 +46,7 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public void deleteImageByProductIdAndUrl(String imageUrl) {
         Image image = imageRepository.findByUrl(imageUrl)
-                .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
+                .orElseThrow(() -> new AppException(ErrorCode.IMAGE_NOT_FOUND));
 
         Product product = image.getProduct();
         if (product != null) {
@@ -80,7 +80,7 @@ public class ImageServiceImpl implements ImageService {
 
         // Tìm ảnh theo URL
         Image image = imageRepository.findByUrl(imageUrl)
-                .orElseThrow(() -> new RuntimeException("Ảnh không tồn tại trong database"));
+                .orElseThrow(() ->new AppException(ErrorCode.IMAGE_NOT_FOUND));
 
         // Xoá trên Cloudinary
         cloudinaryService.deleteImageByUrl(imageUrl);

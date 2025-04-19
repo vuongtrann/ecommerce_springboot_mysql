@@ -9,12 +9,12 @@ import java.util.List;
 
 public interface CommentService {
 
-    void createComment(CommentForm form, Long uid, String productId);
+    CommentResponse  createComment(CommentForm form, Long uid, String productId);
     List<CommentResponse> getCommentsByUserId(Long uid);
 
     Page<CommentResponse> getAllComments(int page, int size, String sortBy, String direction);
     void deleteComment(String commentId, Long userUid);
     void hideComment(String commentId, Long userUid);
 
-    void updateComment(String commentId, Long userUid, CommentForm form);
+    CommentResponse updateComment(String commentId, Long userUid, CommentForm form);
 }

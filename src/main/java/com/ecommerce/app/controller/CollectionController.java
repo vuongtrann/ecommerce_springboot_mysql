@@ -80,7 +80,7 @@ public class CollectionController {
             @PathVariable String productId,
             @RequestBody Map<String, String> body) {
 
-        String collectionId = body.get("id"); // key trong JSON postman là "id"
+        String collectionId = body.get("id");
         collectionService.addCollectionToProduct(productId, collectionId);
         return ResponseEntity.ok(
                 AppResponse.builderResponse(

@@ -26,9 +26,9 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(401, "Invalid or expired token", HttpStatus.BAD_GATEWAY),
     MISSING_REQUEST_COOKIE(400, "Missing Request Cookie!", HttpStatus.BAD_REQUEST),
 
-
     PRODUCT_NOT_FOUND(404,"Product not found !" , HttpStatus.NOT_FOUND ),
     PRODUCT_ALREADY_EXISTS(400,"Product already exists !" , HttpStatus.BAD_REQUEST ),
+    PRODUCT_NAME_ALREADY_EXISTS(400,"Product name already exists !" , HttpStatus.BAD_REQUEST ),
     PRODUCT_NOT_FOUND_BY_SLUG(404,"Product not found by slug !" , HttpStatus.NOT_FOUND ),
     PRODUCT_CANNOT_DELETE(400,"Can not delete this product, please change status first !" , HttpStatus.BAD_REQUEST ),
 
@@ -50,7 +50,24 @@ public enum ErrorCode {
 
     BANNER_NOT_FOUND(404,"Banner not found !" , HttpStatus.NOT_FOUND ),
     BANNER_CANNOT_DELETE(400,"Banner not found !" , HttpStatus.BAD_REQUEST ),
-    VARIANT_TYPE_NOT_FOUND(404,"Variant type not found !" , HttpStatus.NOT_FOUND );
+    VARIANT_TYPE_NOT_FOUND(404,"Variant type not found !" , HttpStatus.NOT_FOUND ),
+
+    UPLOAD_MAX_10_FILES(400,"You can only upload 10 files." , HttpStatus.BAD_REQUEST ),
+    SIZE_MAX_5MB(400,"Size max 5mb !" , HttpStatus.BAD_REQUEST ),
+    FORMAT_NOT_SUPPORTED(400,"File format not supported !" , HttpStatus.BAD_REQUEST ),
+    ERROR_DELETE_CLOUDINARY(400,"Error Delete Cloudinary !" , HttpStatus.BAD_REQUEST ),
+    URL_NOT_VALID(400,"URL Not Valid !" , HttpStatus.BAD_REQUEST ),
+    UPLOAD_AVATAR_FAIL(400,"Upload Avatar Fail !" , HttpStatus.BAD_REQUEST ),
+
+    COMMENT_FAIL(400,"You must be logged in to comment.",HttpStatus.BAD_REQUEST ),
+    COMMENT_NOT_FOUND(404,"Comment not found !" , HttpStatus.NOT_FOUND ),
+    DELETE_COMMENT_FAIL(400,"You do not have permission to delete this comment.",HttpStatus.BAD_REQUEST ),
+    COMMENT_HIDDEN_OR_DELETED(400,"This comment has been hidden or deleted." , HttpStatus.BAD_REQUEST ),
+    UPDATE_COMMENT_FAIL(400,"You do not have permission to edit this comment." ,HttpStatus.BAD_REQUEST ),
+
+    IMAGE_NOT_FOUND(404,"Image not found !" , HttpStatus.NOT_FOUND ),
+
+    PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),;
 
   private final int code;
     private final String message;

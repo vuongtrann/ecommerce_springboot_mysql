@@ -71,7 +71,6 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<AppResponse<String>> deleteProduct(@PathVariable String productId) {
-
         productService.delete(productId);
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
@@ -125,22 +124,31 @@ public class ProductController {
 
 
     @PostMapping("/{variantId}/upload-image-variant")
-    public ResponseEntity<List<String>> uploadImageForVariant(
+    public ResponseEntity<AppResponse<List<String>>> uploadImageForVariant(
             @PathVariable String variantId,
             @RequestParam("productId") String productId,
             @RequestParam("files") List<MultipartFile> files
     ) {
         List<String> urls = productService.uploadImagesToVariant(variantId, productId, files);
-        return ResponseEntity.ok(urls);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.ADD_IMAGES_PRODUCT_VARIANT_TO_CLOUDINARY,
+                        urls
+                )
+        );
     }
 
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<ProductResponse> getProductDetail(@PathVariable String slug) {
+    public ResponseEntity<AppResponse<ProductResponse>> getProductDetail(@PathVariable String slug) {
         ProductResponse response = productService.getProductDetail(slug);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        response
+                )
+        );
     }
-
 
     @GetMapping("/top-views")
     public ResponseEntity<AppResponse<Page<ProductResponse>>> getTopViewedProducts(

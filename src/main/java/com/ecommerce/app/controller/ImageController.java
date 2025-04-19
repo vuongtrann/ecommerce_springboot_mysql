@@ -28,19 +28,25 @@ public class ImageController {
     }
 
     @DeleteMapping("/product/{productId}/delete-image-product")
-    public ResponseEntity<String> deleteImageByProductIdAndUrl(
+    public ResponseEntity<AppResponse<String>> deleteImageByProductIdAndUrl(
             @RequestParam("url") String imageUrl) {
 
         imageService.deleteImageByProductIdAndUrl(imageUrl);
-        return ResponseEntity.ok("Xóa ảnh thành công.");
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.DELETED,
+                "Image Product deleted successfully"
+        ));
     }
 
     @DeleteMapping("/product/{variantId}/delete-image-variant")
-    public ResponseEntity<String> deleteImageByVariantIdAndUrl(
+    public ResponseEntity<AppResponse<String>> deleteImageByVariantIdAndUrl(
             @RequestParam("url") String imageUrl) {
 
         imageService.deleteImageByVariantIdAndUrl(imageUrl);
-        return ResponseEntity.ok("Xóa ảnh thành công.");
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.DELETED,
+                "Image Product Variant deleted successfully"
+        ));
     }
 
 

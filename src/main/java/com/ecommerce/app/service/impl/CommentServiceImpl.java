@@ -40,27 +40,26 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public void createComment(CommentForm form, Long uid, String productId) {
+    public CommentResponse  createComment(CommentForm form, Long uid, String productId) {
 
         if (uid == null) {
-            throw new RuntimeException("Bạn phải đăng nhập để comment.");
+            throw new AppException(ErrorCode.COMMENT_FAIL);
         }
-
-
         User user = userRepository.findByUid(uid)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm."));
+                .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         Comment comment = CommentMapper.toEntity(form, user, product);
-        commentRepository.save(comment);
+        Comment save = commentRepository.save(comment);
+        return CommentMapper.toUserInfoResponse(save);
     }
 
     @Override
     public List<CommentResponse> getCommentsByUserId(Long uid) {
         User user = userRepository.findByUid(uid)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         List<Comment> comments = commentRepository.findByUser_IdAndStatus(user.getId(), Status.ACTIVE);
         return CommentMapper.toResponseList(comments);
     }
@@ -77,16 +76,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void hideComment(String commentId, Long userUid) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy comment."));
+                .orElseThrow(() ->  new AppException(ErrorCode.COMMENT_NOT_FOUND));
 
         User currentUser = userRepository.findByUid(userUid)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         boolean isOwner = comment.getUser().getUid().equals(userUid);
         boolean isAdmin = currentUser.getRole().equals(Role.ADMIN);
 
         if (!isOwner && !isAdmin) {
-            throw new RuntimeException("Bạn không có quyền xoá comment này.");
+            throw new AppException(ErrorCode.DELETE_COMMENT_FAIL);
         }
 
         comment.setStatus(Status.INACTIVE);
@@ -97,43 +96,44 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(String commentId, Long userUid) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy comment."));
+                .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
 
         User currentUser = userRepository.findByUid(userUid)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng."));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         boolean isOwner = comment.getUser().getUid().equals(userUid);
         boolean isAdmin = currentUser.getRole().equals(Role.ADMIN);
 
         if (!isOwner && !isAdmin) {
-            throw new RuntimeException("Bạn không có quyền xoá comment này.");
+            throw  new AppException(ErrorCode.DELETE_COMMENT_FAIL);
         }
         commentRepository.delete(comment);
     }
 
     @Override
-    public void updateComment(String commentId, Long userUid, CommentForm form) {
+    public CommentResponse updateComment(String commentId, Long userUid, CommentForm form) {
         // Tìm user theo UID
         User user = userRepository.findByUid(userUid)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy user."));
+                .orElseThrow(() ->  new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Tìm comment theo ID và check trạng thái ACTIVE
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy comment."));
+                .orElseThrow(() ->  new AppException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getStatus().equals(Status.ACTIVE)) {
-            throw new RuntimeException("Comment này bị ẩn hoặc xóa.");
+            throw new AppException(ErrorCode.COMMENT_HIDDEN_OR_DELETED);
         }
 
         // Chỉ người tạo mới được sửa comment
         if (!comment.getUser().getId().equals(user.getId())) {
-            throw  new RuntimeException("Bạn không có quyền chỉnh sửa comment này");
+            throw  new AppException(ErrorCode.UPDATE_COMMENT_FAIL);
         }
 
         // Cập nhật nội dung
         comment.setContent(form.getContent());
         comment.setUpdatedAt(System.currentTimeMillis());
-        commentRepository.save(comment);
+        Comment save =  commentRepository.save(comment);
+        return CommentMapper.toUserInfoResponse(save);
     }
 
 }

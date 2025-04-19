@@ -1,8 +1,10 @@
 package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.CommentForm;
+import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.CommentResponse;
 import com.ecommerce.app.service.CommentService;
+import com.ecommerce.app.utils.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,11 +25,13 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createComment(@RequestParam Long uid,
-                                           @RequestParam String productId,
-                                           @RequestBody CommentForm form) {
-        commentService.createComment(form, uid, productId);
-        return ResponseEntity.ok("Tạo comment thành công");
+    public ResponseEntity<AppResponse<CommentResponse>> createComment(@RequestParam Long uid,
+                                                     @RequestParam String productId,
+                                                     @RequestBody CommentForm form) {
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.CREATED,
+                commentService.createComment(form, uid, productId)
+        ));
     }
 
     @GetMapping("/user/uid/{uid}")
@@ -48,31 +52,39 @@ public class CommentController {
     }
 
     @DeleteMapping("/hide/{id}")
-    public ResponseEntity<String> hideComment(
+    public ResponseEntity<AppResponse<String>> hideComment(
             @PathVariable("id") String commentId,
             @RequestParam("userUid") Long userUid
     ) {
         commentService.hideComment(commentId, userUid);
-        return ResponseEntity.ok("Đã ẩn comment thành công.");
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.DELETED,
+                "Comment hidden successfully"
+        ));
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<String> deleteComment(
+    public ResponseEntity<AppResponse<String>> deleteComment(
             @PathVariable("id") String commentId,
             @RequestParam("userUid") Long userUid
     ) {
         commentService.deleteComment(commentId, userUid);
-        return ResponseEntity.ok("Đã xoá comment thành công.");
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.DELETED,
+                "Comment delete successfully"
+        ));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateComment(
+    @PutMapping("/update/{id}")
+    public ResponseEntity<AppResponse<CommentResponse>> updateComment(
             @PathVariable("id") String commentId,
             @RequestParam("userUid") Long userUid,
             @RequestBody CommentForm form
     ) {
-        commentService.updateComment(commentId, userUid, form);
-        return ResponseEntity.ok("Cập nhật comment thành công.");
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.UPDATED,
+                commentService.updateComment(commentId, userUid, form)
+        ));
     }
 
 
