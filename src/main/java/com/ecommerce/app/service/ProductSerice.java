@@ -20,11 +20,11 @@ public interface ProductSerice {
     void delete(String id);
     Optional<Product> findById(String id);
     ProductResponse getProductById(String id);
-    Optional<Product> findBySlug(String slug);
+    ProductResponse findBySlug(String slug);
     void changeStatus(String id);
 
     ProductResponse getProductDetail(String slug);
-    Page<ProductResponse> getTopViewedProducts(boolean asc, int page, int size);
+    Page<ProductResponse> getTopViewedProducts(int page, int size, String direction);
 
     Page<ProductResponse> getNewestProducts(int page, int size);
 

@@ -152,13 +152,14 @@ public class ProductController {
 
     @GetMapping("/top-views")
     public ResponseEntity<AppResponse<Page<ProductResponse>>> getTopViewedProducts(
-            @RequestParam(defaultValue = "desc") String direction,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "desc") String direction
     ) {
-        boolean asc = direction.equalsIgnoreCase("asc");
-        Page<ProductResponse> result = productService.getTopViewedProducts(asc, page, size);
-        return ResponseEntity.ok(AppResponse.builderResponse(SuccessCode.FETCHED, result));
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                productService.getTopViewedProducts( page, size, direction)
+        ));
     }
 
 

@@ -79,6 +79,15 @@ public class ProductServiceImpl implements ProductSerice {
         return productRepository.findAllProjectedBy(pageable);
     }
 
+    @Override
+    public Page<ProductResponse> getTopViewedProducts(int page, int size, String direction) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), "noOfView");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(ProductMapper::toSimpleResponse);
+    }
+
+
 
     @Override
     public List<String> uploadImagesToProduct(String productId, List<MultipartFile> files) {
@@ -276,18 +285,22 @@ public class ProductServiceImpl implements ProductSerice {
     @Cacheable(value = "PRODUCT_BY_ID", key = "#id")
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        product.setNoOfView(product.getNoOfView() + 1);
+        productRepository.save(product); // lưu lại lượt xem tăng
         ProductResponse productResponse = ProductMapper.toResponse(product);
         return productResponse;
     }
 
     @Override
     @Cacheable(value = "PRODUCT_BY_SLUG", key = "#slug")
-    public Optional<Product> findBySlug(String slug) {
+    public ProductResponse findBySlug(String slug) {
         Product product = productRepository.findProductBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        /***TODO
-         * Cần caching lại khi gọi findByID để sử dụng cho việc sản phẩm nổi bật, sản phẩm vừa xem
-         * */
-        return Optional.of(product);
+        product.setNoOfView(product.getNoOfView() + 1);
+        productRepository.save(product); // lưu lại lượt xem tăng
+
+        ProductResponse productResponse = ProductMapper.toSimpleResponse(product);
+        return productResponse;
     }
 
     @Override
@@ -370,15 +383,8 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
 
-    @Override
-    public Page<ProductResponse> getTopViewedProducts(boolean asc, int page, int size) {
-        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, "noOfView");
-        Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Product> products = productRepository.findAll(pageable);
 
-        return products.map(ProductMapper::toSimpleResponse);
-    }
 
     @Override
     public Page<ProductResponse> getNewestProducts(int page, int size) {
