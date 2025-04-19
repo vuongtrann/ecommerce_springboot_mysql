@@ -23,4 +23,12 @@ public class AppResponse <T>{
                 .data(data)
                 .build();
     }
+
+    public static <T> AppResponse<T> builderError(int errorCode, String errorMessage) {
+        return AppResponse.<T>builder()
+                .statusCode(errorCode)
+                .message(errorMessage)
+                .data(null)
+                .build();
+    }
 }

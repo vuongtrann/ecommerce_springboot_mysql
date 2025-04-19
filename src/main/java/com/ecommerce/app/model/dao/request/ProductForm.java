@@ -57,16 +57,10 @@ public class ProductForm {
 
 //    private List<Image> images = new ArrayList<>();
 
-
-//    private String brand ;
-//
     private boolean hasVariants;
 //
     private List<ProductVariantForm> variants = new ArrayList<>();
 
-//
-//    private List<String> collections = new ArrayList<>();
-//
 //    private Map<String, String> specifications ;
 
 }

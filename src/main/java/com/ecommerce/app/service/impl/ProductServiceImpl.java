@@ -17,11 +17,15 @@ import com.ecommerce.app.service.*;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.ErrorCode;
 import com.ecommerce.app.utils.Status;
+import com.github.slugify.Slugify;
+import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.cache.annotation.Cacheable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +48,12 @@ public class ProductServiceImpl implements ProductSerice {
     ProductRepository productRepository;
     CloudinaryService cloudinaryService;
     ImageRepository imageRepository;
+    ProductMapper productMapper;
+    ProductVariantRepository productVariant;
+    CategoryRepository categoryRepository;
+    BrandRepository brandRepository;
+    CollectionRepository collectionRepository;
+    TagRepository tagRepository;
 
     CategoryService categoryService;
     BrandService brandService;
@@ -73,9 +83,10 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public List<String> uploadImagesToProduct(String productId, List<MultipartFile> files) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() ->new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        List<String> uploadedUrls = cloudinaryService.uploadImages(files, "ecommerce/products/" + productId);
+        String folderName = "ecommerce/products/" + productId;
+        List<String> uploadedUrls = cloudinaryService.uploadImages(files, folderName);
 
         if (!uploadedUrls.isEmpty()) {
             product.setPrimaryImageURL(uploadedUrls.get(0)); // ảnh đầu tiên
@@ -98,9 +109,33 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public void removeImagesFromProduct(String productId) {
         if (!productRepository.existsById(productId)) {
-            throw new RuntimeException("Product not found");
+            throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
         }
         imageRepository.deleteByProductId(productId);
+    }
+
+
+    @Override
+    public List<String> uploadImagesToVariant(String variantId, String productId, List<MultipartFile> files) {
+
+        ProductVariant variant = productVariantRepository.findById(variantId)
+                .orElseThrow(() ->new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+
+        String folderName = "ecommerce/products/" + productId + "/variant/" + variantId;
+
+        List<String> urls = cloudinaryService.uploadImages(files, folderName);
+
+
+        List<Image> images = urls.stream().map(url -> {
+            Image img = new Image();
+            img.setUrl(url);
+            img.setProductVariant(variant);
+            return img;
+        }).collect(Collectors.toList());
+
+        imageRepository.saveAll(images);
+
+        return urls;
     }
 
     @Override
@@ -114,21 +149,17 @@ public class ProductServiceImpl implements ProductSerice {
 
         List<Collection> collections = collectionService.findByIdIn(form.getCollections());
 
-        List<Tag> tags = tagService.findByIdIn(form.getCategories());
-
-
-
-
+        List<Tag> tags = tagService.findByIdIn(form.getTags());
 
         Product product = ProductMapper.toEntity(form, categories, brands, collections, tags);
 
+        String slug = slugify.generateSlug(form.getName());
+        product.setSlug(slug);
         product.setQuantityAvailable(form.getQuantity());
         product.setStatus(Status.ACTIVE);
         product.setCreatedAt(Instant.now().toEpochMilli());
         product.setUpdatedAt(Instant.now().toEpochMilli());
-
         product = productRepository.save(product); // 🔹 Lưu product vào DB trước
-
         // 👉 Bước 2: Tạo và lưu ProductVariant sau khi Product đã có ID
         if (form.isHasVariants()) {
             List<ProductVariant> variants = new ArrayList<>();
@@ -144,44 +175,73 @@ public class ProductServiceImpl implements ProductSerice {
             product.getVariants().addAll(variants);
             product.setHasVariants(true);
         }
-
         // 👉 Bước 3: Cập nhật lại Product sau khi thêm variants
         Product saved = productRepository.save(product);
-
         return saved;
     }
 
     @Override
-    public Product update(String id ,ProductForm form) {
-        Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        List<Category> categories = categoryService.findByIdIn(form.getCategories());
+    public Product update(String productId ,ProductForm form) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND
+                ));
 
-        product.setName(form.getName());
+        // Check duplicate name
+        if (!product.getName().equalsIgnoreCase(form.getName())) {
+            if (productRepository.existsByName(form.getName())) {
+                throw new AppException(ErrorCode.PRODUCT_NAME_ALREADY_EXISTS);
+            }
+            product.setName(form.getName());
+
+            // Update slug if name changed
+            String newSlug = slugify.generateSlug(form.getName());
+            if (productRepository.existsBySlug(newSlug)) {
+                newSlug += "-" + UUID.randomUUID().toString().substring(0, 8);
+            }
+            product.setSlug(newSlug);
+        }
+
         product.setDescription(form.getDescription());
-        product.setSlug(slugify.generateSlug(form.getName()+ "-" + Instant.now().getEpochSecond()));
+        product.setPrimaryImageURL(form.getPrimaryImageURL());
         product.setSku(form.getSku());
-        product.setQuantity(form.getQuantity());
         product.setOriginalPrice(form.getOriginalPrice());
         product.setSellingPrice(form.getSellingPrice());
         product.setDiscountedPrice(form.getDiscountedPrice());
         product.setSellingType(form.getSellingType());
-        product.setCategories(categories);
-        product.setQuantityAvailable(form.getQuantity() - product.getSoldQuantity());
+        product.setQuantity(form.getQuantity());
+
+        // Handle variants
+        boolean hasVariants = form.isHasVariants();
+        if (hasVariants) {
+            product.getVariants().clear(); //  Hibernate xử lý orphan
+            List<ProductVariant> newVariants = form.getVariants().stream()
+                    .map(variantForm -> productMapper.toVariantEntity(variantForm, product))
+                    .collect(Collectors.toList());
+            product.getVariants().addAll(newVariants);
+        } else {
+            product.getVariants().clear(); // Không có variant thì clear
+        }
 
 
-        /***TODO
-         * Cần check xem sản phẩm đó không trùng tên
-         * Cần check xem sản phẩm đó không trùng sku
-         * Cần check xem sản phẩm đó không trùng slug
-         * Cần xử lý variant nếu có
-         * Cần xử lý spectification nếu có
-         * cần xử lý người cập nhật nếu có
-         * */
+        // Handle categories
+        List<Category> updatedCategories = categoryRepository.findAllByIdIn(form.getCategories());
+        product.setCategories(updatedCategories);
 
-        product.setUpdatedAt(Instant.now().toEpochMilli());
+        // Handle tags
+        List<Tag> updatedTags = tagRepository.findAllByIdIn(form.getTags());
+        product.setTags(updatedTags);
 
-        Product updatedProduct = save(product);
-        return updatedProduct;
+        // Handle brands
+        List<Brand> updatedBrands = brandRepository.findAllByIdIn(form.getBrands());
+        product.setBrands(updatedBrands);
+
+        // Handle collections
+        List<Collection> updatedCollections = collectionRepository.findAllByIdIn(form.getCollections());
+        product.setCollections(updatedCollections);
+
+        Product savedProduct = productRepository.save(product);
+        return savedProduct;
+//        return productMapper.toResponse(savedProduct);
 
     }
 
@@ -294,5 +354,36 @@ public class ProductServiceImpl implements ProductSerice {
         productVariant.getVariantOptions().addAll(variantOptions);
 
         return productVariantRepository.save(productVariant); // Cập nhật lại ProductVariant với danh sách VariantOptions
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse getProductDetail(String slug) {
+        Product product = productRepository.findBySlug(slug)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        product.setNoOfView(product.getNoOfView() + 1);
+        productRepository.save(product); // lưu lại lượt xem tăng
+
+        ProductResponse productResponse = ProductMapper.toSimpleResponse(product);
+        return productResponse;
+    }
+
+
+    @Override
+    public Page<ProductResponse> getTopViewedProducts(boolean asc, int page, int size) {
+        Sort sort = Sort.by(asc ? Sort.Direction.ASC : Sort.Direction.DESC, "noOfView");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> products = productRepository.findAll(pageable);
+
+        return products.map(ProductMapper::toSimpleResponse);
+    }
+
+    @Override
+    public Page<ProductResponse> getNewestProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Product> productPage = productRepository.findAllByOrderByCreatedAtDesc(pageable);
+        return productPage.map(ProductMapper::toSimpleResponse);
     }
 }

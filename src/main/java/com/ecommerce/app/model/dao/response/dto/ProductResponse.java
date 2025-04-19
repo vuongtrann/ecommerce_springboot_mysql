@@ -42,11 +42,12 @@ public class ProductResponse {
 
 
     private List<CategoryResponse> categories;
-//    private List<TagProjection> tags;
-private List<TagResponse> tags;
-//    private List<CollectionProjection> collections;
+    private List<TagResponse> tags;
     private List<CollectionResponse> collections;
     private List<BrandResponse> brands;
     private List<ProductVariantResponse> variants;
     private List<String> images;
+    private List<CommentResponse> comments;
+
+
 }
