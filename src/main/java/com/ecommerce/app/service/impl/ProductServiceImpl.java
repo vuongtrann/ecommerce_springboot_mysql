@@ -26,6 +26,8 @@ import lombok.experimental.FieldDefaults;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -181,6 +183,10 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "PRODUCT_BY_ID", key = "#productId"),
+            @CachePut (value = "PRODUCT_BY_SLUG", key = "#form.slug")
+    })
     public Product update(String productId ,ProductForm form) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND
