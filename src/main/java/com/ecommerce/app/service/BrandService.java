@@ -11,12 +11,13 @@ import java.util.Optional;
 
 public interface BrandService {
     Brand save(Brand brand);
-    Optional<Brand> findById(String id);
+    Brand findById(String id);
     Page<BrandProjection> getAllBrands(int page, int size, String sortBy, String direction);
     Brand createBrand(BrandForm brandForm);
     Brand updateBrand(String id ,BrandForm brandForm);
     void deleteBrand(String id);
     void changeStatus(String id);
+    Brand findBySlug(String slug);
 
     List<Brand> findByIdIn(List<String> ids);
     void addBrandToProduct(String productId, String brandId);

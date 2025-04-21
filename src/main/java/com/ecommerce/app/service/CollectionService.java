@@ -11,12 +11,13 @@ import java.util.Optional;
 
 public interface CollectionService {
     Collection saveCollection(Collection collection);
-    Optional<Collection> findById(String id);
+    Collection findById(String id);
     Page<CollectionProjection> getAllCollections(int page, int size, String sortBy, String direction);
     Collection createCollection(CollectionForm collectionForm);
     Collection updateCollection(String id,CollectionForm collectionForm);
     void deleteCollection(String id);
     void changeStatus(String id);
+    Collection findBySlug(String slug);
 
     List<Collection> findByIdIn(List<String> ids);
     void addCollectionToProduct(String productId, String collectionId);

@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Brand extends BaseEntity{
     private String name;
-    private String slug;
     private String description;
+    private String slug;
+
 }

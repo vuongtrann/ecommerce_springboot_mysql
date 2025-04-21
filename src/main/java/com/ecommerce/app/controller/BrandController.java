@@ -2,8 +2,11 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.BrandForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.CollectionResponse;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
 import com.ecommerce.app.model.entity.Brand;
+import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.service.BrandService;
 import com.ecommerce.app.utils.SuccessCode;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,24 @@ public class BrandController {
             @RequestParam(defaultValue = "desc") String direction
     ) {
         return ResponseEntity.ok(brandService.getAllBrands( page, size, sortBy, direction));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AppResponse<Brand>> getBrandById(@PathVariable String id) {
+        Brand brand = brandService.findById(id);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                brand
+        ));
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<AppResponse<Brand>> getBrandBySlug(@PathVariable String slug) {
+        Brand brand = brandService.findBySlug(slug);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                brand
+        ));
     }
 
     @PostMapping

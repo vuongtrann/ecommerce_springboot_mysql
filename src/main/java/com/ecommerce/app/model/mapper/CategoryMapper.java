@@ -2,6 +2,7 @@ package com.ecommerce.app.model.mapper;
 
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CategoryForm;
+import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.repository.CategoryRepository;
 import com.ecommerce.app.utils.ErrorCode;
@@ -25,6 +26,14 @@ public class CategoryMapper {
                 .slug(request.getSlug()!= null ? request.getSlug() : null)
                 .parent(request.getParentId() != null ? categoryRepository.findById(request.getParentId()).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND)) : null)
                 .children(request.getChildId()!= null ? children : null)
+                .build();
+    }
+
+    public static CategoryResponse toCategoryResponse(Category category) {
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .slug(category.getSlug())
                 .build();
     }
 

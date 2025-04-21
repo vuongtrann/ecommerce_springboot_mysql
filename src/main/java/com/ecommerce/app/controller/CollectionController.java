@@ -31,6 +31,26 @@ public class CollectionController {
         return ResponseEntity.ok(collectionService.getAllCollections( page, size, sortBy, direction));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<AppResponse<Collection>> getCollectionById(@PathVariable String id) {
+        Collection collection = collectionService.findById(id);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                collection
+        ));
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<AppResponse<Collection>> getCollectionBySlug(@PathVariable String slug) {
+        Collection collection = collectionService.findBySlug(slug);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                collection
+        ));
+    }
+
+
+
     @PostMapping
     public ResponseEntity<AppResponse<Collection>> addCollection(@RequestBody CollectionForm collectionForm) {
         return ResponseEntity.ok(
