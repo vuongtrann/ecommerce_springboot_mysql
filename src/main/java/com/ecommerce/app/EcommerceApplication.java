@@ -15,6 +15,7 @@ import static org.springframework.data.web.config.EnableSpringDataWebSupport.Pag
 @EnableJpaAuditing
 public class EcommerceApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(EcommerceApplication.class, args);
     }
