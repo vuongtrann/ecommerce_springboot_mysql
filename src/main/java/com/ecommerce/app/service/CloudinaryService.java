@@ -12,5 +12,5 @@ public interface CloudinaryService {
 
     void deleteImageByUrl(String imageUrl);
 
-    String uploadAvatar(MultipartFile file, Long userId);
+    String uploadAvatar(MultipartFile file, String userId);
 }

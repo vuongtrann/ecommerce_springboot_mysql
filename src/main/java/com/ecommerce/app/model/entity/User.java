@@ -9,6 +9,7 @@
     import lombok.Getter;
     import lombok.NoArgsConstructor;
     import lombok.Setter;
+    import org.hibernate.annotations.GenericGenerator;
     import org.springframework.data.annotation.CreatedDate;
     import org.springframework.data.annotation.LastModifiedDate;
 
@@ -23,11 +24,12 @@
     @AllArgsConstructor
     public class User {
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+        @GeneratedValue(generator = "UUID")
+        @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+        private String id;
 
         @Column(unique = true)
-        private Long uid;
+        private Long UID;
 
         @Column(nullable = false)
         private String messengerId; 

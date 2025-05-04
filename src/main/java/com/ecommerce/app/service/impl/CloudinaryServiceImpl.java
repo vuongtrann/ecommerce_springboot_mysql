@@ -138,7 +138,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private String avatarFolder;
 
     @Override
-    public String uploadAvatar(MultipartFile file, Long userId) {
+    public String uploadAvatar(MultipartFile file, String userId) {
         try {
             String folder = "ecommerce/users/" + userId;
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of(

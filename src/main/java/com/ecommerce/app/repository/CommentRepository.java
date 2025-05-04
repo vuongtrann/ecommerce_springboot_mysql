@@ -14,11 +14,12 @@ import java.util.List;
 
 
 public interface CommentRepository  extends JpaRepository<Comment, String> {
-    List<Comment> findByUser_IdAndStatus(Long userId,  Status status);
 
+    @Query("SELECT c FROM Comment c WHERE c.user.UID = ?1 AND c.status = ?2")
+    List<Comment> findByUIDAndStatus(Long uid, Status status);
     Long user(User user);
 
-    @Query("SELECT c.content AS content, u.uid AS uid, p.id AS productId " +
+    @Query("SELECT c.content AS content, u.UID AS uid, p.id AS productId " +
             "FROM Comment c " +
             "JOIN c.user u " +
             "JOIN c.product p")
