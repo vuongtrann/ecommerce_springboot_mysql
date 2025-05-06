@@ -10,7 +10,7 @@ public class UserMapper {
     public static UserResponse toResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
-                .uid(user.getUid())
+                .UID(user.getUID())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .avatarUrl(user.getAvatar() != null ? user.getAvatar() : null) // hoặc ẩn nếu muốn

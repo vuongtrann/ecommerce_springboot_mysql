@@ -7,6 +7,7 @@ import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.model.entity.UidSequence;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.repository.UidSequenceRepository;
+import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.AuthService;
 import com.ecommerce.app.service.CloudinaryService;
 import com.ecommerce.app.service.MailService;
@@ -25,6 +26,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 @RequiredArgsConstructor
 //@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
@@ -34,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final MailService mailService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
-    private final UidSequenceRepository uidSequenceRepository;
+    private final UserRepositiory userRepository;
 
     @Value("${server.url}")
     String serverUrl;
@@ -60,8 +64,9 @@ public class AuthServiceImpl implements AuthService {
                 Role.USER
         );
 
-        Long uid = generateNextUid(); // gọi từ trong serviceImpl
-        user.setUid(uid);
+
+        user.setUID(generateUniqueUid());
+        user.setMessengerId(java.util.UUID.randomUUID().toString());
         user.setCreatedAt(Instant.now().toEpochMilli());
         user.setUpdatedAt(Instant.now().toEpochMilli());
         userService.save(user);
@@ -182,20 +187,16 @@ public class AuthServiceImpl implements AuthService {
         return userService.existsByUserName(userName);
     }
 
-    private Long generateNextUid() {
-        List<UidSequence> sequences = uidSequenceRepository.findAll();
-        UidSequence sequence;
-
-        if (sequences.isEmpty()) {
-            sequence = new UidSequence();
-            sequence.setCurrentUid(1L);
-        } else {
-            sequence = sequences.get(0);
-            sequence.setCurrentUid(sequence.getCurrentUid() + 1);
-        }
-
-        uidSequenceRepository.save(sequence);
-        return sequence.getCurrentUid();
+    private Long generateUniqueUid() {
+        Long uid;
+        do {
+            uid = generateRandomUid(); // hoặc tăng dần tùy bạn
+        } while (userRepository.existsByUID(uid));
+        return uid;
     }
 
+    private Long generateRandomUid() {
+        // Ví dụ: tạo số ngẫu nhiên trong khoảng 100000 đến 999999
+        return ThreadLocalRandom.current().nextLong(100000, 1000000);
+    }
 }

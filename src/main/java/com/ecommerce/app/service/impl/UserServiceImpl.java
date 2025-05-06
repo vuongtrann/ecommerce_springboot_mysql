@@ -65,12 +65,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserByUid(Long uid) {
-        return userRepositiory.findByUid(uid);
+        return userRepositiory.findByUID(uid);
     }
 
     @Override
     public UserResponse getUserResponseByUid(Long uid) {
-        User user = userRepositiory.findByUid(uid)
+        User user = userRepositiory.findByUID(uid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return UserMapper.toResponse(user);
     }
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateAvatar(Long uid, MultipartFile avatar) {
         User user = userRepositiory
-                .findByUid(uid)
+                .findByUID(uid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         String avatarUrl = cloudinaryService.uploadAvatar(avatar, user.getId());

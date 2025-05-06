@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
         if (uid == null) {
             throw new AppException(ErrorCode.COMMENT_FAIL);
         }
-        User user = userRepository.findByUid(uid)
+        User user = userRepository.findByUID(uid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         Product product = productRepository.findById(productId)
@@ -58,9 +58,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentResponse> getCommentsByUserId(Long uid) {
-        User user = userRepository.findByUid(uid)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        List<Comment> comments = commentRepository.findByUser_IdAndStatus(user.getId(), Status.ACTIVE);
+        List<Comment> comments = commentRepository.findByUIDAndStatus(uid, Status.ACTIVE);
+        if (comments.isEmpty()) {
+            throw new AppException(ErrorCode.COMMENT_NOT_FOUND);
+        }
         return CommentMapper.toResponseList(comments);
     }
 
@@ -78,10 +79,10 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() ->  new AppException(ErrorCode.COMMENT_NOT_FOUND));
 
-        User currentUser = userRepository.findByUid(userUid)
+        User currentUser = userRepository.findByUID(userUid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        boolean isOwner = comment.getUser().getUid().equals(userUid);
+        boolean isOwner = comment.getUser().getUID().equals(userUid);
         boolean isAdmin = currentUser.getRole().equals(Role.ADMIN);
 
         if (!isOwner && !isAdmin) {
@@ -98,10 +99,10 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
 
-        User currentUser = userRepository.findByUid(userUid)
+        User currentUser = userRepository.findByUID(userUid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        boolean isOwner = comment.getUser().getUid().equals(userUid);
+        boolean isOwner = comment.getUser().getUID().equals(userUid);
         boolean isAdmin = currentUser.getRole().equals(Role.ADMIN);
 
         if (!isOwner && !isAdmin) {
@@ -113,7 +114,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResponse updateComment(String commentId, Long userUid, CommentForm form) {
         // Tìm user theo UID
-        User user = userRepository.findByUid(userUid)
+        User user = userRepository.findByUID(userUid)
                 .orElseThrow(() ->  new AppException(ErrorCode.USER_NOT_FOUND));
 
         // Tìm comment theo ID và check trạng thái ACTIVE
