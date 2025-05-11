@@ -12,7 +12,7 @@ public interface ProductProjection {
      String getDescription();
      String getSlug();
      String getPrimaryImageURL();
-     List<Category> getCategories();
+//     List<Category> getCategories();
 //     List<String> getImageURLs();
      List<Image> getImages();
      String getSku();
