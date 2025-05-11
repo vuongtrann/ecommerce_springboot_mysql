@@ -15,6 +15,10 @@ import com.ecommerce.app.utils.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,10 +42,15 @@ public class CollectionImpl implements CollectionService {
     }
 
     @Override
-    public Optional<Collection> findById(String id) {
-        Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+    @Cacheable(value = "COLLECTION_BY_ID", key = "#id")
+    public Collection findById(String id) {
+        return collectionRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+    }
 
-        return Optional.of(collection);
+    @Override
+    public  List<Collection> findAllCollectionsByList(){
+        return collectionRepository.findAll();
     }
 
     @Override
@@ -62,24 +71,32 @@ public class CollectionImpl implements CollectionService {
                 collectionForm.getCollectionName(),
                 collectionForm.getCollectionDescription(),
                 collectionForm.getCollectionImage(),
-                slugify.generateSlug(collectionForm.getCollectionSlug())
+                slugify.generateSlug(collectionForm.getCollectionName())
         );
         Collection savedCollection = collectionRepository.save(collection);
         return savedCollection;
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "COLLECTION_BY_ID", key = "#id"),
+            @CachePut (value = "COLLECTION_BY_SLUG", key = "#collectionForm.collectionSlug")
+    })
     public Collection updateCollection(String id, CollectionForm collectionForm) {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
         collection.setCollectionName(collectionForm.getCollectionName());
         collection.setCollectionDescription(collectionForm.getCollectionDescription());
         collection.setCollectionImage(collectionForm.getCollectionImage());
-        collection.setSlug(slugify.generateSlug(collectionForm.getCollectionSlug()));
+        collection.setSlug(slugify.generateSlug(collectionForm.getCollectionName()));
         Collection savedCollection = collectionRepository.save(collection);
         return savedCollection;
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "COLLECTION_BY_ID", key = "#id"),
+
+    })
     public void deleteCollection(String id) {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
         if (collection.getStatus().equals("ACTIVE")) {
@@ -114,5 +131,14 @@ public class CollectionImpl implements CollectionService {
             product.getCollections().add(collection);
             productRepository.save(product);
         }
+    }
+    @Override
+    @Cacheable(value = "COLLECTION_BY_SLUG", key = "#slug")
+    public Collection findBySlug(String slug) {
+        Collection collection = collectionRepository.findCollectionBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+        /***TODO
+         * Cần caching lại khi gọi findByID để sử dụng cho việc sản phẩm nổi bật, sản phẩm vừa xem
+         * */
+        return collection;
     }
 }

@@ -2,8 +2,12 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.BrandForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.CollectionResponse;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
 import com.ecommerce.app.model.entity.Brand;
+import com.ecommerce.app.model.entity.Category;
+import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.service.BrandService;
 import com.ecommerce.app.utils.SuccessCode;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +16,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/v1/brand")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class BrandController {
@@ -30,6 +36,36 @@ public class BrandController {
             @RequestParam(defaultValue = "desc") String direction
     ) {
         return ResponseEntity.ok(brandService.getAllBrands( page, size, sortBy, direction));
+    }
+
+
+
+    @GetMapping("/list/all")
+    public ResponseEntity<AppResponse<List<Brand>>> getAllBrandByList() {
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        brandService.findAllBrandsByList()
+                )
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AppResponse<Brand>> getBrandById(@PathVariable String id) {
+        Brand brand = brandService.findById(id);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                brand
+        ));
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<AppResponse<Brand>> getBrandBySlug(@PathVariable String slug) {
+        Brand brand = brandService.findBySlug(slug);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                brand
+        ));
     }
 
     @PostMapping

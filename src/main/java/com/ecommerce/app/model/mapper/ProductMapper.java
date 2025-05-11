@@ -10,6 +10,7 @@ import com.ecommerce.app.model.entity.*;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.ecommerce.app.model.entity.Variant.VariantOption;
 import com.ecommerce.app.model.entity.Variant.VariantType;
+import com.ecommerce.app.service.utils.SlugifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +21,10 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
-
     public static Product toEntity(ProductForm request, List<Category> categories, List<Brand> brands, List<Collection> collections, List<Tag> tags) {
         return Product.builder()
                 .name(request.getName() != null ? request.getName().trim() : null)
                 .description(request.getDescription() != null ? request.getDescription().trim() : null)
-                .slug(request.getSlug())
                 .primaryImageURL(request.getPrimaryImageURL() != null ? request.getPrimaryImageURL().trim() : null)
                 .sku(request.getSku() != null ? request.getSku().trim() : null)
                 .quantity(request.getQuantity())

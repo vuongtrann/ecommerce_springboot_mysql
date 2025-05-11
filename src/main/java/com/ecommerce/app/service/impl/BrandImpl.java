@@ -15,6 +15,10 @@ import com.ecommerce.app.utils.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,10 +42,11 @@ public class BrandImpl implements BrandService {
     }
 
     @Override
-    public Optional<Brand> findById(String id) {
+    @Cacheable(value = "BRAND_BY_ID", key = "#id")
+    public Brand findById(String id) {
         Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
 
-        return Optional.of(brand);
+        return brand;
     }
 
     @Override
@@ -57,6 +62,12 @@ public class BrandImpl implements BrandService {
     }
 
     @Override
+    public  List<Brand> findAllBrandsByList(){
+        return brandRepository.findAll();
+    }
+
+
+    @Override
     public Brand createBrand(BrandForm brandForm) {
 
         Brand brand = new Brand(
@@ -68,6 +79,11 @@ public class BrandImpl implements BrandService {
         return savedBrand;
     }
 
+    @Override
+    @Caching(put = {
+            @CachePut(value = "BRAND_BY_ID", key = "#id"),
+            @CachePut (value = "BRAND_BY_SLUG", key = "#brandForm.slug")
+    })
     public Brand updateBrand( String id,BrandForm brandForm) {
        Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
        brand.setName(brandForm.getName());
@@ -77,6 +93,10 @@ public class BrandImpl implements BrandService {
        return savedBrand;
     }
 
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "BRAND_BY_ID", key = "#id"),
+    })
     public void deleteBrand(String id) {
         Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
         if (brand.getStatus().equals("ACTIVE")) {
@@ -109,6 +129,16 @@ public class BrandImpl implements BrandService {
             product.getBrands().add(brand);
             productRepository.save(product);
         }
+    }
+
+    @Override
+    @Cacheable(value = "BRAND_BY_SLUG", key = "#slug")
+    public Brand findBySlug(String slug) {
+        Brand brand = brandRepository.findBrandBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        /***TODO
+         * Cần caching lại khi gọi findByID để sử dụng cho việc sản phẩm nổi bật, sản phẩm vừa xem
+         * */
+        return brand;
     }
 
 

@@ -13,6 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class BrandResponse {
     private String id;
     private String name;
-    private String slug;
     private String description;
+    private String slug;
 }

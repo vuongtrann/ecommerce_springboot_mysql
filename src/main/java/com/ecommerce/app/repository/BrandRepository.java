@@ -16,4 +16,6 @@ import java.util.Optional;
 public interface BrandRepository extends JpaRepository<Brand, String> {
     Page<BrandProjection> findAllBrandBy(Pageable pageable);
     List<Brand> findAllByIdIn(List<String> ids);
+    Optional<Brand> findBrandBySlug(String slug);
+
 }

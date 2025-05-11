@@ -2,7 +2,12 @@ package com.ecommerce.app.service.impl;
 
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CategoryForm;
+import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.entity.Category;
+import com.ecommerce.app.model.entity.Product;
+import com.ecommerce.app.model.mapper.CategoryMapper;
+import com.ecommerce.app.model.mapper.ProductMapper;
 import com.ecommerce.app.repository.CategoryRepository;
 import com.ecommerce.app.service.CategoryService;
 import com.ecommerce.app.service.utils.SlugifyService;
@@ -11,6 +16,10 @@ import com.ecommerce.app.utils.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -33,8 +42,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> findById(String id) {
-        return categoryRepository.findById(id);
+    @Cacheable(value = "CATEGORY_BY_ID", key = "#id")
+
+    public CategoryResponse findById(String id) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        CategoryResponse categoryResponse = CategoryMapper.toCategoryResponse(category);
+        return categoryResponse;
     }
 
     @Override
@@ -43,8 +56,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> findBySlug(String slug) {
-        return  categoryRepository.findBySlug(slug);
+    @Cacheable(value = "CATEGORY_BY_SLUG", key = "#slug")
+
+    public CategoryResponse findBySlug(String slug) {
+        Category category = categoryRepository.findBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        CategoryResponse categoryResponse = CategoryMapper.toCategoryResponse(category);
+        return categoryResponse;
     }
 
     @Override
@@ -84,6 +101,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "CATEGORY_BY_ID", key = "#id"),
+            @CachePut (value = "CATEGORY_BY_SLUG", key = "#form.slug")
+    })
     public Category update(String id,CategoryForm form) {
         Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         boolean existsCategory = categoryRepository.existsByName(form.getName());
@@ -131,6 +152,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "CATEGORY_BY_ID", key = "#id"),
+            @CacheEvict(value = "CATEGORY_BY_SLUG", key = "#slug")
+    })
     public void delete(String id) {
          Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
          /*** TODO
