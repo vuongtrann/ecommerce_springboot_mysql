@@ -49,6 +49,11 @@ public class CollectionImpl implements CollectionService {
     }
 
     @Override
+    public  List<Collection> findAllCollectionsByList(){
+        return collectionRepository.findAll();
+    }
+
+    @Override
     public List<Collection> findByIdIn(List<String> ids) {
         return collectionRepository.findAllByIdIn(ids);
     }
@@ -90,7 +95,7 @@ public class CollectionImpl implements CollectionService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "COLLECTION_BY_ID", key = "#id"),
-            @CacheEvict(value = "COLLECTION_BY_SLUG", key = "#collectionSlug")
+
     })
     public void deleteCollection(String id) {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));

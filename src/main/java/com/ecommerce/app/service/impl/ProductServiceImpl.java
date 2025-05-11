@@ -269,8 +269,8 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     //Clear cache when product is deleted
     @Caching(evict = {
-            @CacheEvict(value = "PRODUCT_BY_ID", key = "#id"),
-            @CacheEvict(value = "PRODUCT_BY_SLUG", key = "#slug")
+            @CacheEvict(value = "PRODUCT_BY_ID", key = "#id")
+
     })
     public void delete(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));

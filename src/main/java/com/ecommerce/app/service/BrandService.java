@@ -18,6 +18,7 @@ public interface BrandService {
     void deleteBrand(String id);
     void changeStatus(String id);
     Brand findBySlug(String slug);
+    List<Brand> findAllBrandsByList();
 
     List<Brand> findByIdIn(List<String> ids);
     void addBrandToProduct(String productId, String brandId);

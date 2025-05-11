@@ -3,6 +3,7 @@ package com.ecommerce.app.controller;
 import com.ecommerce.app.model.dao.request.CollectionForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.projection.CollectionProjection;
+import com.ecommerce.app.model.entity.Brand;
 import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.service.CollectionService;
 import com.ecommerce.app.utils.SuccessCode;
@@ -12,9 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/v1/collection")
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class CollectionController {
@@ -29,6 +32,16 @@ public class CollectionController {
             @RequestParam(defaultValue = "desc") String direction
     ) {
         return ResponseEntity.ok(collectionService.getAllCollections( page, size, sortBy, direction));
+    }
+
+    @GetMapping("/list/all")
+    public ResponseEntity<AppResponse<List<Collection>>> getAllCollectionByList() {
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.FETCHED,
+                        collectionService.findAllCollectionsByList()
+                )
+        );
     }
 
     @GetMapping("/{id}")

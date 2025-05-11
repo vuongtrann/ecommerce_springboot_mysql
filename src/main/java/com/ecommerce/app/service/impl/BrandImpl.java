@@ -62,6 +62,12 @@ public class BrandImpl implements BrandService {
     }
 
     @Override
+    public  List<Brand> findAllBrandsByList(){
+        return brandRepository.findAll();
+    }
+
+
+    @Override
     public Brand createBrand(BrandForm brandForm) {
 
         Brand brand = new Brand(
@@ -90,7 +96,6 @@ public class BrandImpl implements BrandService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "BRAND_BY_ID", key = "#id"),
-            @CacheEvict(value = "BRAND_BY_SLUG", key = "#slug")
     })
     public void deleteBrand(String id) {
         Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));

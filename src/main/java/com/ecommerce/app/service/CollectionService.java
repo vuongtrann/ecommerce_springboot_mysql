@@ -19,6 +19,8 @@ public interface CollectionService {
     void changeStatus(String id);
     Collection findBySlug(String slug);
 
+    List<Collection> findAllCollectionsByList();
+
     List<Collection> findByIdIn(List<String> ids);
     void addCollectionToProduct(String productId, String collectionId);
 }
