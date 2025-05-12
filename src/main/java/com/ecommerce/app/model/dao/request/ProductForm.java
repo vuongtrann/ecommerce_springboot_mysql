@@ -23,7 +23,7 @@ public class ProductForm {
 
     private String primaryImageURL;
 
-    private List<String> imagesURL = new ArrayList<>();
+//    private List<String> imagesURL = new ArrayList<>();
 
     private String sku;
 
@@ -41,24 +41,26 @@ public class ProductForm {
     @Size(min = 1, message = "Discounted price must be greater than 0")
     private double discountedPrice; //gia giam
 
-    private int noOfView;
+//    private int noOfView;
 
     private String sellingType;
 
-    private double avgRating;
+//    private double avgRating;
 
     private List<String> categories = new ArrayList<>();
-    private List<Image> images = new ArrayList<>();
 
-//    private String brand ;
-//
+    private List<String> brands = new ArrayList<>();
+
+    private List<String> collections = new ArrayList<>();
+
+    private List<String> tags = new ArrayList<>();
+
+//    private List<Image> images = new ArrayList<>();
+
     private boolean hasVariants;
 //
     private List<ProductVariantForm> variants = new ArrayList<>();
 
-//
-//    private List<String> collections = new ArrayList<>();
-//
 //    private Map<String, String> specifications ;
 
 }

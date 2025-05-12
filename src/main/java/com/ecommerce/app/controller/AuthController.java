@@ -7,6 +7,7 @@ import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.service.AuthService;
+import com.ecommerce.app.service.UserService;
 import com.ecommerce.app.utils.SuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -25,13 +27,23 @@ import java.util.Map;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
     AuthService authservice;
+    UserService userservice;
+
+//    @PostMapping("/register")
+//    public ResponseEntity<AppResponse<User>> register(@RequestBody @Valid RegisterForm form) {
+//        User user = authservice.register(form);
+//        return ResponseEntity.ok( AppResponse.builderResponse(
+//                SuccessCode.REGISTER, user
+//        ));
+//    }
 
     @PostMapping("/register")
-    public ResponseEntity<AppResponse<User>> register(@RequestBody @Valid RegisterForm form) {
-        User user = authservice.register(form);
-        return ResponseEntity.ok( AppResponse.builderResponse(
-                SuccessCode.REGISTER, user
-        ));
+    public ResponseEntity<AppResponse<User>> register(
+            @ModelAttribute RegisterForm form,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar
+    ) {
+        User user = authservice.register(form, avatar);
+        return ResponseEntity.ok(AppResponse.builderResponse(SuccessCode.REGISTER, user));
     }
 
     @GetMapping("/verify-email")
@@ -79,5 +91,4 @@ public class AuthController {
     public ResponseEntity<Boolean> existsByUserName(@PathVariable String username) {
         return ResponseEntity.ok(authservice.existsByUserName(username));
     }
-
 }

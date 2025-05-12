@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.response.projection;
 
+import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.model.entity.Image;
 import com.ecommerce.app.utils.Status;
 
@@ -11,7 +12,7 @@ public interface ProductProjection {
      String getDescription();
      String getSlug();
      String getPrimaryImageURL();
-//
+//     List<Category> getCategories();
 //     List<String> getImageURLs();
      List<Image> getImages();
      String getSku();

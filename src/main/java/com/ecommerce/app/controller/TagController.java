@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -81,6 +82,21 @@ public class TagController {
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,
                         id
+                )
+        );
+    }
+
+    @PostMapping("/product/{productId}")
+    public ResponseEntity<AppResponse<String>> addTagToProduct(
+            @PathVariable String productId,
+            @RequestBody Map<String, String> body) {
+
+        String tagId = body.get("id");
+        tagService.addTagToProduct(productId, tagId);
+        return ResponseEntity.ok(
+                AppResponse.builderResponse(
+                        SuccessCode.ADD_TAG_PRODUCT,
+                        "Check productId: " + productId
                 )
         );
     }

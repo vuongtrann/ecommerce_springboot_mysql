@@ -2,6 +2,7 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.CategoryForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.service.CategoryService;
 import com.ecommerce.app.utils.SuccessCode;
@@ -39,21 +40,21 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppResponse<Category>> findById(@PathVariable String id) {
+    public ResponseEntity<AppResponse<CategoryResponse>> findById(@PathVariable String id) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.FETCHED,
-                        categoryService.findById(id).orElse(null)
+                        categoryService.findById(id)
                 )
         );
     }
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<AppResponse<Category>> findBySlug(@PathVariable String slug) {
+    public ResponseEntity<AppResponse<CategoryResponse>> findBySlug(@PathVariable String slug) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.FETCHED,
-                        categoryService.findBySlug(slug).orElse(null)
+                        categoryService.findBySlug(slug)
                 )
         );
     }
@@ -69,12 +70,12 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}/activate")
-    public ResponseEntity<AppResponse<Category>> setActivate(@PathVariable String id, @RequestParam boolean isActive) {
+    public ResponseEntity<AppResponse<CategoryResponse>> setActivate(@PathVariable String id, @RequestParam boolean isActive) {
         categoryService.setActivate(id, isActive);
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,
-                        categoryService.findById(id).orElse(null)
+                        categoryService.findById(id)
                 )
         );
     }

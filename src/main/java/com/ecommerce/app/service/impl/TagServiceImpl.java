@@ -3,7 +3,10 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.TagForm;
 import com.ecommerce.app.model.dao.response.projection.TagProjection;
+import com.ecommerce.app.model.entity.Collection;
+import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Tag;
+import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.repository.TagRepository;
 import com.ecommerce.app.service.TagService;
 import com.ecommerce.app.utils.ErrorCode;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +29,7 @@ import java.util.Optional;
 public class TagServiceImpl implements TagService {
 
     TagRepository tagRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public Page<TagProjection> findAll(int page, int size, String sortBy, String direction) {
@@ -36,6 +41,11 @@ public class TagServiceImpl implements TagService {
     @Override
     public Optional<Tag> findById(String id) {
         return tagRepository.findById(id);
+    }
+
+    @Override
+    public List<Tag> findByIdIn(List<String> ids) {
+        return tagRepository.findAllByIdIn(ids);
     }
 
     @Override
@@ -85,5 +95,18 @@ public class TagServiceImpl implements TagService {
             tag.setStatus(Status.ACTIVE);
         }
         tagRepository.save(tag);
+    }
+    @Override
+    public void addTagToProduct(String productId, String tagId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new AppException(ErrorCode.TAG_NOT_FOUND));
+
+        if (!product.getTags().contains(tag)) {
+            product.getTags().add(tag);
+            productRepository.save(product);
+        }
     }
 }

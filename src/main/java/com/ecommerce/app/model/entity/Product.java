@@ -3,6 +3,7 @@ package com.ecommerce.app.model.entity;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,12 +22,15 @@ import java.util.stream.Collectors;
 public class Product extends BaseEntity {
     private String name;
     private String description;
+
+    @Column(name = "slug", nullable = false)
     private String slug;
+
     private String primaryImageURL;
-    @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url")
-    private List<String> imageURLs;
+//    @ElementCollection
+//    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+//    @Column(name = "image_url")
+//    private List<String> imageURLs;
     private String sku;
     private int quantity;
     private int quantityAvailable;
@@ -62,24 +66,28 @@ public class Product extends BaseEntity {
     )
     private List<Tag> tags;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_collection",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "collection_id")
+    )
+    private List<Collection> collections;
+
+    @ManyToMany
+    @JoinTable(
+            name = "product_brand",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "brand_id")
+    )
+    private List<Brand> brands;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 //    @JsonBackReference
     private List<ProductVariant> variants = new ArrayList<>();
 
-    public Product( String name, String description, String slug, String sku,int quantity,  double originalPrice,  double sellingPrice,  double discountedPrice, String sellingType, List<Category> categories) {
-        this.name = name;
-        this.description = description;
-        this.slug = slug;
-        this.sku = sku;
-        this.quantity = quantity;
-        this.originalPrice = originalPrice;
-        this.sellingPrice = sellingPrice;
-        this.discountedPrice = discountedPrice;
-        this.sellingType = sellingType;
-        this.categories = categories;
-        this.imageURLs = getImages().stream()
-                .map(Image::getUrl)
-                .collect(Collectors.toList());
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
-    }
+
 }

@@ -1,6 +1,7 @@
 package com.ecommerce.app.service;
 
 import com.ecommerce.app.model.dao.request.ProductForm;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Variant.VariantType;
@@ -18,9 +19,20 @@ public interface ProductSerice {
     Product uploadImage(String id, List<MultipartFile> files);
     void delete(String id);
     Optional<Product> findById(String id);
-    Optional<Product> findBySlug(String slug);
+    ProductResponse getProductById(String id);
+    ProductResponse findBySlug(String slug);
     void changeStatus(String id);
 
+    ProductResponse getProductDetail(String slug);
+    Page<ProductResponse> getTopViewedProducts(int page, int size, String direction);
+
+    Page<ProductResponse> getNewestProducts(int page, int size);
+
+    List<String> uploadImagesToProduct(String productId, List<MultipartFile> files);
+    void removeImagesFromProduct(String productId);
+
+
+    List<String> uploadImagesToVariant(String variantId,String productId, List<MultipartFile> files);
 
     /**Variant Type*/
     List<VariantType> getVariantTypes();
