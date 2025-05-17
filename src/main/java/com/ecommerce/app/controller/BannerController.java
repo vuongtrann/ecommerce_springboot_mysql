@@ -4,14 +4,13 @@ import com.ecommerce.app.model.dao.request.BannerForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.entity.Banner;
 import com.ecommerce.app.service.BannerService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/banner")

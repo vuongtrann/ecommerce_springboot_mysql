@@ -1,6 +1,6 @@
 package com.ecommerce.app.exception;
 
-import com.ecommerce.app.utils.ErrorCode;
+import com.ecommerce.app.utils.Enum.ErrorCode;
 
 public class AppException extends RuntimeException {
 

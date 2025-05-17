@@ -5,7 +5,7 @@ import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.projection.TagProjection;
 import com.ecommerce.app.model.entity.Tag;
 import com.ecommerce.app.service.TagService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

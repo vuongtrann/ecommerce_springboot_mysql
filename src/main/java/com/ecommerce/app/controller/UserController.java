@@ -3,7 +3,7 @@ package com.ecommerce.app.controller;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
 import com.ecommerce.app.service.UserService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

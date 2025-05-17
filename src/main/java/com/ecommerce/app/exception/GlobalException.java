@@ -1,7 +1,7 @@
 package com.ecommerce.app.exception;
 
 import com.ecommerce.app.model.dao.response.AppResponse;
-import com.ecommerce.app.utils.ErrorCode;
+import com.ecommerce.app.utils.Enum.ErrorCode;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

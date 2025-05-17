@@ -4,7 +4,7 @@ import com.ecommerce.app.model.dao.request.CommentForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.CommentResponse;
 import com.ecommerce.app.service.CommentService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

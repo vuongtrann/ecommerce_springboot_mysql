@@ -1,8 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
-import com.ecommerce.app.model.entity.Product;
-import com.ecommerce.app.model.entity.User;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

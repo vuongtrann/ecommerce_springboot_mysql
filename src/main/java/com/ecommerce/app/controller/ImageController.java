@@ -2,9 +2,8 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.service.ImageService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

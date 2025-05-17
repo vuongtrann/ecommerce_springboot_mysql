@@ -3,19 +3,15 @@ package com.ecommerce.app.service.impl;
 
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
-import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.model.mapper.UserMapper;
-import com.ecommerce.app.repository.UidSequenceRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.CloudinaryService;
 import com.ecommerce.app.service.UserService;
 
-import com.ecommerce.app.utils.ErrorCode;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

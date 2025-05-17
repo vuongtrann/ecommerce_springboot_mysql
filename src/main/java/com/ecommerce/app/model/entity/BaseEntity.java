@@ -1,6 +1,6 @@
 package com.ecommerce.app.model.entity;
 
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.Status;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;

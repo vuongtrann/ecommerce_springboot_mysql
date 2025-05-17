@@ -1,4 +1,4 @@
-package com.ecommerce.app.utils;
+package com.ecommerce.app.utils.Enum;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

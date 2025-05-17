@@ -3,16 +3,13 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CategoryForm;
 import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
-import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.entity.Category;
-import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.mapper.CategoryMapper;
-import com.ecommerce.app.model.mapper.ProductMapper;
 import com.ecommerce.app.repository.CategoryRepository;
 import com.ecommerce.app.service.CategoryService;
 import com.ecommerce.app.service.utils.SlugifyService;
-import com.ecommerce.app.utils.ErrorCode;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.ErrorCode;
+import com.ecommerce.app.utils.Enum.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

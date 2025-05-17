@@ -9,6 +9,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(name = "Cart")
+@Table(name = "cart")
 public class Cart extends BaseEntityForBuying {
     private Long userId;
 

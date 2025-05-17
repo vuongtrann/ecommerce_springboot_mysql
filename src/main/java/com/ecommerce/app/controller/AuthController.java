@@ -8,7 +8,7 @@ import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.service.AuthService;
 import com.ecommerce.app.service.UserService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

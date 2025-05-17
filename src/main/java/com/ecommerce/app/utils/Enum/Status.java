@@ -1,4 +1,4 @@
-package com.ecommerce.app.utils;
+package com.ecommerce.app.utils.Enum;
 
 public enum Status {
     ACTIVE,

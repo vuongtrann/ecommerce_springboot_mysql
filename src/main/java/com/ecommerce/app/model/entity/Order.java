@@ -1,12 +1,12 @@
 package com.ecommerce.app.model.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity(name = "Order")
+@Table(name = "oder")
 public class Order extends BaseEntityForBuying {
     private Long userId;
 

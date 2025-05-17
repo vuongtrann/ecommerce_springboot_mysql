@@ -1,6 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

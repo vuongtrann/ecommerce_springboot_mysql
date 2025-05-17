@@ -1,7 +1,7 @@
     package com.ecommerce.app.model.entity;
 
-    import com.ecommerce.app.utils.Role;
-    import com.ecommerce.app.utils.Status;
+    import com.ecommerce.app.utils.Enum.Role;
+    import com.ecommerce.app.utils.Enum.Status;
     import com.fasterxml.jackson.annotation.JsonIgnore;
     import com.fasterxml.jackson.annotation.JsonInclude;
     import jakarta.persistence.*;
