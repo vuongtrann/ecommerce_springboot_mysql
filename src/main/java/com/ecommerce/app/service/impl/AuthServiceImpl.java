@@ -90,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
         String token = "Bearer " + jwtUtil.generateToken(user.getEmail());
         Map<String,String> response = new HashMap<>();
         response.put("token", token);
-        response.put("userId", String.valueOf(user.getId()));
+        response.put("userId", String.valueOf(user.getUID()));
         response.put("role", String.valueOf(user.getRole()));
         return response;
     }
