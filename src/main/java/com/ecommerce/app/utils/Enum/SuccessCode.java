@@ -34,7 +34,11 @@ public enum SuccessCode {
     FORGOT_PASSWORD(200, "New random password have sent to your email", HttpStatus.OK),
 
     ADD_IMAGES_PRODUCT_TO_CLOUDINARY(200,"Add images product to cloud successfully" , HttpStatus.OK ),
-    ADD_IMAGES_PRODUCT_VARIANT_TO_CLOUDINARY(200,"Add images product variant to cloud successfully" , HttpStatus.OK ),;
+    ADD_IMAGES_PRODUCT_VARIANT_TO_CLOUDINARY(200,"Add images product variant to cloud successfully" , HttpStatus.OK ),
+
+
+    CLEARED(200,"Cleared !" , HttpStatus.OK ),
+    SYNCED(200, "Synced !", HttpStatus.OK ),;
 
 
 
