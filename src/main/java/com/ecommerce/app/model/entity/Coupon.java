@@ -2,14 +2,20 @@ package com.ecommerce.app.model.entity;
 
 import com.ecommerce.app.utils.Enum.CouponStatus;
 import com.ecommerce.app.utils.Enum.DiscountType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "Coupon")
 @Table(name = "coupon")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Coupon {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -37,4 +43,7 @@ public class Coupon {
     private Long updatedAt;
     private Long createdBy;
     private Long updatedBy;
+
+    @OneToMany(mappedBy = "coupon", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CouponTarget> couponTargets = new ArrayList<>();
 }
