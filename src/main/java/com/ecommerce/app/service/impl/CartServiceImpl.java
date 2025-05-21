@@ -120,7 +120,7 @@ public class CartServiceImpl implements CartService {
                     .findFirst();
             if (existingItem.isPresent()) {
                 Item item = existingItem.get();
-                item.setQuantity(itemForm.getQuantity()+itemForm.getQuantity());
+                item.setQuantity(item.getQuantity() +itemForm.getQuantity());
             } else {
                 cart.getItems().add(cartMapper.toItem(itemForm));
             }

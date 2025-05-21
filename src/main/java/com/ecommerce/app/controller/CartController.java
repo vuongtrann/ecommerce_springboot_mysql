@@ -7,7 +7,9 @@ import com.ecommerce.app.model.entity.Cart;
 import com.ecommerce.app.model.mapper.CartMapper;
 import com.ecommerce.app.service.CartService;
 import com.ecommerce.app.utils.Enum.SuccessCode;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CartController {
     CartService cartService;
     CartMapper cartMapper;
