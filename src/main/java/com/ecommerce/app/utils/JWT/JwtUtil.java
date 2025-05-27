@@ -11,7 +11,7 @@ import java.util.Date;
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret; ;
-    @Value("${jwt.expiration}")
+    @Value("${jwt.accessToken.expiration}")
     private long jwtExpiration;
 
     public String generateToken(String email) {
