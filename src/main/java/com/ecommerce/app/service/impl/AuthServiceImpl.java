@@ -3,25 +3,26 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.Auth.LoginForm;
 import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
+import com.ecommerce.app.model.dao.response.dto.AuthResponse;
+import com.ecommerce.app.model.entity.RefreshToken;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.repository.UserRepositiory;
-import com.ecommerce.app.service.AuthService;
-import com.ecommerce.app.service.CloudinaryService;
-import com.ecommerce.app.service.MailService;
-import com.ecommerce.app.service.UserService;
+import com.ecommerce.app.service.*;
 import com.ecommerce.app.utils.Enum.ErrorCode;
-import com.ecommerce.app.utils.JWT.JwtUtil;
+import com.ecommerce.app.security.JWT.JwtUtil;
 import com.ecommerce.app.utils.Enum.Role;
 import com.ecommerce.app.utils.Enum.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -34,6 +35,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final UserRepositiory userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${server.url}")
     String serverUrl;
@@ -78,22 +81,51 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Map<String, String> login(LoginForm loginForm) {
-        User user = userService.findByUsername(loginForm.getUsername());
-        if (user == null || !passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
-            throw new AppException(ErrorCode.INVALID_CREDENTIALS);
-        }
-        if(!user.isEnabled()) {
-            throw new AppException(ErrorCode.ACCOUNT_NOT_VERIFIED);
-        }
+    public AuthResponse login(LoginForm loginForm) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String accessToken = jwtUtil.generateToken(loginForm.getUsername());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginForm.getUsername());
 
-        String token = "Bearer " + jwtUtil.generateToken(user.getEmail());
-        Map<String,String> response = new HashMap<>();
-        response.put("token", token);
-        response.put("userId", String.valueOf(user.getUID()));
-        response.put("role", String.valueOf(user.getRole()));
-        return response;
+        return new AuthResponse(
+                accessToken,
+                refreshToken.getToken(),
+                null,
+                null
+        );
     }
+
+    @Override
+    public AuthResponse refresh(String refreshToken) {
+        return refreshTokenService.findByToken(refreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String accessToken = jwtUtil.generateToken(user.getEmail());
+                    return new AuthResponse(accessToken, refreshToken,null, null);
+                }).orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+    }
+
+
+//    @Override
+//    public Map<String, String> login(LoginForm loginForm) {
+//        User user = userService.findByUsername(loginForm.getUsername());
+//        if (user == null || !passwordEncoder.matches(loginForm.getPassword(), user.getPassword())) {
+//            throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+//        }
+//        if(!user.isEnabled()) {
+//            throw new AppException(ErrorCode.ACCOUNT_NOT_VERIFIED);
+//        }
+//
+//        String token = "Bearer " + jwtUtil.generateToken(user.getEmail());
+//        Map<String,String> response = new HashMap<>();
+//        response.put("token", token);
+//        response.put("userId", String.valueOf(user.getUID()));
+//        response.put("role", String.valueOf(user.getRole()));
+//        return response;
+//    }
 
     @Override
     public void verifyEmail(String token) {

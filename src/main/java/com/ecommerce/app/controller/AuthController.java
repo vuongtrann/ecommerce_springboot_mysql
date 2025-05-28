@@ -1,10 +1,8 @@
 package com.ecommerce.app.controller;
 
-import com.ecommerce.app.model.dao.request.Auth.ChangePasswordForm;
-import com.ecommerce.app.model.dao.request.Auth.ChangeUserNameForm;
-import com.ecommerce.app.model.dao.request.Auth.LoginForm;
-import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
+import com.ecommerce.app.model.dao.request.Auth.*;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.AuthResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.service.AuthService;
 import com.ecommerce.app.service.UserService;
@@ -55,10 +53,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AppResponse<Map<String,String>>> login(@RequestBody @Valid LoginForm form) {
+    public ResponseEntity<AppResponse<AuthResponse>> login(@RequestBody @Valid LoginForm form) {
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.LOGIN, authservice.login(form)
         ));
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
+        return ResponseEntity.ok(authservice.refresh(request.getRefreshToken()));
     }
 
     @PostMapping("/change-username")

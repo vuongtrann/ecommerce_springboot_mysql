@@ -1,4 +1,4 @@
-package com.ecommerce.app.utils.JWT;
+package com.ecommerce.app.security.JWT;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
