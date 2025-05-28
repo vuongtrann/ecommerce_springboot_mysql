@@ -1,10 +1,7 @@
 package com.ecommerce.app.model.dao.response.dto;
 
 import com.ecommerce.app.model.dao.response.dto.Variant.ProductVariantResponse;
-import com.ecommerce.app.model.dao.response.projection.CollectionProjection;
-import com.ecommerce.app.model.dao.response.projection.TagProjection;
-import com.ecommerce.app.model.entity.Banner;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

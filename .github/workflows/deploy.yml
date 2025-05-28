@@ -11,30 +11,30 @@ jobs:
 
     steps:
       # 🔔 Gửi thông báo khi bắt đầu deploy
-      - name: 🔔 Notify Discord for Deploy Start
-        env:
-          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: |
-          if [ -n "$WEBHOOK" ]; then
-            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
-            curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "username": "Deploy Bot",
-              "avatar_url": "https://res.cloudinary.com/dtgxoujtw/image/upload/v1741496910/icks3qexzybso5ztoolz.jpg",
-              "embeds": [{
-                "title": "🚀 Deployment Started!",
-                "description": "Spring Boot backend ** đang được deploy ** ",
-                "color": 15258703,
-                "fields": [
-                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
-                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
-                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
-                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false }
-                ],
-                "footer": { "text": "GitHub Actions | Automate Everything" }
-              }]
-            }' "$WEBHOOK"
-          fi
+#      - name: 🔔 Notify Discord for Deploy Start
+#        env:
+#          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+#        run: |
+#          if [ -n "$WEBHOOK" ]; then
+#            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
+#            curl -X POST -H "Content-Type: application/json" \
+#            -d '{
+#              "username": "Deploy Bot",
+#              "avatar_url": "https://res.cloudinary.com/dtgxoujtw/image/upload/v1741496910/icks3qexzybso5ztoolz.jpg",
+#              "embeds": [{
+#                "title": "🚀 Deployment Started!",
+#                "description": "Spring Boot backend ** đang được deploy ** ",
+#                "color": 15258703,
+#                "fields": [
+#                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
+#                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
+#                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
+#                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false }
+#                ],
+#                "footer": { "text": "GitHub Actions | Automate Everything" }
+#              }]
+#            }' "$WEBHOOK"
+#          fi
 
       # 1️⃣ Clone source code từ GitHub
       - name: 1️⃣ Checkout repository
@@ -118,58 +118,58 @@ jobs:
             docker rm spring_boot || true
             docker run -d --name spring_boot -p 8080:8080 --restart always myapp:latest
 
-      # ✅ Gửi thông báo khi deploy thành công
-      - name: ✅ Notify Discord for Success
-        if: success()
-        env:
-          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: |
-          if [ -n "$WEBHOOK" ]; then
-            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
-            curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "username": "Deploy Bot",
-              "avatar_url": "https://res.cloudinary.com/dtgxoujtw/image/upload/v1741496910/icks3qexzybso5ztoolz.jpg",
-              "embeds": [{
-                "title": "✅ Deployment Successful!",
-                "description": "Spring Boot backend đã deploy ** thành công ** 🎉",
-                "color": 3066993,
-                "fields": [
-                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
-                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
-                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
-                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false },
-                  { "name": "⚡ Status", "value": "**Thành công** ✅", "inline": true }
-                ],
-                "footer": { "text": "GitHub Actions | CI/CD Automation" }
-              }]
-            }' "$WEBHOOK"
-          fi
-
-      # ❌ Gửi thông báo khi deploy thất bại
-      - name: ❌ Notify Discord for Failure
-        if: failure()
-        env:
-          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: |
-          if [ -n "$WEBHOOK" ]; then
-            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
-            curl -X POST -H "Content-Type: application/json" \
-            -d '{
-              "username": "Deploy Bot",
-              "avatar_url": "https://res.cloudinary.com/dtgxoujtw/image/upload/v1741496910/icks3qexzybso5ztoolz.jpg",
-              "embeds": [{
-                "title": "❌ Deployment Failed!",
-                "description": "Spring Boot backend deploy ** thất bại ** 😞",
-                "color": 15158332,
-                "fields": [
-                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
-                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
-                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
-                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false },
-                  { "name": "⚡ Status", "value": "**Thất bại** ❌", "inline": true }
-                ],
-                "footer": { "text": "GitHub Actions | CI/CD Automation" }
-              }]
-            }' "$WEBHOOK"
-          fi
+#      # ✅ Gửi thông báo khi deploy thành công
+#      - name: ✅ Notify Discord for Success
+#        if: success()
+#        env:
+#          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+#        run: |
+#          if [ -n "$WEBHOOK" ]; then
+#            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
+#            curl -X POST -H "Content-Type: application/json" \
+#            -d '{
+#              "username": "Deploy Bot",
+#              "avatar_url": "https://res.cloudinary.com/dtgxoujtw/image/upload/v1741496910/icks3qexzybso5ztoolz.jpg",
+#              "embeds": [{
+#                "title": "✅ Deployment Successful!",
+#                "description": "Spring Boot backend đã deploy ** thành công ** 🎉",
+#                "color": 3066993,
+#                "fields": [
+#                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
+#                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
+#                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
+#                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false },
+#                  { "name": "⚡ Status", "value": "**Thành công** ✅", "inline": true }
+#                ],
+#                "footer": { "text": "GitHub Actions | CI/CD Automation" }
+#              }]
+#            }' "$WEBHOOK"
+#          fi
+#
+#      # ❌ Gửi thông báo khi deploy thất bại
+#      - name: ❌ Notify Discord for Failure
+#        if: failure()
+#        env:
+#          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+#        run: |
+#          if [ -n "$WEBHOOK" ]; then
+#            TIME_NOW=$(date +"%Y-%m-%d %H:%M:%S")
+#            curl -X POST -H "Content-Type: application/json" \
+#            -d '{
+#              "username": "Deploy Bot",
+#              "avatar_url": "https://res.cloudinary.com/dtgxoujtw/image/upload/v1741496910/icks3qexzybso5ztoolz.jpg",
+#              "embeds": [{
+#                "title": "❌ Deployment Failed!",
+#                "description": "Spring Boot backend deploy ** thất bại ** 😞",
+#                "color": 15158332,
+#                "fields": [
+#                  { "name": "🛠 Service", "value": "Backend - Spring Boot", "inline": true },
+#                  { "name": "📂 Branch", "value": "'"${{ github.ref_name }}"'", "inline": true },
+#                  { "name": "🆔 Commit", "value": "'"${{ github.sha }}"'", "inline": false },
+#                  { "name": "🕒 Time", "value": "'"$TIME_NOW"'", "inline": false },
+#                  { "name": "⚡ Status", "value": "**Thất bại** ❌", "inline": true }
+#                ],
+#                "footer": { "text": "GitHub Actions | CI/CD Automation" }
+#              }]
+#            }' "$WEBHOOK"
+#          fi

@@ -5,7 +5,6 @@ import com.ecommerce.app.model.dao.response.dto.CommentResponse;
 import com.ecommerce.app.model.entity.Comment;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.User;
-import com.ecommerce.app.utils.Status;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

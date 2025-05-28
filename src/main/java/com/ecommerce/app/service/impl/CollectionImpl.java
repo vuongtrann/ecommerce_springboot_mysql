@@ -3,15 +3,14 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CollectionForm;
 import com.ecommerce.app.model.dao.response.projection.CollectionProjection;
-import com.ecommerce.app.model.entity.Brand;
 import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.repository.CollectionRepository;
 import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.CollectionService;
 import com.ecommerce.app.service.utils.SlugifyService;
-import com.ecommerce.app.utils.ErrorCode;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.ErrorCode;
+import com.ecommerce.app.utils.Enum.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

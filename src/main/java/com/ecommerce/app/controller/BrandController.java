@@ -2,14 +2,10 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.BrandForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
-import com.ecommerce.app.model.dao.response.dto.CollectionResponse;
-import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
 import com.ecommerce.app.model.entity.Brand;
-import com.ecommerce.app.model.entity.Category;
-import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.service.BrandService;
-import com.ecommerce.app.utils.SuccessCode;
+import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

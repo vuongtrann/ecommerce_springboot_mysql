@@ -15,10 +15,8 @@ import com.ecommerce.app.model.mapper.ProductMapper;
 import com.ecommerce.app.repository.*;
 import com.ecommerce.app.service.*;
 import com.ecommerce.app.service.utils.SlugifyService;
-import com.ecommerce.app.utils.ErrorCode;
-import com.ecommerce.app.utils.Status;
-import com.github.slugify.Slugify;
-import com.sun.jdi.request.DuplicateRequestException;
+import com.ecommerce.app.utils.Enum.ErrorCode;
+import com.ecommerce.app.utils.Enum.Status;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +24,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,9 +34,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Service

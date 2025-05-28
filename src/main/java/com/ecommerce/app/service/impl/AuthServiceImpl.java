@@ -3,19 +3,16 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.Auth.LoginForm;
 import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
-import com.ecommerce.app.model.entity.Collection;
-import com.ecommerce.app.model.entity.UidSequence;
 import com.ecommerce.app.model.entity.User;
-import com.ecommerce.app.repository.UidSequenceRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.AuthService;
 import com.ecommerce.app.service.CloudinaryService;
 import com.ecommerce.app.service.MailService;
 import com.ecommerce.app.service.UserService;
-import com.ecommerce.app.utils.ErrorCode;
+import com.ecommerce.app.utils.Enum.ErrorCode;
 import com.ecommerce.app.utils.JWT.JwtUtil;
-import com.ecommerce.app.utils.Role;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.Role;
+import com.ecommerce.app.utils.Enum.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,9 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -95,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
         String token = "Bearer " + jwtUtil.generateToken(user.getEmail());
         Map<String,String> response = new HashMap<>();
         response.put("token", token);
-        response.put("userId", String.valueOf(user.getId()));
+        response.put("userId", String.valueOf(user.getUID()));
         response.put("role", String.valueOf(user.getRole()));
         return response;
     }

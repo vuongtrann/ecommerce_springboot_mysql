@@ -3,19 +3,17 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CommentForm;
 import com.ecommerce.app.model.dao.response.dto.CommentResponse;
-import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.entity.Comment;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.model.mapper.CommentMapper;
-import com.ecommerce.app.model.mapper.ProductMapper;
 import com.ecommerce.app.repository.CommentRepository;
 import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.CommentService;
-import com.ecommerce.app.utils.ErrorCode;
-import com.ecommerce.app.utils.Role;
-import com.ecommerce.app.utils.Status;
+import com.ecommerce.app.utils.Enum.ErrorCode;
+import com.ecommerce.app.utils.Enum.Role;
+import com.ecommerce.app.utils.Enum.Status;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,7 +24,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

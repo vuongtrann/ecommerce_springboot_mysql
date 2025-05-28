@@ -5,7 +5,7 @@ import com.ecommerce.app.model.dao.request.CategoryForm;
 import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.repository.CategoryRepository;
-import com.ecommerce.app.utils.ErrorCode;
+import com.ecommerce.app.utils.Enum.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
