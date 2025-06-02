@@ -63,6 +63,9 @@
         @Enumerated(EnumType.STRING)
         private Role role;
 
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+        private List<RefreshToken> refreshTokens = new ArrayList<>();
+
         @Getter
         @CreatedDate
         private Long createdAt;

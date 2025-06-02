@@ -26,7 +26,7 @@ public class CartMapper {
         Item item = new Item();
         item.setProduct(product);
         item.setQuantity(form.getQuantity());
-        double price = product.getDiscountedPrice() > 0 ? product.getDiscountedPrice() : product.getSellingPrice();
+        double price = product.getSellingPrice();
         item.setUnitPrice(price);
         return item;
     }
