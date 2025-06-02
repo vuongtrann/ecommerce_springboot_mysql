@@ -5,6 +5,9 @@ import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.repository.RefreshTokenRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.RefreshTokenService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +16,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepositiory userRepositiory;
 
     @Value("${jwt.refreshToken.expiration}")
     private Long refreshTokenExpiration;
-    private RefreshTokenRepository refreshTokenRepository;
-    private UserRepositiory userRepositiory;
+
     @Override
     public RefreshToken createRefreshToken(String email) {
         User user = userRepositiory.findByEmail(email);

@@ -67,7 +67,10 @@ public enum ErrorCode {
 
     IMAGE_NOT_FOUND(404,"Image not found !" , HttpStatus.NOT_FOUND ),
 
-    PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),;
+    PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),
+    CART_NOT_FOUND(404, "Cart not found !",HttpStatus.NOT_FOUND ),
+    ITEM_NOT_FOUND(404,"Item not found !" ,HttpStatus.NOT_FOUND ),
+    ORDER_NOT_FOUND(404,"Order not found !" , HttpStatus.NOT_FOUND );
 
   private final int code;
     private final String message;
