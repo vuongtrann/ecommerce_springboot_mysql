@@ -60,8 +60,7 @@ public class CartServiceImpl implements CartService {
             Item newItem = new Item();
             newItem.setProduct(product);
             newItem.setQuantity(quantity);
-            double price = product.getDiscountedPrice()>0?
-                    product.getDiscountedPrice() : product.getSellingPrice();
+            double price = product.getSellingPrice();
             newItem.setUnitPrice(price);
             cart.getItems().add(newItem);
         }
@@ -95,6 +94,7 @@ public class CartServiceImpl implements CartService {
                 break;
             }
         }
+
         Cart savedCart = cartRepository.save(cart);
         CartResponse cartResponse = cartMapper.toCartResponse(savedCart);
         return cartResponse;

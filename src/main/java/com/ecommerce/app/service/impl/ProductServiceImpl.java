@@ -188,7 +188,7 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     @Caching(put = {
             @CachePut (value = "PRODUCT_BY_ID", key = "#productId"),
-            @CachePut (value = "PRODUCT_BY_SLUG", key = "#form.slug")
+            @CachePut (value = "PRODUCT_BY_SLUG", key ="#result.slug")
     })
     public Product update(String productId ,ProductForm form) {
         Product product = productRepository.findById(productId)
@@ -273,6 +273,7 @@ public class ProductServiceImpl implements ProductSerice {
         /**TODO
          * Cần check thêm sản phẩm đó đang được mua hay ko, sản phẩm đó có đang nằm trong top hay ko, check các case có thể xảy ra
          **/
+//        productRepository.delete(product);
         product.setStatus(Status.DELETED);
         productRepository.save(product);
     }
@@ -288,7 +289,7 @@ public class ProductServiceImpl implements ProductSerice {
 
     @Override
     //Cache product by id
-    @Cacheable(value = "PRODUCT_BY_ID", key = "#id")
+//    @Cacheable(value = "PRODUCT_BY_ID", key = "#id")
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 

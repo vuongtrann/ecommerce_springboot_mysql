@@ -78,7 +78,7 @@ public class CollectionImpl implements CollectionService {
     @Override
     @Caching(put = {
             @CachePut(value = "COLLECTION_BY_ID", key = "#id"),
-            @CachePut (value = "COLLECTION_BY_SLUG", key = "#collectionForm.collectionSlug")
+            @CachePut(value = "COLLECTION_BY_SLUG", key = "#result.slug")
     })
     public Collection updateCollection(String id, CollectionForm collectionForm) {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
