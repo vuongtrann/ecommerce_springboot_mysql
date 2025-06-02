@@ -3,12 +3,18 @@ package com.ecommerce.app.model.entity;
 import com.ecommerce.app.utils.Enum.PayStatus;
 import com.ecommerce.app.utils.Enum.PayType;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "Order")
 @Table(name = "oder")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Order extends BaseEntityForBuying {
     private Long userId;
     private String cardId;

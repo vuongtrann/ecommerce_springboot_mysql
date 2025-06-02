@@ -34,6 +34,7 @@ public class CartMapper {
         List<ItemResponse> itemResponses = cart.getItems().stream().map(item -> {
             Product product = item.getProduct();
             return new ItemResponse(
+                    item.getId(),
                     product.getId(),
                     product.getName(),
                     product.getPrimaryImageURL(),

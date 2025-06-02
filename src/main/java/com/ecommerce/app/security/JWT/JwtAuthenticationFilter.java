@@ -1,4 +1,4 @@
-package com.ecommerce.app.utils.JWT;
+package com.ecommerce.app.security.JWT;
 
 import com.ecommerce.app.service.utils.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
