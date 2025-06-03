@@ -88,11 +88,13 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String accessToken = jwtUtil.generateToken(loginForm.getUsername());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginForm.getUsername());
+        User user = userService.findByUsername(loginForm.getUsername());
+
 
         return new AuthResponse(
                 accessToken,
                 refreshToken.getToken(),
-                null,
+                user.getUID().toString(),
                 null
         );
     }

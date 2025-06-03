@@ -12,7 +12,7 @@ public enum ErrorCode {
     /** Category */
     CATEGORY_NOT_FOUND(404, "Category not found", HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXISTS(400, "Category already exists", HttpStatus.BAD_REQUEST),
-
+    CATEGORY_IN_USE_BY_PRODUCT(400, "Category in use by product" , HttpStatus.BAD_REQUEST ),
 
 
     /** File */
@@ -67,9 +67,12 @@ public enum ErrorCode {
 
     IMAGE_NOT_FOUND(404,"Image not found !" , HttpStatus.NOT_FOUND ),
 
-    PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),;
+    CART_NOT_FOUND(404,"Cart not found !" , HttpStatus.NOT_FOUND ),
+    ITEM_NOT_FOUND(404,"Item not found !" , HttpStatus.NOT_FOUND ) ,
+    ORDER_NOT_FOUND(404,"Order not found !" , HttpStatus.NOT_FOUND ) ,
 
-  private final int code;
+    PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND );
+    private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
 
