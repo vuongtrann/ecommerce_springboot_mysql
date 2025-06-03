@@ -7,6 +7,7 @@ import com.ecommerce.app.model.entity.Item;
 import com.ecommerce.app.model.entity.Order;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Shipping;
+import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
 import com.ecommerce.app.utils.Enum.PayType;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,11 @@ public class OrderMapper {
         order.setCardId(form.getCardId());
         order.setItems(items);
         order.setTotalPrice(items.stream().mapToDouble(Item::getTotalPrice).sum() + form.getShippingFee());
-        order.setStatus(PayStatus.PENDING);
+        order.setPayStatus(PayStatus.PENDING);
         order.setPayType(form.getPayType());
         order.setOrderDate(System.currentTimeMillis());
         order.setShippingFee(form.getShippingFee());
+        order.setOrderStatus(OrderStatus.PENDING);
 
 //        Shipping shipping = new Shipping();
 //        shipping.setAddress(request.getShipping().getAddress());
@@ -61,8 +63,9 @@ public class OrderMapper {
                 order.getCardId(),
                 itemResponses,
                 order.getTotalPrice(),
-                order.getStatus(),
+                order.getPayStatus(),
                 order.getPayType(),
+                order.getOrderStatus(),
                 order.getOrderDate(),
                 order.getShippingFee(),
                 order.getCreatedAt(),

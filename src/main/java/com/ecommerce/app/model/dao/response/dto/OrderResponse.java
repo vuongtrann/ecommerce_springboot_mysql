@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
+import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
 import com.ecommerce.app.utils.Enum.PayType;
 import lombok.AllArgsConstructor;
@@ -21,8 +22,9 @@ public class OrderResponse {
     private String cardId;
     private List<ItemResponse> items;
     private double totalPrice;
-    private PayStatus status;
+    private PayStatus payStatus;
     private PayType payType;
+    private OrderStatus orderStatus;
     private Long orderDate;
     private double shippingFee;
 //    private ShippingResponse shipping;

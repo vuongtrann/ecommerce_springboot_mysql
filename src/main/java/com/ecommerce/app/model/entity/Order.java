@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.entity;
 
+import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
 import com.ecommerce.app.utils.Enum.PayType;
 import jakarta.persistence.*;
@@ -24,10 +25,13 @@ public class Order extends BaseEntityForBuying {
     private List<Item> items = new ArrayList<>();
 
     private double totalPrice;
-    private PayStatus status;
+    private PayStatus payStatus;
     private PayType payType;
     private Long orderDate;
     private double shippingFee;
+
+    private OrderStatus orderStatus;
+
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Shipping shipping;

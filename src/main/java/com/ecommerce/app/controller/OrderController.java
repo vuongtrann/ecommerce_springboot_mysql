@@ -5,6 +5,7 @@ import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
 import com.ecommerce.app.model.mapper.OrderMapper;
 import com.ecommerce.app.service.OrderService;
+import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +42,24 @@ public class OrderController {
         ));
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<AppResponse<List<OrderResponse>>> getOrderByUserId(@PathVariable Long userId) {
-        List<OrderResponse> orderResponseList = orderService.getOrderByUserId(userId);
+    public ResponseEntity<AppResponse<List<OrderResponse>>> getOrderByUserId(@PathVariable Long userId, @RequestParam(required = false) OrderStatus status) {
+            List<OrderResponse> orderResponseList = orderService.getOrderByUserIdAndStatus(userId, status);
+            return ResponseEntity.ok(AppResponse.builderResponse(
+                    SuccessCode.FETCHED,
+                    orderResponseList
+            ));
+
+    }
+
+    @PutMapping("/{orderId}/status")
+    public ResponseEntity<AppResponse<OrderResponse>> updateOrderStatus(
+            @PathVariable String orderId,
+            @RequestParam OrderStatus orderStatus,
+            @RequestParam Long userId) {
+        OrderResponse updatedOrder = orderService.updateOrderStatus(userId, orderId, orderStatus);
         return ResponseEntity.ok(AppResponse.builderResponse(
-                SuccessCode.FETCHED,
-                orderResponseList
+                SuccessCode.UPDATED,
+                updatedOrder
         ));
     }
 
