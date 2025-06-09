@@ -6,6 +6,7 @@ import com.ecommerce.app.service.OrderService;
 import com.ecommerce.app.service.VnPayService;
 
 import com.ecommerce.app.utils.Enum.PayStatus;
+import com.ecommerce.app.utils.Enum.PayType;
 import com.ecommerce.app.utils.VnPayUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -129,7 +130,10 @@ public class VnPayServiceImpl implements VnPayService {
                 try {
                     // Thêm log để debug
                     System.out.println("Payment successful for order: " + orderId);
-                    orderService.updateOrderPayStatus(orderId, PayStatus.PAID);
+                    /**
+                     * Cần tạo 1 hàm để update toàn bộ trạng thái của đơn hàng và gửi mail thông báo cho khách hàng
+                     */
+                    orderService.updateOrderWhenPaymentSuccess(orderId, PayType.ONLINE, PayStatus.PAID);
                     return 1;
                 } catch (Exception e) {
                     // Thêm log để bắt lỗi
