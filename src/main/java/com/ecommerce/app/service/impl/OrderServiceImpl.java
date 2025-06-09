@@ -12,9 +12,7 @@ import com.ecommerce.app.repository.CartRepository;
 import com.ecommerce.app.repository.OrderRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.OrderService;
-import com.ecommerce.app.utils.Enum.ErrorCode;
-import com.ecommerce.app.utils.Enum.OrderStatus;
-import com.ecommerce.app.utils.Enum.Role;
+import com.ecommerce.app.utils.Enum.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +64,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order findOrderById(String orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return order;
+    }
+
+    @Override
     public List<OrderResponse> getOrderByUserIdAndStatus(Long userId, OrderStatus orderStatus) {
         List<Order> orders;
         if (orderStatus == null) {
@@ -93,5 +98,20 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus(orderStatus);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toResponse(updatedOrder);
+    }
+
+    @Override
+    public void updateOrderPayStatus(String orderId, PayStatus status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        order.setPayStatus(status);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void updateOrderWhenPaymentSuccess(String orderId, PayType payType, PayStatus payStatus) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        order.setPayStatus(payStatus);
+        order.setPayType(payType);
     }
 }

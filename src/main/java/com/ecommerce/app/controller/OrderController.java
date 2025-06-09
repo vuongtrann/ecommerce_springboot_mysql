@@ -3,10 +3,13 @@ package com.ecommerce.app.controller;
 import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
+import com.ecommerce.app.model.entity.Order;
 import com.ecommerce.app.model.mapper.OrderMapper;
 import com.ecommerce.app.service.OrderService;
+import com.ecommerce.app.service.VnPayService;
 import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.SuccessCode;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +26,7 @@ import java.util.List;
 public class OrderController {
     OrderService orderService;
     OrderMapper orderMapper;
+    VnPayService vnPayService;
 
     @PostMapping("/create")
     public ResponseEntity<AppResponse<OrderResponse>> createOrder(@RequestBody OrderForm form) {
@@ -31,6 +35,14 @@ public class OrderController {
                 SuccessCode.CREATED,
                 orderResponse
         ));
+    }
+
+    @PostMapping("/{orderId}/pay")
+    public ResponseEntity<String> payOrder(@PathVariable String orderId, HttpServletRequest request) {
+        Order order = orderService.findOrderById(orderId);
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()+"/api/v1/vnpay/vnpay-callback";
+        String paymentUrl = vnPayService.createOrder(order, baseUrl);
+        return ResponseEntity.ok(paymentUrl);
     }
 
     @GetMapping("/{orderId}")
@@ -62,5 +74,7 @@ public class OrderController {
                 updatedOrder
         ));
     }
+
+
 
 }

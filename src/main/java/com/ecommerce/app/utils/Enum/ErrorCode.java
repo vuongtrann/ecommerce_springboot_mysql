@@ -72,7 +72,7 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(404,"Order not found !" , HttpStatus.NOT_FOUND ) ,
 
     PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),
-    UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED ),;
+    UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED );
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
