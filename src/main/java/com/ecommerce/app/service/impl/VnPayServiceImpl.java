@@ -29,7 +29,7 @@ public class VnPayServiceImpl implements VnPayService {
 
     private final OrderService orderService;
     public String createOrder(Order order, String urlReturn) {
-        double total =  (order.getTotalPrice() + order.getShippingFee())*1000;
+        double total =  (order.getTotalPrice() + order.getShippingFee());
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = order.getId();
