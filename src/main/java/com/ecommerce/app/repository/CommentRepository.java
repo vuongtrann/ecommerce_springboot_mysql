@@ -23,6 +23,4 @@ public interface CommentRepository  extends JpaRepository<Comment, String> {
             "JOIN c.user u " +
             "JOIN c.product p")
     Page<CommentProjection> findAllCommentsWithUserAndProduct(Pageable pageable);
-
-    List<Comment> findByProduct_Id(String productId);
 }

@@ -14,7 +14,6 @@ import lombok.experimental.FieldDefaults;
 public class CommentResponse {
     private String commentId;
     private Long userUid;
-    private Double rating;
     private String content;
     private Status status = Status.ACTIVE;
     private String productId;

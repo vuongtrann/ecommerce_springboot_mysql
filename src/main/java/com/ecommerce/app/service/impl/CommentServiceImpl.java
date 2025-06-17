@@ -63,16 +63,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResponse> getCommentsByProductId(String productId){
-        List<Comment> comments = commentRepository.findByProduct_Id(productId);
-        if (comments.isEmpty()) {
-            throw new AppException(ErrorCode.COMMENT_NOT_FOUND);
-        }else {
-            return CommentMapper.toResponseList(comments);
-        }
-    }
-
-    @Override
     public Page<CommentResponse> getAllComments(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -138,7 +128,6 @@ public class CommentServiceImpl implements CommentService {
         }
 
         // Cập nhật nội dung
-        comment.setRating(form.getRating());
         comment.setContent(form.getContent());
         comment.setUpdatedAt(System.currentTimeMillis());
         Comment save =  commentRepository.save(comment);

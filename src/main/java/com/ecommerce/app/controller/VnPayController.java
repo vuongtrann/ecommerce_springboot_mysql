@@ -4,15 +4,13 @@ import com.ecommerce.app.service.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
-//@RestController
-@Controller
+@RestController
 @RequestMapping("/api/v1/vnpay")
 @RequiredArgsConstructor
 public class VnPayController {
@@ -39,7 +37,7 @@ public class VnPayController {
         String totalPrice = request.getParameter("vnp_Amount");
 
         // Tạo URL redirect về FE với các tham số
-        String redirectUrl = "http://127.0.0.1:5500/checkout-result.html?" +
+        String redirectUrl = "http://127.0.0.1:8000/checkout?" +
                 "orderId=" + orderInfo +
                 "&totalPrice=" + totalPrice +
                 "&paymentTime=" + paymentTime +

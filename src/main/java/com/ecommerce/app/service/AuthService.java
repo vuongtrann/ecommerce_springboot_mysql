@@ -1,6 +1,5 @@
 package com.ecommerce.app.service;
 
-import com.ecommerce.app.model.dao.request.Auth.ChangePasswordForm;
 import com.ecommerce.app.model.dao.request.Auth.LoginForm;
 import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
 import com.ecommerce.app.model.dao.response.dto.AuthResponse;
@@ -17,7 +16,7 @@ public interface AuthService {
     public AuthResponse refresh(String refreshToken);
     public void verifyEmail(String token);
     public void resendVerifyEmail(String email);
-    public void changePassword(Long userUid, ChangePasswordForm changePasswordForm);
+    public void changePassword(String email, String oldPassword, String newPassword);
     public String generateVerificationToken(String email);
     public void logout(String token);
     public void forgotPassword(String email);

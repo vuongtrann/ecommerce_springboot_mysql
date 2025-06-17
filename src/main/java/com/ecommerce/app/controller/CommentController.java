@@ -40,12 +40,6 @@ public class CommentController {
         return ResponseEntity.ok(comments);
     }
 
-    @GetMapping("/product/{productId}")
-    public ResponseEntity<List<CommentResponse>> getCommentsByProductId(@PathVariable String productId) {
-        List<CommentResponse> comments = commentService.getCommentsByProductId(productId);
-        return ResponseEntity.ok(comments);
-    }
-
     @GetMapping
     public ResponseEntity<Page<CommentResponse>> getAllComments(
             @RequestParam(defaultValue = "0") int page,

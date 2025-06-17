@@ -12,8 +12,6 @@ public interface CommentService {
     CommentResponse  createComment(CommentForm form, Long uid, String productId);
     List<CommentResponse> getCommentsByUserId(Long uid);
 
-    List<CommentResponse> getCommentsByProductId(String productId);
-
     Page<CommentResponse> getAllComments(int page, int size, String sortBy, String direction);
     void deleteComment(String commentId, Long userUid);
     void hideComment(String commentId, Long userUid);
