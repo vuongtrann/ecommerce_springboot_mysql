@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse createOrder(OrderForm form) {
         User user = userRepositiory.findById(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
         Cart cart = cartRepository.findByUserId(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         // Lọc các item cần mua theo ID
