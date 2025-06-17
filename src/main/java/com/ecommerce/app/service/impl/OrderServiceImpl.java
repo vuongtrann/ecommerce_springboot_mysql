@@ -30,6 +30,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse createOrder(OrderForm form) {
+        User user = userRepositiory.findById(form.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
         Cart cart = cartRepository.findByUserId(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         // Lọc các item cần mua theo ID
@@ -45,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ITEM_NOT_FOUND);
         }
 
-        Order order = orderMapper.toEntity(form, itemsToBuy);
+        Order order = orderMapper.toEntity(form, itemsToBuy, user);
         Order savedOrder = orderRepository.save(order);
         return orderMapper.toResponse(savedOrder);
 
