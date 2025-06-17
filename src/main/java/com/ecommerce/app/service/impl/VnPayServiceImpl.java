@@ -29,7 +29,9 @@ public class VnPayServiceImpl implements VnPayService {
 
     private final OrderService orderService;
     public String createOrder(Order order, String urlReturn) {
-        double total =  (order.getTotalPrice() + order.getShippingFee());
+      
+        double total =  (order.getTotalPrice() + order.getShippingFee())*100;
+
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_TxnRef = order.getId();
@@ -41,7 +43,7 @@ public class VnPayServiceImpl implements VnPayService {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf((long)total*100));
+        vnp_Params.put("vnp_Amount", String.valueOf((long)total));
         vnp_Params.put("vnp_CurrCode", "VND");
 
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);

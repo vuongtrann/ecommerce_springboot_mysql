@@ -1,5 +1,6 @@
 package com.ecommerce.app.service;
 
+import com.ecommerce.app.model.dao.request.UserForm;
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
 import com.ecommerce.app.model.entity.User;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,8 @@ public interface UserService {
     User findByVerificationToken(String token);
 
     User findByEmail(String email);
+
+    UserResponse updateInfo(Long userUid, UserForm userForm);
 
     boolean existsByUserName(String userName);
 

@@ -71,8 +71,11 @@ public enum ErrorCode {
     ITEM_NOT_FOUND(404,"Item not found !" , HttpStatus.NOT_FOUND ) ,
     ORDER_NOT_FOUND(404,"Order not found !" , HttpStatus.NOT_FOUND ) ,
 
+    PASSWORD_NOT_EQUAL(400,"Password not equal !" , HttpStatus.BAD_REQUEST ),
+    PASSWORD_NOT_MATCHES(400,"Password not matchces !" , HttpStatus.BAD_REQUEST ),
+
     PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),
-    UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED );
+    UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED ), ;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class CommentMapper {
     public static Comment toEntity(CommentForm form, User user, Product product) {
         return Comment.builder()
+                .rating(form.getRating() != null ? form.getRating().doubleValue() : null)
                 .content(form.getContent() != null ? form.getContent().trim() : null)
                 .user(user)
                 .product(product)
@@ -35,6 +36,7 @@ public class CommentMapper {
         return CommentResponse.builder()
                 .commentId(comment.getId())
                 .userUid(comment.getUser().getUID() != null ? comment.getUser().getUID() : null)
+                .rating(comment.getRating())
                 .content(comment.getContent())
                 .firstName(comment.getUser().getFirstName())
                 .lastName(comment.getUser().getLastName())

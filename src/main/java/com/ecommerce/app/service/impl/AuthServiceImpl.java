@@ -1,6 +1,7 @@
 package com.ecommerce.app.service.impl;
 
 import com.ecommerce.app.exception.AppException;
+import com.ecommerce.app.model.dao.request.Auth.ChangePasswordForm;
 import com.ecommerce.app.model.dao.request.Auth.LoginForm;
 import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
 import com.ecommerce.app.model.dao.response.dto.AuthResponse;
@@ -148,15 +149,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void changePassword(String email, String oldPassword, String newPassword) {
-        User user = userService.findByEmail(email);
-        if (user == null) {
-            throw new AppException(ErrorCode.USER_NOT_FOUND);
+    public void changePassword(Long userUid, ChangePasswordForm changePasswordForm) {
+        User user = userService.getUserByUid(userUid).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if(!changePasswordForm.getNewPassword().equals(changePasswordForm.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_EQUAL);
         }
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+        if(!passwordEncoder.matches(changePasswordForm.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCHES);
         }
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPassword()));
         userService.save(user);
     }
 
