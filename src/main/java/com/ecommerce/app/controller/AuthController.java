@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.util.Map;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -70,9 +71,9 @@ public class AuthController {
                 SuccessCode.CHANGE_USERNAME, null
         ));
     }
-    @PostMapping("/change-password")
-    public ResponseEntity<AppResponse<String>> changePassword(@RequestBody ChangePasswordForm form) {
-        authservice.changePassword(form.getEmail(), form.getOldPassword(), form.getNewPassword());
+    @PostMapping("/change-password/{uid}")
+    public ResponseEntity<AppResponse<String>> changePassword(@PathVariable Long uid,@RequestBody ChangePasswordForm form) {
+        authservice.changePassword(uid, form);
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.CHANGE_PASSWORD, null
         ));

@@ -1,7 +1,9 @@
 package com.ecommerce.app.controller;
 
+import com.ecommerce.app.model.dao.request.UserForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
+import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.service.UserService;
 import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.AccessLevel;
@@ -35,6 +37,14 @@ public class UserController {
                         userResponse
                 )
         );
+    }
+
+    @PutMapping("/{uid}")
+    public ResponseEntity<AppResponse<UserResponse>> updateUser(@PathVariable Long uid, @RequestBody UserForm userForm) {
+       return ResponseEntity.ok(AppResponse.builderResponse(
+               SuccessCode.UPDATED,
+               userService.updateInfo(uid, userForm)
+       ));
     }
 
     @PutMapping("/avatar/{uid}")

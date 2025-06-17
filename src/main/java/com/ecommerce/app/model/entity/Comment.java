@@ -22,5 +22,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private double rating;
     private String content;
+
 }
