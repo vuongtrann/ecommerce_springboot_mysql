@@ -1,0 +1,35 @@
+[33m3285883[m[33m ([m[1;36mHEAD -> [m[1;32mtantienvnpay[m[33m, [m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{0}: checkout: moving from feature to tantienvnpay
+[33m3285883[m[33m ([m[1;36mHEAD -> [m[1;32mtantienvnpay[m[33m, [m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{1}: checkout: moving from tantienvnpay to feature
+[33m3285883[m[33m ([m[1;36mHEAD -> [m[1;32mtantienvnpay[m[33m, [m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{2}: reset: moving to origin/feature
+[33m162238c[m HEAD@{3}: checkout: moving from feature to tantienvnpay
+[33m3285883[m[33m ([m[1;36mHEAD -> [m[1;32mtantienvnpay[m[33m, [m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{4}: pull: Fast-forward
+[33m921483a[m HEAD@{5}: checkout: moving from tantienvnpay to feature
+[33m162238c[m HEAD@{6}: commit: Entity Favourite
+[33ma9eae71[m HEAD@{7}: pull: Fast-forward
+[33m8cb2724[m HEAD@{8}: commit: push code vnpay
+[33m921483a[m HEAD@{9}: checkout: moving from feature to tantienvnpay
+[33m921483a[m HEAD@{10}: pull: Fast-forward
+[33md7ed6ec[m HEAD@{11}: commit: add userId for login
+[33mcd241b8[m HEAD@{12}: commit (merge): Merge remote-tracking branch 'origin/feature' into feature
+[33m40342b9[m[33m ([m[1;32morder[m[33m)[m HEAD@{13}: checkout: moving from order to feature
+[33m40342b9[m[33m ([m[1;32morder[m[33m)[m HEAD@{14}: checkout: moving from feature to order
+[33m40342b9[m[33m ([m[1;32morder[m[33m)[m HEAD@{15}: commit: #result.slug
+[33mf34352d[m HEAD@{16}: pull: Fast-forward
+[33mfac77ad[m HEAD@{17}: reset: moving to feature
+[33mfac77ad[m HEAD@{18}: reset: moving to HEAD
+[33mfac77ad[m HEAD@{19}: pull: Fast-forward
+[33m21ee0e3[m HEAD@{20}: pull: Fast-forward
+[33me265a26[m HEAD@{21}: checkout: moving from tantienredis to feature
+[33me7b2b4f[m[33m ([m[1;31morigin/tantienredis[m[33m, [m[1;32mtantienredis[m[33m)[m HEAD@{22}: commit: Code gộp nhánh
+[33mba5df32[m HEAD@{23}: checkout: moving from feature to tantienredis
+[33me265a26[m HEAD@{24}: pull: Fast-forward
+[33mdc3338e[m HEAD@{25}: checkout: moving from tantienredis to feature
+[33mba5df32[m HEAD@{26}: commit: build fail
+[33md3728d8[m HEAD@{27}: checkout: moving from tantienredis to tantienredis
+[33md3728d8[m HEAD@{28}: checkout: moving from tantienredis to tantienredis
+[33md3728d8[m HEAD@{29}: pull origin feature: Merge made by the 'recursive' strategy.
+[33md247e11[m HEAD@{30}: commit: Test GetById and GetBySlug
+[33mdc3338e[m HEAD@{31}: reset: moving to origin/feature
+[33mdc3338e[m HEAD@{32}: checkout: moving from feature to tantienredis
+[33mdc3338e[m HEAD@{33}: checkout: moving from main to feature
+[33mae66cf7[m[33m ([m[1;32mmain[m[33m)[m HEAD@{34}: clone: from https://github.com/vuongtrann/ecommerce_springboot_mysql.git

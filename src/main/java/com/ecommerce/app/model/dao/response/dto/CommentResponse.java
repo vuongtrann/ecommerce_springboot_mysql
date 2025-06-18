@@ -22,4 +22,5 @@ public class CommentResponse {
     private String lastName;
     private String avatar;
     private String email;
+    private Long createdAt;
 }

@@ -13,6 +13,8 @@ public interface UserService {
 
     void save(User user);
 
+    void delete(Long uid);
+
     User findByUsername(String username);
 
     User findByVerificationToken(String token);
