@@ -79,6 +79,10 @@
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private List<Comment> comments = new ArrayList<>();
 
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private List<Order> orders = new ArrayList<>();
+
 
         public User(String firstName, String lastName, String phone, String email, String username, String password, boolean isEnabled, String verificationToken, Role role) {
             this.firstName = firstName;

@@ -24,6 +24,10 @@ public class Order extends BaseEntityForBuying {
     @JoinColumn(name = "order_id")
     private List<Item> items = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_order_id") // Cột mới để ánh xạ quan hệ
+    private User user;
+
     private double totalPrice;
     private PayStatus payStatus;
     private PayType payType;
