@@ -3,10 +3,8 @@ package com.ecommerce.app.model.mapper;
 import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.dto.ItemResponse;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
-import com.ecommerce.app.model.entity.Item;
-import com.ecommerce.app.model.entity.Order;
-import com.ecommerce.app.model.entity.Product;
-import com.ecommerce.app.model.entity.Shipping;
+
+import com.ecommerce.app.model.entity.*;
 import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
 import com.ecommerce.app.utils.Enum.PayType;
@@ -18,11 +16,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrderMapper {
-    public Order toEntity(OrderForm form, List<Item> items) {
+    public Order toEntity(OrderForm form, List<Item> items, User user) {
         Order order = new Order();
         order.setUserId(form.getUserId());
         order.setCardId(form.getCardId());
         order.setItems(items);
+        order.setUser(user);
         order.setTotalPrice(items.stream().mapToDouble(Item::getTotalPrice).sum() + form.getShippingFee());
         order.setPayStatus(PayStatus.PENDING);
         order.setPayType(form.getPayType());
@@ -56,7 +55,6 @@ public class OrderMapper {
                     item.getUnitPrice()
             );
         }).collect(Collectors.toList());
-
         return new OrderResponse(
                 order.getId(),
                 order.getUserId(),
