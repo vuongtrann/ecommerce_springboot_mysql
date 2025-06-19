@@ -2,6 +2,7 @@ package com.ecommerce.app.service;
 
 import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
+import com.ecommerce.app.model.dao.response.dto.OrderResponseADM;
 import com.ecommerce.app.model.entity.Order;
 import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
@@ -14,6 +15,8 @@ public interface OrderService {
     OrderResponse getOrderById(String orderId);
     Order findOrderById(String orderId);
     List<OrderResponse> getOrderByUserIdAndStatus(Long userId, OrderStatus orderStatus);
+
+    List<OrderResponseADM> getAllOrders();
 
 
 

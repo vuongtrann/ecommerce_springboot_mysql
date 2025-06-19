@@ -4,6 +4,7 @@ import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.dto.ItemResponse;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
 
+import com.ecommerce.app.model.dao.response.dto.OrderResponseADM;
 import com.ecommerce.app.model.entity.*;
 import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
@@ -71,5 +72,31 @@ public class OrderMapper {
                 order.getCreatedBy(),
                 order.getUpdatedBy()
         );
+    }
+
+    public static OrderResponseADM toOrderResponseADM(Order order) {
+        if (order == null) return null;
+        System.out.println("Order user: " + order.getUser());
+        return  OrderResponseADM.builder()
+                .orderId(order.getId())
+                .user(UserMapper.toResponse(order.getUser()))
+
+                .totalPrice(order.getTotalPrice())
+                .payStatus(order.getPayStatus())
+                .payType(order.getPayType())
+                .orderStatus(order.getOrderStatus())
+                .orderDate(order.getOrderDate())
+                .shippingFee(order.getShippingFee())
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .createdBy(order.getCreatedBy())
+                .updatedBy(order.getUpdatedBy())
+                .build();
+    }
+
+    public static List<OrderResponseADM> toOrderListResponse(List<Order> orders) {
+        return orders.stream()
+                .map(OrderMapper::toOrderResponseADM)
+                .collect(Collectors.toList());
     }
 }

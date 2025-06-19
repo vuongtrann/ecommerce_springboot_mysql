@@ -3,6 +3,7 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
+import com.ecommerce.app.model.dao.response.dto.OrderResponseADM;
 import com.ecommerce.app.model.entity.Cart;
 import com.ecommerce.app.model.entity.Item;
 import com.ecommerce.app.model.entity.Order;
@@ -32,8 +33,15 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepositiory userRepositiory;
 
     @Override
+    public List<OrderResponseADM> getAllOrders(){
+        List<Order> orders = orderRepository.findAll();
+        return OrderMapper.toOrderListResponse(orders);
+    }
+
+
+    @Override
     public OrderResponse createOrder(OrderForm form) {
-        User user = userRepositiory.findById(form.getUserId())
+        User user = userRepositiory.findByUID(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         Cart cart = cartRepository.findByUserId(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
