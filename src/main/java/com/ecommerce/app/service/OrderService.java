@@ -6,6 +6,7 @@ import com.ecommerce.app.model.dao.response.dto.OrderResponseADM;
 import com.ecommerce.app.model.entity.Order;
 import com.ecommerce.app.utils.Enum.OrderStatus;
 import com.ecommerce.app.utils.Enum.PayStatus;
+import com.ecommerce.app.utils.Enum.PayType;
 
 import java.util.List;
 
@@ -23,4 +24,5 @@ public interface OrderService {
     OrderResponse updateOrderStatus(Long userId,String orderId, OrderStatus orderStatus);
 //    OrderResponse getAllOrders();
     void updateOrderPayStatus(String orderId, PayStatus status);
+    void updateOrderWhenPaymentSuccess(String orderId, PayType payType, PayStatus payStatus);
 }

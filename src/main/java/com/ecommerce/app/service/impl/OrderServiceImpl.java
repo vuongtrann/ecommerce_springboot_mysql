@@ -13,10 +13,7 @@ import com.ecommerce.app.repository.CartRepository;
 import com.ecommerce.app.repository.OrderRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.OrderService;
-import com.ecommerce.app.utils.Enum.ErrorCode;
-import com.ecommerce.app.utils.Enum.OrderStatus;
-import com.ecommerce.app.utils.Enum.PayStatus;
-import com.ecommerce.app.utils.Enum.Role;
+import com.ecommerce.app.utils.Enum.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -119,5 +116,12 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         order.setPayStatus(status);
         orderRepository.save(order);
+    }
+
+    @Override
+    public void updateOrderWhenPaymentSuccess(String orderId, PayType payType, PayStatus payStatus) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        order.setPayStatus(payStatus);
+        order.setPayType(payType);
     }
 }
