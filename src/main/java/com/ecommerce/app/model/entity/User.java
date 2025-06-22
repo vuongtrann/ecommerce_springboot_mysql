@@ -80,6 +80,7 @@
         private List<Comment> comments = new ArrayList<>();
 
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private List<Order> orders = new ArrayList<>();
 
 

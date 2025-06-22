@@ -66,6 +66,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void delete(Long uid){
+        User user = userRepositiory.findByUID(uid).orElseThrow(()->new AppException(ErrorCode.USER_NOT_FOUND));
+        userRepositiory.delete(user);
+    }
+
+    @Override
     public UserResponse getUserResponseByUid(Long uid) {
         User user = userRepositiory.findByUID(uid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

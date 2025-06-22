@@ -39,6 +39,15 @@ public class UserController {
         );
     }
 
+    @DeleteMapping("/{uid}")
+    public ResponseEntity<AppResponse<String>> deleteUser(@PathVariable Long uid) {
+        userService.delete(uid);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.DELETED,
+                "User deleted"
+        ));
+    }
+
     @PutMapping("/{uid}")
     public ResponseEntity<AppResponse<UserResponse>> updateUser(@PathVariable Long uid, @RequestBody UserForm userForm) {
        return ResponseEntity.ok(AppResponse.builderResponse(

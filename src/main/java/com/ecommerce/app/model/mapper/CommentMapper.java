@@ -43,6 +43,7 @@ public class CommentMapper {
                 .avatar(comment.getUser().getAvatar())
                 .email(comment.getUser().getEmail())
                 .status(comment.getStatus())
+                .createdAt(comment.getCreatedAt())
                 .build();
     }
 
