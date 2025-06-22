@@ -40,25 +40,37 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse createOrder(OrderForm form) {
         User user = userRepositiory.findByUID(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
         Cart cart = cartRepository.findByUserId(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+
         // Lọc các item cần mua theo ID
         List<Item> itemsToBuy = cart.getItems().stream()
                 .filter(item -> form.getItemIdsToBuy().contains(item.getId()))
+                .collect(Collectors.toList());
+
+        if (itemsToBuy.isEmpty()) {
+            throw new AppException(ErrorCode.ITEM_NOT_FOUND);
+        }
+
+        // Tạo bản sao item mới cho đơn hàng (tránh liên kết trực tiếp với item trong cart)
+        List<Item> orderItems = itemsToBuy.stream()
                 .map(item -> new Item(
                         item.getProduct(),
                         item.getQuantity(),
                         item.getUnitPrice()
                 ))
                 .collect(Collectors.toList());
-        if (itemsToBuy.isEmpty()) {
-            throw new AppException(ErrorCode.ITEM_NOT_FOUND);
-        }
 
-        Order order = orderMapper.toEntity(form, itemsToBuy,user);
+        // Xóa item đã mua khỏi cart
+        cart.getItems().removeIf(item -> form.getItemIdsToBuy().contains(item.getId()));
+        cartRepository.save(cart); // Lưu cart sau khi cập nhật
+
+        // Tạo và lưu đơn hàng
+        Order order = orderMapper.toEntity(form, orderItems, user);
         Order savedOrder = orderRepository.save(order);
-        return orderMapper.toResponse(savedOrder);
 
+        return orderMapper.toResponse(savedOrder);
     }
 
     @Override
