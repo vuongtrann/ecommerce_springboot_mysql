@@ -19,6 +19,7 @@ import java.util.List;
 public class OrderResponse {
     private String id;
     private Long userId;
+    private UserInOrderResponse user;
     private String cardId;
     private List<ItemResponse> items;
     private double totalPrice;

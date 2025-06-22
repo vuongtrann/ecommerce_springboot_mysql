@@ -3,7 +3,6 @@ package com.ecommerce.app.model.mapper;
 import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.dto.ItemResponse;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
-
 import com.ecommerce.app.model.dao.response.dto.OrderResponseADM;
 import com.ecommerce.app.model.entity.*;
 import com.ecommerce.app.utils.Enum.OrderStatus;
@@ -59,6 +58,7 @@ public class OrderMapper {
         return new OrderResponse(
                 order.getId(),
                 order.getUserId(),
+                userInOrderResponse,
                 order.getCardId(),
                 itemResponses,
                 order.getTotalPrice(),
