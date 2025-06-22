@@ -1,10 +1,8 @@
 package com.ecommerce.app.controller;
 
-import com.ecommerce.app.model.dao.request.Auth.ChangePasswordForm;
-import com.ecommerce.app.model.dao.request.Auth.ChangeUserNameForm;
-import com.ecommerce.app.model.dao.request.Auth.LoginForm;
-import com.ecommerce.app.model.dao.request.Auth.RegisterForm;
+import com.ecommerce.app.model.dao.request.Auth.*;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.AuthResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.service.AuthService;
 import com.ecommerce.app.service.UserService;
@@ -16,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.Map;
 
@@ -55,10 +54,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AppResponse<Map<String,String>>> login(@RequestBody @Valid LoginForm form) {
+    public ResponseEntity<AppResponse<AuthResponse>> login(@RequestBody @Valid LoginForm form) {
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.LOGIN, authservice.login(form)
         ));
+    }
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
+        return ResponseEntity.ok(authservice.refresh(request.getRefreshToken()));
     }
 
     @PostMapping("/change-username")
@@ -68,9 +71,9 @@ public class AuthController {
                 SuccessCode.CHANGE_USERNAME, null
         ));
     }
-    @PostMapping("/change-password")
-    public ResponseEntity<AppResponse<String>> changePassword(@RequestBody ChangePasswordForm form) {
-        authservice.changePassword(form.getEmail(), form.getOldPassword(), form.getNewPassword());
+    @PostMapping("/change-password/{uid}")
+    public ResponseEntity<AppResponse<String>> changePassword(@PathVariable Long uid,@RequestBody ChangePasswordForm form) {
+        authservice.changePassword(uid, form);
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.CHANGE_PASSWORD, null
         ));

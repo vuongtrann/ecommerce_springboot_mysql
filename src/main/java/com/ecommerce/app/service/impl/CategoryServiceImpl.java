@@ -96,48 +96,102 @@ public class CategoryServiceImpl implements CategoryService {
         return category;
     }
 
+//    @Override
+//    @Caching(put = {
+//            @CachePut(value = "CATEGORY_BY_ID", key = "#id"),
+//            @CachePut (value = "CATEGORY_BY_SLUG", key = "#result.slug")
+//    })
+//    public Category update(String id,CategoryForm form) {
+//        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+//        boolean existsCategory = categoryRepository.existsByName(form.getName());
+//
+//        if (existsCategory) {
+//            throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
+//        }
+//
+//
+//        // Tìm parent category (nếu có)
+//        Category parentCategory = (form.getParentId() != null)
+//                ? categoryRepository.findById(form.getParentId()).orElse(null)
+//                : null;
+//
+//        // Tìm danh sách child categories (nếu có)
+//        List<Category> childCategories = form.getChildId() != null
+//                ? categoryRepository.findAllById(form.getChildId())
+//                : new ArrayList<>();
+//
+//        category.setParent(parentCategory);
+//        category.setChildren(childCategories);
+//
+//        if (parentCategory != null) {
+//            parentCategory.getChildren().add(category);
+//        }
+//        for (Category childCategory : childCategories) {
+//            childCategory.setParent(category);
+//        }
+//
+//        category.setName(form.getName());
+//        category.setSlug(slugify.generateSlug(form.getName()));
+//        category.setUpdatedAt(Instant.now().toEpochMilli());
+//
+//        categoryRepository.save(category);
+//
+//        return category;
+//    }
+
     @Override
     @Caching(put = {
             @CachePut(value = "CATEGORY_BY_ID", key = "#id"),
-            @CachePut (value = "CATEGORY_BY_SLUG", key = "#form.slug")
+            @CachePut(value = "CATEGORY_BY_SLUG", key = "#result.slug")
     })
-    public Category update(String id,CategoryForm form) {
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        boolean existsCategory = categoryRepository.existsByName(form.getName());
+    public Category update(String id, CategoryForm form) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        if (existsCategory) {
+        boolean existsCategory = categoryRepository.existsByName(form.getName());
+        if (existsCategory && !category.getName().equals(form.getName())) {
             throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
 
-
-        // Tìm parent category (nếu có)
-        Category parentCategory = (form.getParentId() != null)
-                ? categoryRepository.findById(form.getParentId()).orElse(null)
+        // --- Update parent ---
+        String parentId = form.getParentId();
+        Category parentCategory = (parentId != null && !parentId.isBlank())
+                ? categoryRepository.findById(parentId).orElse(null)
                 : null;
 
-        // Tìm danh sách child categories (nếu có)
-        List<Category> childCategories = form.getChildId() != null
+        // --- Update children ---
+        List<Category> newChildren = form.getChildId() != null
                 ? categoryRepository.findAllById(form.getChildId())
                 : new ArrayList<>();
 
+        // ✅ Gỡ liên kết các con cũ
+        for (Category oldChild : category.getChildren()) {
+            oldChild.setParent(null);
+        }
+
+        // ✅ Gỡ category khỏi parent cũ nếu thay đổi parent
+        if (category.getParent() != null && !category.getParent().getId().equals(form.getParentId())) {
+            category.getParent().getChildren().remove(category);
+        }
+
+        // ✅ Cập nhật parent và con mới
         category.setParent(parentCategory);
-        category.setChildren(childCategories);
+        category.setChildren(newChildren);
 
         if (parentCategory != null) {
             parentCategory.getChildren().add(category);
         }
-        for (Category childCategory : childCategories) {
-            childCategory.setParent(category);
+        for (Category child : newChildren) {
+            child.setParent(category);
         }
 
         category.setName(form.getName());
         category.setSlug(slugify.generateSlug(form.getName()));
         category.setUpdatedAt(Instant.now().toEpochMilli());
 
-        categoryRepository.save(category);
-
-        return category;
+        return categoryRepository.save(category);
     }
+
 
     @Override
     public void setActivate(String id, boolean isActive) {
@@ -154,12 +208,10 @@ public class CategoryServiceImpl implements CategoryService {
     })
     public void delete(String id) {
          Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-         /*** TODO
-          * 1. Xóa category khỏi danh sách children của parent category
-          * 2. Xóa category khỏi danh sách parent của children categories
-          * 3. Xóa category
-          * 4. Kiem tra xem category có sản phẩm không, nếu có thì không xóa
-          */
+
+          if (!category.getProducts().isEmpty()) {
+          throw new AppException(ErrorCode.CATEGORY_IN_USE_BY_PRODUCT);
+          }
 
          categoryRepository.delete(category);
     }

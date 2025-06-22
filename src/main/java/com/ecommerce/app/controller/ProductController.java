@@ -7,6 +7,7 @@ import com.ecommerce.app.model.dao.response.projection.ProductProjection;
 import com.ecommerce.app.model.entity.Product;
 import com.ecommerce.app.model.entity.Variant.VariantType;
 import com.ecommerce.app.service.ProductSerice;
+import com.ecommerce.app.utils.Enum.ErrorCode;
 import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -114,6 +115,9 @@ public class ProductController {
                 )
         );
     }
+
+
+
 
     @DeleteMapping("/{productId}/all-images")
     public ResponseEntity<String> removeAllProductImages(@PathVariable String productId) {

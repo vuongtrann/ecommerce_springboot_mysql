@@ -80,7 +80,7 @@ public class BrandImpl implements BrandService {
     @Override
     @Caching(put = {
             @CachePut(value = "BRAND_BY_ID", key = "#id"),
-            @CachePut (value = "BRAND_BY_SLUG", key = "#brandForm.slug")
+            @CachePut (value = "BRAND_BY_SLUG", key = "#result.slug")
     })
     public Brand updateBrand( String id,BrandForm brandForm) {
        Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));

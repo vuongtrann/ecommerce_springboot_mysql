@@ -1,6 +1,6 @@
-package com.ecommerce.app.config;
+package com.ecommerce.app.security;
 
-import com.ecommerce.app.utils.JWT.JwtAuthenticationFilter;
+import com.ecommerce.app.security.JWT.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

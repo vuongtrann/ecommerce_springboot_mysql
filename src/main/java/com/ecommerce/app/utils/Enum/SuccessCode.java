@@ -38,7 +38,7 @@ public enum SuccessCode {
 
 
     CLEARED(200,"Cleared !" , HttpStatus.OK ),
-    SYNCED(200, "Synced !", HttpStatus.OK ),;
+    SYNCED(200, "Synced !", HttpStatus.OK );
 
 
 

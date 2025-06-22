@@ -22,11 +22,10 @@ public class CartMapper {
 
     public Item toItem(ItemForm form){
         Product product = productRepository.findById(form.getProductId()).orElseThrow(()-> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-
         Item item = new Item();
         item.setProduct(product);
         item.setQuantity(form.getQuantity());
-        double price = product.getDiscountedPrice() > 0 ? product.getDiscountedPrice() : product.getSellingPrice();
+        double price = product.getSellingPrice();
         item.setUnitPrice(price);
         return item;
     }
@@ -35,11 +34,13 @@ public class CartMapper {
         List<ItemResponse> itemResponses = cart.getItems().stream().map(item -> {
             Product product = item.getProduct();
             return new ItemResponse(
+                    item.getId(),
                     product.getId(),
                     product.getName(),
                     product.getPrimaryImageURL(),
                     item.getQuantity(),
                     item.getUnitPrice()
+
             );
         }).collect(Collectors.toList());
 
@@ -50,4 +51,5 @@ public class CartMapper {
         );
 
     }
+
 }

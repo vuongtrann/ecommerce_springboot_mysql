@@ -2,6 +2,7 @@ package com.ecommerce.app.service.impl;
 
 
 import com.ecommerce.app.exception.AppException;
+import com.ecommerce.app.model.dao.request.UserForm;
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.model.mapper.UserMapper;
@@ -65,6 +66,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void delete(Long uid){
+        User user = userRepositiory.findByUID(uid).orElseThrow(()->new AppException(ErrorCode.USER_NOT_FOUND));
+        userRepositiory.delete(user);
+    }
+
+    @Override
     public UserResponse getUserResponseByUid(Long uid) {
         User user = userRepositiory.findByUID(uid)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
@@ -75,6 +82,16 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepositiory.findAll();
         return UserMapper.toResponseList(users);
+    }
+
+    @Override
+    public UserResponse updateInfo(Long userUid, UserForm userForm){
+        User user = userRepositiory.findByUID(userUid).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setFirstName(userForm.getFirstName());
+        user.setLastName(userForm.getLastName());
+        user.setPhone(userForm.getPhone());
+        userRepositiory.save(user);
+        return UserMapper.toResponse(user);
     }
 
     @Override
