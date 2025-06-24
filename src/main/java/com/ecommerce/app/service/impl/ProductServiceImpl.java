@@ -76,6 +76,18 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
+    public List<ProductResponse> search(String keyword){
+        if(keyword == null || keyword.isEmpty()){
+            return Collections.emptyList();
+        }
+        List<Product> products = productRepository.searchProductByNameOrSlug(keyword);
+
+        return products.stream().map(
+                ProductMapper::toResponse
+        ).collect(Collectors.toList());
+    }
+
+    @Override
     public Page<ProductResponse> getTopViewedProducts(int page, int size, String direction) {
         Sort sort = Sort.by(Sort.Direction.fromString(direction), "noOfView");
         Pageable pageable = PageRequest.of(page, size, sort);

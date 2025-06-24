@@ -23,6 +23,8 @@ public interface ProductSerice {
     ProductResponse findBySlug(String slug);
     void changeStatus(String id);
 
+    List<ProductResponse> search(String keyword);
+
     ProductResponse getProductDetail(String slug);
     Page<ProductResponse> getTopViewedProducts(int page, int size, String direction);
 

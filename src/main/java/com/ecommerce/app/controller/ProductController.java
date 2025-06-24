@@ -29,6 +29,13 @@ public class ProductController {
 
     private final ProductSerice productService;
 
+    @GetMapping("/search")
+    public ResponseEntity<AppResponse<List<ProductResponse>>> search(@RequestParam(required = false) String keyword){
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                productService.search(keyword)
+        ));
+    }
 
     @GetMapping
     public ResponseEntity<Page<ProductProjection>> getAllProducts(
