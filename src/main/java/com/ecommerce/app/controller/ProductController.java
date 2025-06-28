@@ -88,7 +88,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<AppResponse<Product>> updateProduct(@PathVariable String productId, @RequestBody ProductForm productForm) {
+    public ResponseEntity<AppResponse<ProductResponse>> updateProduct(@PathVariable String productId, @RequestBody ProductForm productForm) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,
@@ -163,7 +163,7 @@ public class ProductController {
     @GetMapping("/top-views")
     public ResponseEntity<AppResponse<Page<ProductResponse>>> getTopViewedProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "3") int size,
             @RequestParam(defaultValue = "desc") String direction
     ) {
         return ResponseEntity.ok(AppResponse.builderResponse(
@@ -186,6 +186,19 @@ public class ProductController {
                         result
                 )
         );
+    }
+
+    @GetMapping("/highRating")
+    public ResponseEntity<AppResponse<Page<ProductResponse>>> getHighRatingProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+
+    ){
+        Page<ProductResponse> result = productService.getTopRatedProducts(page, size);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                result
+        ));
     }
 
 

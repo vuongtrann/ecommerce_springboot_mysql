@@ -15,7 +15,7 @@ public interface ProductSerice {
     Page<ProductProjection> findAll(int page, int size, String sortBy, String direction);
     Product save(Product product);
     Product create(ProductForm form);
-    Product update(String id, ProductForm form);
+    ProductResponse update(String id, ProductForm form);
     Product uploadImage(String id, List<MultipartFile> files);
     void delete(String id);
     Optional<Product> findById(String id);
@@ -29,6 +29,8 @@ public interface ProductSerice {
     Page<ProductResponse> getTopViewedProducts(int page, int size, String direction);
 
     Page<ProductResponse> getNewestProducts(int page, int size);
+
+    Page<ProductResponse>  getTopRatedProducts(int page, int size);
 
     List<String> uploadImagesToProduct(String productId, List<MultipartFile> files);
     void removeImagesFromProduct(String productId);

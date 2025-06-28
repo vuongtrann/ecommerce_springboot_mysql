@@ -18,6 +18,14 @@ public class Item extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "order_id")
+//    private Order order;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "cart_id")
+//    private Cart cart;
+
     private int quantity;
     private double unitPrice;
 

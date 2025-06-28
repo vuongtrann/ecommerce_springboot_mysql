@@ -6,6 +6,7 @@ import com.ecommerce.app.model.dao.request.Variant.ProductVariantForm;
 import com.ecommerce.app.model.dao.request.Variant.VariantOptionForm;
 import com.ecommerce.app.model.dao.response.dto.ProductResponse;
 import com.ecommerce.app.model.dao.response.projection.ProductProjection;
+import com.ecommerce.app.model.dao.response.projection.ProductWithAvgRatingProjection;
 import com.ecommerce.app.model.entity.*;
 import com.ecommerce.app.model.entity.Collection;
 import com.ecommerce.app.model.entity.Variant.ProductVariant;
@@ -94,6 +95,26 @@ public class ProductServiceImpl implements ProductSerice {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(ProductMapper::toSimpleResponse);
     }
+
+    @Override
+    public Page<ProductResponse> getTopRatedProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ProductWithAvgRatingProjection> projections = productRepository.findAllWithAvgRating(pageable);
+
+        return projections.map(product -> {
+            ProductResponse response = new ProductResponse();
+            response.setId(product.getProductId());
+            response.setName(product.getProductName());
+            response.setDescription(product.getProductDescription());
+            response.setPrimaryImageURL(product.getPrimaryImageUrl());
+            response.setSellingPrice(product.getSellingPrice());
+            response.setAvgRating(product.getAvgRating());
+            return response;
+        });
+    }
+
+
 
 
 
@@ -198,11 +219,11 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
-    @Caching(put = {
-            @CachePut (value = "PRODUCT_BY_ID", key = "#productId"),
-            @CachePut (value = "PRODUCT_BY_SLUG", key ="#result.slug")
-    })
-    public Product update(String productId ,ProductForm form) {
+//    @Caching(put = {
+//            @CachePut (value = "PRODUCT_BY_ID", key = "#productId"),
+//            @CachePut (value = "PRODUCT_BY_SLUG", key ="#result.slug")
+//    })
+    public ProductResponse update(String productId ,ProductForm form) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND
                 ));
@@ -249,8 +270,8 @@ public class ProductServiceImpl implements ProductSerice {
         product.setCategories(updatedCategories);
 
         // Handle tags
-        List<Tag> updatedTags = tagRepository.findAllByIdIn(form.getTags());
-        product.setTags(updatedTags);
+//        List<Tag> updatedTags = tagRepository.findAllByIdIn(form.getTags());
+//        product.setTags(updatedTags);
 
         // Handle brands
         List<Brand> updatedBrands = brandRepository.findAllByIdIn(form.getBrands());
@@ -261,7 +282,7 @@ public class ProductServiceImpl implements ProductSerice {
         product.setCollections(updatedCollections);
 
         Product savedProduct = productRepository.save(product);
-        return savedProduct;
+        return ProductMapper.toResponse(savedProduct);
 //        return productMapper.toResponse(savedProduct);
 
     }
