@@ -6,6 +6,7 @@ import com.ecommerce.app.model.dao.request.UserForm;
 import com.ecommerce.app.model.dao.response.dto.UserResponse;
 import com.ecommerce.app.model.entity.User;
 import com.ecommerce.app.model.mapper.UserMapper;
+import com.ecommerce.app.repository.FavouriteRepository;
 import com.ecommerce.app.repository.UserRepositiory;
 import com.ecommerce.app.service.CloudinaryService;
 import com.ecommerce.app.service.UserService;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class UserServiceImpl implements UserService {
     UserRepositiory userRepositiory;
     CloudinaryService  cloudinaryService;
+    FavouriteRepository favouriteRepository;
 
     @Override
     public boolean existsByEmail(String email) {
@@ -68,6 +70,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Long uid){
         User user = userRepositiory.findByUID(uid).orElseThrow(()->new AppException(ErrorCode.USER_NOT_FOUND));
+
         userRepositiory.delete(user);
     }
 

@@ -84,6 +84,15 @@ public class OrderController {
         ));
     }
 
+    @GetMapping("/user/count")
+    public ResponseEntity<AppResponse<List<OrderResponseADM>>> getOrderCountByUser() {
+        List<OrderResponseADM> results = orderService.countOrdersByUser();
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                results
+        ));
+    }
+
 
 
 }

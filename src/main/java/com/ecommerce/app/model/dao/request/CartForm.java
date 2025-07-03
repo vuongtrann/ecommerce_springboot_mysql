@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class CartForm {
-    private Long userId;
+    private Long userUid;
     private List<ItemForm> items;
 }

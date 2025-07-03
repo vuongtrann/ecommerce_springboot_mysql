@@ -4,6 +4,8 @@ import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.OrderForm;
 import com.ecommerce.app.model.dao.response.dto.OrderResponse;
 import com.ecommerce.app.model.dao.response.dto.OrderResponseADM;
+import com.ecommerce.app.model.dao.response.dto.UserResponse;
+import com.ecommerce.app.model.dao.response.projection.SimpleUserProjectionForCountOrder;
 import com.ecommerce.app.model.entity.Cart;
 import com.ecommerce.app.model.entity.Item;
 import com.ecommerce.app.model.entity.Order;
@@ -41,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepositiory.findByUID(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        Cart cart = cartRepository.findByUserId(form.getUserId())
+        Cart cart = cartRepository.findByUserUid(form.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
 
         // Lọc các item cần mua theo ID
@@ -93,12 +95,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getOrderByUserIdAndStatus(Long userId, OrderStatus orderStatus) {
+    public List<OrderResponse> getOrderByUserIdAndStatus(Long userUid, OrderStatus orderStatus) {
         List<Order> orders;
         if (orderStatus == null) {
-            orders = orderRepository.findAllByUserId(userId);
+            orders = orderRepository.findAllByUserUid(userUid);
         } else {
-            orders = orderRepository.findAllByUserIdAndOrderStatus(userId, orderStatus);
+            orders = orderRepository.findAllByUserUidAndOrderStatus(userUid, orderStatus);
         }
 
         if (orders.isEmpty()) {
@@ -110,8 +112,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse updateOrderStatus(Long userId,String orderId, OrderStatus orderStatus) {
-        User currentUser = userRepositiory.findByUID(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
+    public OrderResponse updateOrderStatus(Long userUid,String orderId, OrderStatus orderStatus) {
+        User currentUser = userRepositiory.findByUID(userUid).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_FOUND));
 //        if (currentUser.getRole() != Role.ADMIN) {
 //            throw new AppException(ErrorCode.UNAUTHORIZED);
 //        }
@@ -135,5 +137,30 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         order.setPayStatus(payStatus);
         order.setPayType(payType);
+        orderRepository.save(order);
     }
+
+    @Override
+    public List<OrderResponseADM> countOrdersByUser() {
+        List<SimpleUserProjectionForCountOrder> results = orderRepository.countTotalOrderByUser();
+
+        return results.stream()
+                .map(r -> OrderResponseADM.builder()
+                        .user(new UserResponse(
+                                null,                                 // id chưa có, để null hoặc query thêm nếu cần
+                                Long.valueOf(r.getUserUid()),         // hoặc giữ String nếu UID là String
+                                r.getFirstName(),
+                                r.getLastName(),
+                                r.getAvatar(),
+                                r.getEmail(),
+                                r.getPhone(),
+                                null                                 // status chưa có
+                        ))
+                        .totalOrders(r.getTotalOrder())               // Tổng số order của user
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
+
 }

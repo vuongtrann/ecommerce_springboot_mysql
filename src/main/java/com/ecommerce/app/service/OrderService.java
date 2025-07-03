@@ -15,14 +15,16 @@ public interface OrderService {
     OrderResponse updateOrder(String orderId, OrderForm form);
     OrderResponse getOrderById(String orderId);
     Order findOrderById(String orderId);
-    List<OrderResponse> getOrderByUserIdAndStatus(Long userId, OrderStatus orderStatus);
+    List<OrderResponse> getOrderByUserIdAndStatus(Long userUid, OrderStatus orderStatus);
 
     List<OrderResponseADM> getAllOrders();
 
 
 
-    OrderResponse updateOrderStatus(Long userId,String orderId, OrderStatus orderStatus);
+    OrderResponse updateOrderStatus(Long userUid,String orderId, OrderStatus orderStatus);
 //    OrderResponse getAllOrders();
     void updateOrderPayStatus(String orderId, PayStatus status);
     void updateOrderWhenPaymentSuccess(String orderId, PayType payType, PayStatus payStatus);
+
+    List<OrderResponseADM> countOrdersByUser();
 }

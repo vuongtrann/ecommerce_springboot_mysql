@@ -14,6 +14,6 @@ import java.util.List;
 
 public class CartResponse {
     private String cartId;
-    private Long userId;
+    private Long userUid;
     private List<ItemResponse> items;
 }

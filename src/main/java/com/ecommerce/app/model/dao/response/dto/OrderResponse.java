@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 public class OrderResponse {
     private String id;
-    private Long userId;
+    private Long userUid;
     private UserInOrderResponse user;
     private String cardId;
     private List<ItemResponse> items;

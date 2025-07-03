@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface FavouriteRepository extends JpaRepository<Favourite, String> {
     List<Favourite> findByUser_UID(Long userUid);
     Optional<Favourite> findByUser_UIDAndProduct_Id(Long userUid, String productId);
+    void deleteByUser_UID(Long userUid);
 }

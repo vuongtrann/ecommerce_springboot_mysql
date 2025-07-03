@@ -135,7 +135,7 @@ public class VnPayServiceImpl implements VnPayService {
                     /**
                      * Cần tạo 1 hàm để update toàn bộ trạng thái của đơn hàng và gửi mail thông báo cho khách hàng
                      */
-                    orderService.updateOrderWhenPaymentSuccess(orderId, PayType.ONLINE, PayStatus.PAID);
+                    orderService.updateOrderWhenPaymentSuccess(orderId, PayType.ONLINE, PayStatus.COMPLETED);
                     return 1;
                 } catch (Exception e) {
                     // Thêm log để bắt lỗi

@@ -15,5 +15,6 @@ public class ItemResponse {
     private String productName;
     private String imageUrl;
     private int quantity;
+    private int quantityVariableOfProduct;
     private double unitPrice;
 }

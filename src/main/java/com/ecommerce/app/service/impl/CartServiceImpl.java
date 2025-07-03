@@ -28,25 +28,25 @@ public class CartServiceImpl implements CartService {
     CartMapper cartMapper;
 
     @Override
-    public Cart getOrCreateCart(Long userId) {
-        return cartRepository.findByUserId(userId)
+    public Cart getOrCreateCart(Long userUid) {
+        return cartRepository.findByUserUid(userUid)
                 .orElseGet(()->{
                     Cart newCart = new Cart();
-                    newCart.setUserId(userId);
+                    newCart.setUserUid(userUid);
                     return cartRepository.save(newCart);
                 });
     }
 
     @Override
-    public CartResponse getuserCart(Long userId) {
-        Cart cart = getOrCreateCart(userId);
+    public CartResponse getuserCart(Long userUid) {
+        Cart cart = getOrCreateCart(userUid);
         CartResponse cartResponse = cartMapper.toCartResponse(cart);
         return cartResponse;
     }
 
     @Override
-    public CartResponse addToCart(Long userId, String productId, int quantity) {
-        Cart cart = getOrCreateCart(userId);
+    public CartResponse addToCart(Long userUid, String productId, int quantity) {
+        Cart cart = getOrCreateCart(userUid);
         Product product = productRepository.findById(productId).orElseThrow(()->
                 new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
@@ -71,8 +71,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponse removeFromCart(Long userId, String productId) {
-        Cart cart = getOrCreateCart(userId);
+    public CartResponse removeFromCart(Long userUid, String productId) {
+        Cart cart = getOrCreateCart(userUid);
 
         cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
         Cart savedCart = cartRepository.save(cart);
@@ -81,8 +81,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartResponse updateQuantity(Long userId, String productId, int newQuantity) {
-        Cart cart = getOrCreateCart(userId);
+    public CartResponse updateQuantity(Long userUid, String productId, int newQuantity) {
+        Cart cart = getOrCreateCart(userUid);
 
         for (Item item : cart.getItems()) {
             if (item.getProduct().getId().equals(productId)) {
@@ -101,15 +101,15 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void clearCart(Long userId) {
-        Cart cart = getOrCreateCart(userId);
+    public void clearCart(Long userUid) {
+        Cart cart = getOrCreateCart(userUid);
         cart.getItems().clear();
         cartRepository.save(cart);
     }
 
     @Override
     public CartResponse syncCartFormClient(CartForm form, boolean merge) {
-        Cart cart = getOrCreateCart(form.getUserId());
+        Cart cart = getOrCreateCart(form.getUserUid());
         if (!merge) {
             cart.getItems().clear();
         }

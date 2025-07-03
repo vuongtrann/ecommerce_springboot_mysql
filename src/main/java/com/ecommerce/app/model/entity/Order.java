@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Order extends BaseEntityForBuying {
-    private Long userId;
+    private Long userUid;
     private String cardId;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

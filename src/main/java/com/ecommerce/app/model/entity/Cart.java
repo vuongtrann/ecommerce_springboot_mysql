@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Cart extends BaseEntityForBuying {
-    private Long userId;
+    private Long userUid;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cart_id") // foreign key trong Item

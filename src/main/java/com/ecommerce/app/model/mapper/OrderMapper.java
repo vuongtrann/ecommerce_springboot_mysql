@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class OrderMapper {
     public Order toEntity(OrderForm form, List<Item> items, User user) {
         Order order = new Order();
-        order.setUserId(form.getUserId());
+        order.setUserUid(form.getUserId());
         order.setCardId(form.getCardId());
         order.setItems(items);
         order.setUser(user);
@@ -53,6 +53,7 @@ public class OrderMapper {
                     product.getName(),
                     product.getPrimaryImageURL(),
                     item.getQuantity(),
+                    product.getQuantity(),
                     item.getUnitPrice()
             );
         }).collect(Collectors.toList());
@@ -69,7 +70,7 @@ public class OrderMapper {
 
         return new OrderResponse(
                 order.getId(),
-                order.getUserId(),
+                order.getUserUid(),
                 userResponse,
                 order.getCardId(),
                 itemResponses,

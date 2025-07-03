@@ -39,6 +39,7 @@ public class CartMapper {
                     product.getName(),
                     product.getPrimaryImageURL(),
                     item.getQuantity(),
+                    product.getQuantity(),
                     item.getUnitPrice()
 
             );
@@ -46,7 +47,7 @@ public class CartMapper {
 
         return new CartResponse(
                 cart.getId(),
-                cart.getUserId(),
+                cart.getUserUid(),
                 itemResponses
         );
 

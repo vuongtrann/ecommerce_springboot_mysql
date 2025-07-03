@@ -17,6 +17,7 @@ public class OrderResponseADM {
     private UserResponse user;
 
     private double totalPrice;
+    private Long totalOrders;
     private PayStatus payStatus;
     private PayType payType;
     private OrderStatus orderStatus;
