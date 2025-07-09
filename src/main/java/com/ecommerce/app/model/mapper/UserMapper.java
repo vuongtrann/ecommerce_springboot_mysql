@@ -16,6 +16,7 @@ public class UserMapper {
                 .avatarUrl(user.getAvatar() != null ? user.getAvatar() : null) // hoặc ẩn nếu muốn
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .role(user.getRole())
                 .status(user.getStatus())
                 .build();
     }

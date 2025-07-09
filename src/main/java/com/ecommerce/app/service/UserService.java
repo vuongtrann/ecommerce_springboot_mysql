@@ -25,6 +25,8 @@ public interface UserService {
 
     boolean existsByUserName(String userName);
 
+    boolean existsByPhone(String phone);
+
     List<UserResponse> getAllUsers();
 
     UserResponse getUserResponseByUid(Long uid);

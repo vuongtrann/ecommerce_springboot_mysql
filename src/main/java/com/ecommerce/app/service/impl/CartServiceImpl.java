@@ -15,6 +15,7 @@ import com.ecommerce.app.utils.Enum.ErrorCode;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -56,10 +57,12 @@ public class CartServiceImpl implements CartService {
         if (existingItem.isPresent()) {
             Item item = existingItem.get();
             item.setQuantity(item.getQuantity() + quantity);
+
         } else {
             Item newItem = new Item();
             newItem.setProduct(product);
             newItem.setQuantity(quantity);
+//            product.setQuantity(product.getQuantity() - quantity);
             double price = product.getSellingPrice();
             newItem.setUnitPrice(price);
             cart.getItems().add(newItem);
@@ -84,12 +87,22 @@ public class CartServiceImpl implements CartService {
     public CartResponse updateQuantity(Long userUid, String productId, int newQuantity) {
         Cart cart = getOrCreateCart(userUid);
 
+
         for (Item item : cart.getItems()) {
             if (item.getProduct().getId().equals(productId)) {
                 if (newQuantity <= 0) {
                     cart.getItems().remove(item);
-                } else {
+                    break;
+                }
+                Product product = productRepository.findById(productId)
+                        .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+                if (newQuantity > product.getQuantity()) {
+                    throw new AppException(ErrorCode.NOT_ENOUGH_PRPDUCTS);
+                }
+                else {
                     item.setQuantity(newQuantity);
+//                    product.setQuantity(product.getQuantity() - newQuantity);
                 }
                 break;
             }

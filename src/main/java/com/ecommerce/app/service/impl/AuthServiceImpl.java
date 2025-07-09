@@ -48,6 +48,10 @@ public class AuthServiceImpl implements AuthService {
             throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
+        if(userService.existsByPhone(registerForm.getPhone())) {
+            throw new AppException(ErrorCode.PHONE_ALREADY_EXISTS);
+        }
+
         String hashedPassword = passwordEncoder.encode(registerForm.getPassword());
         String token = generateVerificationToken(registerForm.getEmail());
 
@@ -99,6 +103,39 @@ public class AuthServiceImpl implements AuthService {
                 null
         );
     }
+
+    @Override
+    public AuthResponse loginAdmin(LoginForm loginForm) {
+
+        // Xác thực username + password qua Spring Security
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword())
+        );
+
+        // Đẩy thông tin người dùng đã xác thực vào SecurityContext
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Tìm thông tin user trong database
+        User user = userService.findByUsername(loginForm.getUsername());
+
+        // Check role phải là ADMIN
+        if (!user.getRole().equals(Role.ADMIN)) {
+            throw new AppException(ErrorCode.ACCESS_DENIED); // Trả lỗi không cho login
+        }
+
+        // Sinh access token và refresh token bình thường
+        String accessToken = jwtUtil.generateToken(loginForm.getUsername());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginForm.getUsername());
+
+        return new AuthResponse(
+                accessToken,
+                refreshToken.getToken(),
+                user.getUID().toString(),
+                "ADMIN"
+        );
+    }
+
+
 
     @Override
     public AuthResponse refresh(String refreshToken) {

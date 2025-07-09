@@ -60,6 +60,11 @@ public class UserServiceImpl implements UserService {
         return userRepositiory.existsByUsername(userName);
     }
 
+    @Override
+    public boolean existsByPhone(String phone) {
+        return userRepositiory.existsByPhone(phone);
+    }
+
     private static final AtomicLong UID_COUNTER = new AtomicLong(1);
 
     @Override

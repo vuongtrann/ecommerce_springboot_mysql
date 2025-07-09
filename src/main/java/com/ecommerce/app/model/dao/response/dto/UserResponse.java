@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
+import com.ecommerce.app.utils.Enum.Role;
 import com.ecommerce.app.utils.Enum.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,4 +20,5 @@ public class UserResponse {
     private String avatarUrl;
     private String email;
     private String phone;
-    Status status; }
+    private Role role;
+    private Status status; }

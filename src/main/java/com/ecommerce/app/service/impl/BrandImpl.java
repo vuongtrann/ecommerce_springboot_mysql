@@ -71,7 +71,8 @@ public class BrandImpl implements BrandService {
         Brand brand = new Brand(
                 brandForm.getName(),
                 brandForm.getDescription(),
-                slugify.generateSlug(brandForm.getName())
+                slugify.generateSlug(brandForm.getName()),
+                null
         );
         Brand savedBrand = brandRepository.save(brand);
         return savedBrand;
@@ -97,6 +98,9 @@ public class BrandImpl implements BrandService {
     })
     public void deleteBrand(String id) {
         Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        if (!brand.getProducts().isEmpty()) {
+            throw new AppException(ErrorCode.BRAND_IN_USE_BY_PRODUCT);
+        }
         if (brand.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.BRAND_CANNOT_DELETE);
         }

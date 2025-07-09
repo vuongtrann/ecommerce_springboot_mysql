@@ -204,16 +204,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "CATEGORY_BY_ID", key = "#id"),
-            @CacheEvict(value = "CATEGORY_BY_SLUG", key = "#slug")
     })
     public void delete(String id) {
-         Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
-          if (!category.getProducts().isEmpty()) {
-          throw new AppException(ErrorCode.CATEGORY_IN_USE_BY_PRODUCT);
-          }
 
-         categoryRepository.delete(category);
+        if (!category.getProducts().isEmpty()) {
+            throw new AppException(ErrorCode.CATEGORY_IN_USE_BY_PRODUCT);
+        }
+        if (category.getStatus().equals("ACTIVE")) {
+            throw new AppException(ErrorCode.CATEGORY_CANNOT_DELETE);
+        }
+        category.setStatus(Status.DELETED);
+
+        categoryRepository.save(category);
     }
 
 }

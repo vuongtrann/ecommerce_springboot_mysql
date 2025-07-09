@@ -59,6 +59,16 @@ public class AuthController {
                 SuccessCode.LOGIN, authservice.login(form)
         ));
     }
+
+    @PostMapping("/login-admin")
+    public ResponseEntity<AppResponse<AuthResponse>> loginAdmin(@RequestBody @Valid LoginForm form) {
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.LOGIN, authservice.loginAdmin(form)
+        ));
+    }
+
+
+
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
         return ResponseEntity.ok(authservice.refresh(request.getRefreshToken()));

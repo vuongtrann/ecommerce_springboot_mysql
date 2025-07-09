@@ -9,6 +9,7 @@ import com.ecommerce.app.model.mapper.OrderMapper;
 import com.ecommerce.app.service.OrderService;
 import com.ecommerce.app.service.VnPayService;
 import com.ecommerce.app.utils.Enum.OrderStatus;
+import com.ecommerce.app.utils.Enum.PayStatus;
 import com.ecommerce.app.utils.Enum.SuccessCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -81,6 +82,17 @@ public class OrderController {
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.UPDATED,
                 updatedOrder
+        ));
+    }
+
+    @PutMapping("/{orderId}/pay/status")
+    public ResponseEntity<AppResponse<String>> updateOrderPayStatus(
+            @PathVariable String orderId,
+            @RequestParam PayStatus payStatus){
+        orderService.updateOrderPayStatus( orderId, payStatus);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.UPDATED,
+                "Change Pay Status Success"
         ));
     }
 

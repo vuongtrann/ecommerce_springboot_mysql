@@ -69,7 +69,8 @@ public class CollectionImpl implements CollectionService {
                 collectionForm.getCollectionName(),
                 collectionForm.getCollectionDescription(),
                 collectionForm.getCollectionImage(),
-                slugify.generateSlug(collectionForm.getCollectionName())
+                slugify.generateSlug(collectionForm.getCollectionName()),
+                null
         );
         Collection savedCollection = collectionRepository.save(collection);
         return savedCollection;
@@ -97,6 +98,9 @@ public class CollectionImpl implements CollectionService {
     })
     public void deleteCollection(String id) {
         Collection collection = collectionRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.COLLECTION_NOT_FOUND));
+        if (!collection.getProducts().isEmpty()) {
+            throw new AppException(ErrorCode.COLLECTION_IN_USE_BY_PRODUCT);
+        }
         if (collection.getStatus().equals("ACTIVE")) {
             throw new AppException(ErrorCode.COLLECTION_CANNOT_DELETE);
         }

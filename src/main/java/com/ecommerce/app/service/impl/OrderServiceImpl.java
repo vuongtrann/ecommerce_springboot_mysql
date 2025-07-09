@@ -128,6 +128,9 @@ public class OrderServiceImpl implements OrderService {
     public void updateOrderPayStatus(String orderId, PayStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        if(order.getPayType() == PayType.ONLINE){
+            throw new AppException(ErrorCode.ORDER_NOT_CHANGE_PAY_ONLINE);
+        }
         order.setPayStatus(status);
         orderRepository.save(order);
     }
@@ -154,6 +157,7 @@ public class OrderServiceImpl implements OrderService {
                                 r.getAvatar(),
                                 r.getEmail(),
                                 r.getPhone(),
+                                null,
                                 null                                 // status chưa có
                         ))
                         .totalOrders(r.getTotalOrder())               // Tổng số order của user

@@ -14,6 +14,9 @@ public interface AuthService {
     public User register(RegisterForm registerForm,  MultipartFile avatar);
 //    public Map<String, String> login(LoginForm loginForm);
     public AuthResponse login(LoginForm loginForm);
+
+    public AuthResponse  loginAdmin(LoginForm loginForm);
+
     public AuthResponse refresh(String refreshToken);
     public void verifyEmail(String token);
     public void resendVerifyEmail(String email);

@@ -13,6 +13,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(404, "Category not found", HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXISTS(400, "Category already exists", HttpStatus.BAD_REQUEST),
     CATEGORY_IN_USE_BY_PRODUCT(400, "Category in use by product" , HttpStatus.BAD_REQUEST ),
+    CATEGORY_CANNOT_DELETE(400, "Category cannot be deleted" , HttpStatus.BAD_REQUEST ),
 
 
     /** File */
@@ -31,6 +32,7 @@ public enum ErrorCode {
     PRODUCT_NAME_ALREADY_EXISTS(400,"Product name already exists !" , HttpStatus.BAD_REQUEST ),
     PRODUCT_NOT_FOUND_BY_SLUG(404,"Product not found by slug !" , HttpStatus.NOT_FOUND ),
     PRODUCT_CANNOT_DELETE(400,"Can not delete this product, please change status first !" , HttpStatus.BAD_REQUEST ),
+    NOT_ENOUGH_PRPDUCTS(400,"Not enough products !" , HttpStatus.BAD_REQUEST ),
 
     TAG_NOT_FOUND(404, "Tag not found !", HttpStatus.NOT_FOUND),
     TAG_ALREADY_EXISTS(400,"Tag already exists !" , HttpStatus.BAD_REQUEST ),
@@ -38,15 +40,19 @@ public enum ErrorCode {
     TAG_STATUS_IS_ACTIVE(400,"Tag status is active , please change status first !" , HttpStatus.BAD_REQUEST ),
 
     EMAIL_ALREADY_EXISTS(400,"Email already exists !" , HttpStatus.BAD_REQUEST ),
+    PHONE_ALREADY_EXISTS(400,"Phone already exists !" , HttpStatus.BAD_REQUEST ),
     INVALID_CREDENTIALS(400,"Invalid credentials !" , HttpStatus.BAD_REQUEST ),
     ACCOUNT_NOT_VERIFIED(400,"Account not verified !" , HttpStatus.FORBIDDEN ),
     INVALID_VERIFICATION_TOKEN(400,"Invalid verification token" , HttpStatus.BAD_REQUEST ),
     USER_NOT_FOUND(404,"User not found !" , HttpStatus.NOT_FOUND ),
+
     COLLECTION_NOT_FOUND(404,"Collection not found !" , HttpStatus.NOT_FOUND ),
     COLLECTION_CANNOT_DELETE(400,"Collection Cannot delete !" , HttpStatus.BAD_REQUEST ),
+    COLLECTION_IN_USE_BY_PRODUCT(400,"Collection in use by product !" , HttpStatus.BAD_REQUEST ),
 
     BRAND_NOT_FOUND(404,"Brand not found !" , HttpStatus.NOT_FOUND ),
     BRAND_CANNOT_DELETE(400,"Brand not found !" , HttpStatus.BAD_REQUEST ),
+    BRAND_IN_USE_BY_PRODUCT(400, "Brand in use by product !" , HttpStatus.BAD_REQUEST ),
 
     BANNER_NOT_FOUND(404,"Banner not found !" , HttpStatus.NOT_FOUND ),
     BANNER_CANNOT_DELETE(400,"Banner not found !" , HttpStatus.BAD_REQUEST ),
@@ -70,12 +76,15 @@ public enum ErrorCode {
     CART_NOT_FOUND(404,"Cart not found !" , HttpStatus.NOT_FOUND ),
     ITEM_NOT_FOUND(404,"Item not found !" , HttpStatus.NOT_FOUND ) ,
     ORDER_NOT_FOUND(404,"Order not found !" , HttpStatus.NOT_FOUND ) ,
+    ORDER_NOT_CHANGE_PAY_ONLINE(400,"Order not change pay online !" , HttpStatus.BAD_REQUEST ),
+
+    ACCESS_DENIED(400,"Access denied !" , HttpStatus.FORBIDDEN ),
 
     PASSWORD_NOT_EQUAL(400,"Password not equal !" , HttpStatus.BAD_REQUEST ),
     PASSWORD_NOT_MATCHES(400,"Password not matchces !" , HttpStatus.BAD_REQUEST ),
 
     PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),
-    UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED ), ;
+    UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED ),;
     private final int code;
     private final String message;
     private final HttpStatusCode statusCode;
