@@ -12,6 +12,7 @@ import com.ecommerce.app.model.entity.Variant.VariantOption;
 import com.ecommerce.app.model.entity.Variant.VariantType;
 import com.ecommerce.app.service.utils.SlugifyService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
-    public static Product toEntity(ProductForm request, List<Category> categories, List<Brand> brands, List<Collection> collections, List<Tag> tags) {
+    public static Product toEntity(ProductForm request, Category category, List<Brand> brands, List<Collection> collections, List<Tag> tags) {
         return Product.builder()
                 .name(request.getName() != null ? request.getName().trim() : null)
                 .description(request.getDescription() != null ? request.getDescription().trim() : null)
@@ -34,7 +35,7 @@ public class ProductMapper {
                 .noOfView(0)
                 .sellingType(request.getSellingType() != null ? request.getSellingType().trim() : null)
                 .avgRating(0)
-                .categories(categories)
+                .category(category)
                 .brands(brands)
                 .collections(collections)
                 .tags(tags)
@@ -47,6 +48,7 @@ public class ProductMapper {
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
+                .categoryName(product.getCategory().getName())
                 .slug(product.getSlug())
                 .primaryImageURL(product.getPrimaryImageURL())
                 .sku(product.getSku())
@@ -61,6 +63,7 @@ public class ProductMapper {
                 .avgRating(product.getAvgRating())
                 .noOfRating(product.getNoOfRating())
                 .hasVariants(product.getHasVariants())
+
 
 
 
@@ -79,14 +82,11 @@ public class ProductMapper {
 
 
 
-                // Ánh xạ danh sách categories vào ProductResponse
-                .categories(product.getCategories().stream()
-                        .map(cat -> CategoryResponse.builder()
-                                .id(cat.getId())
-                                .name(cat.getName())
-                                .build())
-                        .collect(Collectors.toList())
-                )
+
+
+
+
+
 
                 .brands(product.getBrands().stream()
                         .map(brand -> BrandResponse.builder()

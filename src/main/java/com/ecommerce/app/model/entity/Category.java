@@ -1,6 +1,7 @@
 package com.ecommerce.app.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,9 +33,10 @@ public class Category extends BaseEntity {
     private List<Category> children = new ArrayList<>();
 
 
-    @ManyToMany(mappedBy = "categories")
-    @JsonBackReference
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @JsonIgnore // Hoặc dùng @JsonBackReference nếu muốn kiểm soát vòng lặp
     private List<Product> products;
+
 
     public Category(String name, Category parent, List<Category> children) {
         this.name = name;

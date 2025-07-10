@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, String> {
-    @EntityGraph(attributePaths = {"images"})
+
     Page<ProductProjection> findAllProjectedBy(Pageable pageable);
     Optional<Product> findProductBySlug(String slug);
 

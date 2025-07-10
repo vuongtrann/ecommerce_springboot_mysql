@@ -3,6 +3,7 @@ package com.ecommerce.app.model.dao.request;
 import com.ecommerce.app.model.dao.request.Variant.ProductVariantForm;
 import com.ecommerce.app.model.entity.Image;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
@@ -46,8 +47,8 @@ public class ProductForm {
     private String sellingType;
 
 //    private double avgRating;
-
-    private List<String> categories = new ArrayList<>();
+    @NotNull(message = "categoryId must not be null")
+    private String categoryId;
 
     private List<String> brands = new ArrayList<>();
 

@@ -44,14 +44,9 @@ public class Product extends BaseEntity {
     private int noOfRating;
     private Boolean hasVariants = false;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JsonManagedReference
-    @JoinTable(
-            name = "product_category",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> categories;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

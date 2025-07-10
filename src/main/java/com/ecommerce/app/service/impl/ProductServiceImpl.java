@@ -178,18 +178,13 @@ public class ProductServiceImpl implements ProductSerice {
 
     @Override
     public Product create(ProductForm form) {
-        List<Category> categories = categoryService.findByIdIn(form.getCategories());
-        if (Objects.isNull(categories) || categories.isEmpty()) {
-            throw new AppException(ErrorCode.CATEGORY_NOT_FOUND);
-        }
-
+        Category category = categoryRepository.findById(form.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         List<Brand> brands = brandService.findByIdIn(form.getBrands());
-
         List<Collection> collections = collectionService.findByIdIn(form.getCollections());
-
         List<Tag> tags = tagService.findByIdIn(form.getTags());
 
-        Product product = ProductMapper.toEntity(form, categories, brands, collections, tags);
+        Product product = ProductMapper.toEntity(form, category, brands, collections, tags);
 
         String slug = slugify.generateSlug(form.getName());
         product.setSlug(slug);
@@ -197,15 +192,15 @@ public class ProductServiceImpl implements ProductSerice {
         product.setStatus(Status.ACTIVE);
         product.setCreatedAt(Instant.now().toEpochMilli());
         product.setUpdatedAt(Instant.now().toEpochMilli());
-        product = productRepository.save(product); // 🔹 Lưu product vào DB trước
-        // 👉 Bước 2: Tạo và lưu ProductVariant sau khi Product đã có ID
+
+        product = productRepository.save(product); // Lưu Product
+
         if (form.isHasVariants()) {
             List<ProductVariant> variants = new ArrayList<>();
             for (ProductVariantForm variantForm : form.getVariants()) {
                 ProductVariant productVariant = createProductVariant(variantForm, product);
-                variants.add(productVariantRepository.save(productVariant)); // 🔹 Lưu ProductVariant trước
+                variants.add(productVariantRepository.save(productVariant));
             }
-            // 🔹 Cập nhật danh sách variants mà không thay thế toàn bộ danh sách
             if (product.getVariants() == null) {
                 product.setVariants(new ArrayList<>());
             }
@@ -213,20 +208,19 @@ public class ProductServiceImpl implements ProductSerice {
             product.getVariants().addAll(variants);
             product.setHasVariants(true);
         }
-        // 👉 Bước 3: Cập nhật lại Product sau khi thêm variants
-        Product saved = productRepository.save(product);
-        return saved;
+
+        return productRepository.save(product);
     }
+
 
     @Override
 //    @Caching(put = {
 //            @CachePut (value = "PRODUCT_BY_ID", key = "#productId"),
 //            @CachePut (value = "PRODUCT_BY_SLUG", key ="#result.slug")
 //    })
-    public ProductResponse update(String productId ,ProductForm form) {
+    public ProductResponse update(String productId, ProductForm form) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() ->  new AppException(ErrorCode.PRODUCT_NOT_FOUND
-                ));
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // Check duplicate name
         if (!product.getName().equalsIgnoreCase(form.getName())) {
@@ -235,7 +229,6 @@ public class ProductServiceImpl implements ProductSerice {
             }
             product.setName(form.getName());
 
-            // Update slug if name changed
             String newSlug = slugify.generateSlug(form.getName());
             if (productRepository.existsBySlug(newSlug)) {
                 newSlug += "-" + UUID.randomUUID().toString().substring(0, 8);
@@ -255,23 +248,19 @@ public class ProductServiceImpl implements ProductSerice {
         // Handle variants
         boolean hasVariants = form.isHasVariants();
         if (hasVariants) {
-            product.getVariants().clear(); //  Hibernate xử lý orphan
+            product.getVariants().clear();
             List<ProductVariant> newVariants = form.getVariants().stream()
                     .map(variantForm -> productMapper.toVariantEntity(variantForm, product))
                     .collect(Collectors.toList());
             product.getVariants().addAll(newVariants);
         } else {
-            product.getVariants().clear(); // Không có variant thì clear
+            product.getVariants().clear();
         }
 
-
-        // Handle categories
-        List<Category> updatedCategories = categoryRepository.findAllByIdIn(form.getCategories());
-        product.setCategories(updatedCategories);
-
-        // Handle tags
-//        List<Tag> updatedTags = tagRepository.findAllByIdIn(form.getTags());
-//        product.setTags(updatedTags);
+        // Handle single category
+        Category category = categoryRepository.findById(form.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        product.setCategory(category);
 
         // Handle brands
         List<Brand> updatedBrands = brandRepository.findAllByIdIn(form.getBrands());
@@ -283,9 +272,8 @@ public class ProductServiceImpl implements ProductSerice {
 
         Product savedProduct = productRepository.save(product);
         return ProductMapper.toResponse(savedProduct);
-//        return productMapper.toResponse(savedProduct);
-
     }
+
 
     @Override
     public Product uploadImage(String id, List<MultipartFile> files) {
