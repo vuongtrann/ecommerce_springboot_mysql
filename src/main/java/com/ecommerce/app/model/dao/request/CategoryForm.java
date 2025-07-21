@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.request;
 
+import com.ecommerce.app.utils.Enum.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -13,14 +14,8 @@ public class CategoryForm {
     @Size(min = 5, max = 100, message = "Name must be between 5 and 100 characters")
     private String name;
 
-    private String slug;
+    private Status status;
 
-    private String icon;
 
-    private String banner;
-
-    private String parentId;
-
-    private List<String> childId;
 
 }

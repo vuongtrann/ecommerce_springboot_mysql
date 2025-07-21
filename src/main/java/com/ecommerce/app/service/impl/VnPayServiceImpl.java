@@ -130,7 +130,7 @@ public class VnPayServiceImpl implements VnPayService {
             if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
                 String orderId = request.getParameter("vnp_TxnRef");
                 try {
-                    // Thêm log để debug
+
                     System.out.println("Payment successful for order: " + orderId);
                     /**
                      * Cần tạo 1 hàm để update toàn bộ trạng thái của đơn hàng và gửi mail thông báo cho khách hàng
@@ -138,7 +138,7 @@ public class VnPayServiceImpl implements VnPayService {
                     orderService.updateOrderWhenPaymentSuccess(orderId, PayType.ONLINE, PayStatus.COMPLETED);
                     return 1;
                 } catch (Exception e) {
-                    // Thêm log để bắt lỗi
+
                     System.out.println("Error processing payment callback: " + e.getMessage());
                     return 0;
                 }

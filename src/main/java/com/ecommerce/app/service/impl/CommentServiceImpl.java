@@ -65,11 +65,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponse> getCommentsByProductId(String productId){
         List<Comment> comments = commentRepository.findByProduct_Id(productId);
-        if (comments.isEmpty()) {
-            throw new AppException(ErrorCode.COMMENT_NOT_FOUND);
-        }else {
-            return CommentMapper.toResponseList(comments);
-        }
+        return CommentMapper.toResponseList(comments);
+
     }
 
     @Override

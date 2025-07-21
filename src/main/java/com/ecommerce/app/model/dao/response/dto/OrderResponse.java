@@ -20,7 +20,6 @@ public class OrderResponse {
     private String id;
     private Long userUid;
     private UserInOrderResponse user;
-    private String cardId;
     private List<ItemResponse> items;
     private double totalPrice;
     private PayStatus payStatus;

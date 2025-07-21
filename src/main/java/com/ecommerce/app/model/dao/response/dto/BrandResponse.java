@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
+import com.ecommerce.app.utils.Enum.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class BrandResponse {
     private String id;
     private String name;
-    private String description;
     private String slug;
+    private Status status;
+    private Integer totalProduct;
 }

@@ -3,6 +3,9 @@ package com.ecommerce.app.service.impl;
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.CategoryForm;
 import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
+import com.ecommerce.app.model.dao.response.dto.ProductResponse;
+import com.ecommerce.app.model.dao.response.projection.CategoryWithTotalProductProjection;
+import com.ecommerce.app.model.dao.response.projection.ProductWithAvgRatingProjection;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.model.mapper.CategoryMapper;
 import com.ecommerce.app.repository.CategoryRepository;
@@ -17,6 +20,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -37,28 +43,54 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll();
     }
 
-    @Override
-    @Cacheable(value = "CATEGORY_BY_ID", key = "#id")
 
-    public CategoryResponse findById(String id) {
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        CategoryResponse categoryResponse = CategoryMapper.toCategoryResponse(category);
-        return categoryResponse;
+    @Override
+    public Page<CategoryResponse> findAllCategoryWithTotalProduct(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<CategoryWithTotalProductProjection> projections = categoryRepository.findAllCategoryWithTotalProduct(pageable);
+
+        return projections.map(category -> {
+            CategoryResponse response = new CategoryResponse();
+            response.setId(category.getId());
+            response.setName(category.getName());
+            System.out.println("Raw status from DB = " + category.getStatus());
+            response.setStatus(Status.fromValue(category.getStatus()));
+            response.setTotalProduct(category.getTotalProduct());
+            return response;
+        });
     }
+
+
+
+    @Caching(evict = {
+            @CacheEvict(value = "CATEGORY_BY_ID", key = "#id"),
+
+    })
+    @Override
+    public void changeStatus(String id){
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        switch (category.getStatus()) {
+            case ACTIVE -> category.setStatus(Status.INACTIVE);
+            case INACTIVE -> category.setStatus(Status.ACTIVE);
+            case DELETED -> throw new AppException(ErrorCode.CATEGORY_CANNOT_DELETE);
+        }
+
+        category.setUpdatedAt(Instant.now().toEpochMilli());
+        categoryRepository.save(category);
+    }
+
+
+
 
     @Override
     public List<Category> findByIdIn(List<String> ids) {
         return categoryRepository.findAllByIdIn(ids);
     }
 
-    @Override
-    @Cacheable(value = "CATEGORY_BY_SLUG", key = "#slug")
 
-    public CategoryResponse findBySlug(String slug) {
-        Category category = categoryRepository.findBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        CategoryResponse categoryResponse = CategoryMapper.toCategoryResponse(category);
-        return categoryResponse;
-    }
 
     @Override
     public Category create(CategoryForm form) {
@@ -67,28 +99,14 @@ public class CategoryServiceImpl implements CategoryService {
             throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
 
-        // Tìm parent category (nếu có)
-        Category parentCategory = (form.getParentId() != null)
-                ? categoryRepository.findById(form.getParentId()).orElse(null)
-                : null;
 
-        // Tìm danh sách child categories (nếu có)
-        List<Category> childCategories = form.getChildId() != null
-                ? categoryRepository.findAllById(form.getChildId())
-                : new ArrayList<>();
-
-        Category category = new Category(form.getName(),parentCategory,childCategories);
+        Category category = new Category(form.getName(),form.getStatus());
         category.setSlug(slugify.generateSlug(form.getName()));
+
 
         category.setCreatedAt(Instant.now().toEpochMilli());
         category.setUpdatedAt(Instant.now().toEpochMilli());
 
-        if (parentCategory != null) {
-            parentCategory.getChildren().add(category);
-        }
-        for (Category childCategory : childCategories) {
-            childCategory.setParent(category);
-        }
 
         categoryRepository.save(category);
 
@@ -139,12 +157,29 @@ public class CategoryServiceImpl implements CategoryService {
 //        return category;
 //    }
 
+
     @Override
-    @Caching(put = {
-            @CachePut(value = "CATEGORY_BY_ID", key = "#id"),
-            @CachePut(value = "CATEGORY_BY_SLUG", key = "#result.slug")
-    })
-    public Category update(String id, CategoryForm form) {
+    @Cacheable(value = "CATEGORY_BY_SLUG", key = "#slug")
+
+    public CategoryResponse findBySlug(String slug) {
+        Category category = categoryRepository.findBySlug(slug).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        CategoryResponse categoryResponse = CategoryMapper.toCategoryResponse(category);
+        return categoryResponse;
+    }
+
+
+    @Override
+    @Cacheable(value = "CATEGORY_BY_ID", key = "#id")
+
+    public CategoryResponse findById(String id) {
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
+        CategoryResponse categoryResponse = CategoryMapper.toCategoryResponse(category);
+        return categoryResponse;
+    }
+
+    @CachePut(value = "CATEGORY_BY_ID", key = "#id")
+    @Override
+    public CategoryResponse update(String id, CategoryForm form) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
@@ -153,44 +188,17 @@ public class CategoryServiceImpl implements CategoryService {
             throw new AppException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
 
-        // --- Update parent ---
-        String parentId = form.getParentId();
-        Category parentCategory = (parentId != null && !parentId.isBlank())
-                ? categoryRepository.findById(parentId).orElse(null)
-                : null;
-
-        // --- Update children ---
-        List<Category> newChildren = form.getChildId() != null
-                ? categoryRepository.findAllById(form.getChildId())
-                : new ArrayList<>();
-
-        // ✅ Gỡ liên kết các con cũ
-        for (Category oldChild : category.getChildren()) {
-            oldChild.setParent(null);
-        }
-
-        // ✅ Gỡ category khỏi parent cũ nếu thay đổi parent
-        if (category.getParent() != null && !category.getParent().getId().equals(form.getParentId())) {
-            category.getParent().getChildren().remove(category);
-        }
-
-        // ✅ Cập nhật parent và con mới
-        category.setParent(parentCategory);
-        category.setChildren(newChildren);
-
-        if (parentCategory != null) {
-            parentCategory.getChildren().add(category);
-        }
-        for (Category child : newChildren) {
-            child.setParent(category);
-        }
-
         category.setName(form.getName());
+        category.setStatus(form.getStatus());
         category.setSlug(slugify.generateSlug(form.getName()));
         category.setUpdatedAt(Instant.now().toEpochMilli());
 
-        return categoryRepository.save(category);
+        category = categoryRepository.save(category);
+        CategoryResponse response = CategoryMapper.toCategoryResponse(category);
+
+        return response; // <-- bây giờ object được cache chính là DTO, không dính Hibernate proxy
     }
+
 
 
     @Override

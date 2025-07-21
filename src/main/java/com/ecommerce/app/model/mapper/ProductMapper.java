@@ -22,21 +22,21 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
-    public static Product toEntity(ProductForm request, Category category, List<Brand> brands, List<Collection> collections, List<Tag> tags) {
+    public static Product toEntity(ProductForm request, Category category, Brand brand, List<Collection> collections, List<Tag> tags) {
         return Product.builder()
                 .name(request.getName() != null ? request.getName().trim() : null)
                 .description(request.getDescription() != null ? request.getDescription().trim() : null)
                 .primaryImageURL(request.getPrimaryImageURL() != null ? request.getPrimaryImageURL().trim() : null)
                 .sku(request.getSku() != null ? request.getSku().trim() : null)
                 .quantity(request.getQuantity())
-                .originalPrice(request.getOriginalPrice() != 0 ? request.getOriginalPrice() : null)
-                .sellingPrice(request.getSellingPrice() != 0 ? request.getSellingPrice() : null)
-                .discountedPrice(request.getDiscountedPrice() != 0 ? request.getDiscountedPrice() : null)
+                .originalPrice(request.getOriginalPrice())
+                .sellingPrice(request.getSellingPrice())
+                .discountedPrice(request.getDiscountedPrice())
                 .noOfView(0)
                 .sellingType(request.getSellingType() != null ? request.getSellingType().trim() : null)
                 .avgRating(0)
                 .category(category)
-                .brands(brands)
+                .brand(brand)
                 .collections(collections)
                 .tags(tags)
                 .build();
@@ -49,6 +49,7 @@ public class ProductMapper {
                 .name(product.getName())
                 .description(product.getDescription())
                 .categoryName(product.getCategory().getName())
+                .brandName(product.getBrand().getName())
                 .slug(product.getSlug())
                 .primaryImageURL(product.getPrimaryImageURL())
                 .sku(product.getSku())
@@ -62,7 +63,10 @@ public class ProductMapper {
                 .sellingType(product.getSellingType())
                 .avgRating(product.getAvgRating())
                 .noOfRating(product.getNoOfRating())
+                .status(product.getStatus())
                 .hasVariants(product.getHasVariants())
+
+
 
 
 
@@ -88,14 +92,7 @@ public class ProductMapper {
 
 
 
-                .brands(product.getBrands().stream()
-                        .map(brand -> BrandResponse.builder()
-                                .id(brand.getId())
-                                .name(brand.getName())
-                                .slug(brand.getSlug())
-                                .description(brand.getDescription())
-                                .build())
-                        .collect(Collectors.toList()))
+
 
 
                 .collections(product.getCollections().stream()
@@ -176,6 +173,8 @@ public class ProductMapper {
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
+                .categoryName(product.getCategory().getName())
+                .brandName(product.getBrand().getName())
                 .slug(product.getSlug())
                 .primaryImageURL(product.getPrimaryImageURL())
                 .sku(product.getSku())

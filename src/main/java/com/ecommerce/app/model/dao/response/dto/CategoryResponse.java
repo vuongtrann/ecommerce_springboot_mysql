@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigInteger;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,5 +19,7 @@ public class CategoryResponse {
     private String name;
     private String slug;
     private Status status;
+    private Integer totalProduct;
 
 }
+

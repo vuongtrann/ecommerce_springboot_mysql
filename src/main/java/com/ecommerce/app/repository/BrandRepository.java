@@ -1,6 +1,7 @@
 package com.ecommerce.app.repository;
 
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
+import com.ecommerce.app.model.dao.response.projection.CategoryWithTotalProductProjection;
 import com.ecommerce.app.model.entity.Brand;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.model.entity.Product;
@@ -15,7 +16,26 @@ import java.util.Optional;
 
 public interface BrandRepository extends JpaRepository<Brand, String> {
     Page<BrandProjection> findAllBrandBy(Pageable pageable);
-    List<Brand> findAllByIdIn(List<String> ids);
+
     Optional<Brand> findBrandBySlug(String slug);
+
+    @Query(
+            value = "SELECT " +
+                    "b.id, " +
+                    "b.name, " +
+                    "b.status, " +
+
+
+                    "COUNT(p.id) AS totalProduct " +
+                    "FROM brand b " +
+                    "LEFT JOIN product p ON p.brand_id = b.id " +
+
+                    "GROUP BY b.id, b.name, b.status ",
+
+
+            countQuery = "SELECT COUNT(DISTINCT b.name) FROM brand b",
+            nativeQuery = true
+    )
+    Page<BrandProjection> findAllBrandWithTotalProduct(Pageable pageable);
 
 }

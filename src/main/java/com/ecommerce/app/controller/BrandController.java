@@ -2,6 +2,8 @@ package com.ecommerce.app.controller;
 
 import com.ecommerce.app.model.dao.request.BrandForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
+import com.ecommerce.app.model.dao.response.dto.BrandResponse;
+import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
 import com.ecommerce.app.model.entity.Brand;
 import com.ecommerce.app.service.BrandService;
@@ -24,14 +26,26 @@ public class BrandController {
     private final BrandService brandService;
 
 
+//    @GetMapping
+//    public ResponseEntity<Page<BrandProjection>> getAllBrand(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(defaultValue = "createdAt") String sortBy,
+//            @RequestParam(defaultValue = "desc") String direction
+//    ) {
+//        return ResponseEntity.ok(brandService.getAllBrands( page, size, sortBy, direction));
+//    }
+
     @GetMapping
-    public ResponseEntity<Page<BrandProjection>> getAllBrand(
+    public ResponseEntity<AppResponse<Page<BrandResponse>>> findAllBrandWithTotalProduct(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String direction
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(brandService.getAllBrands( page, size, sortBy, direction));
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                brandService.findAllBrandWithTotalProduct(page, size)
+
+        ));
     }
 
 
@@ -47,11 +61,11 @@ public class BrandController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppResponse<Brand>> getBrandById(@PathVariable String id) {
-        Brand brand = brandService.findById(id);
+    public ResponseEntity<AppResponse<BrandResponse>> getBrandById(@PathVariable String id) {
+
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.FETCHED,
-                brand
+                brandService.findById(id)
         ));
     }
 
@@ -108,18 +122,18 @@ public class BrandController {
         );
     }
 
-    @PostMapping("/product/{productId}")
-    public ResponseEntity<AppResponse<String>>addBrandToProduct(
-            @PathVariable String productId,
-            @RequestBody Map<String, String> body) {
-
-        String brandId = body.get("id"); // key là "id" như trong postman cậu gửi
-        brandService.addBrandToProduct(productId, brandId);
-        return ResponseEntity.ok(
-                AppResponse.builderResponse(
-                SuccessCode.ADD_BRAND_PRODUCT,
-                        "Check productId: " + productId
-        ));
-    }
+//    @PostMapping("/product/{productId}")
+//    public ResponseEntity<AppResponse<String>>addBrandToProduct(
+//            @PathVariable String productId,
+//            @RequestBody Map<String, String> body) {
+//
+//        String brandId = body.get("id");
+//        brandService.addBrandToProduct(productId, brandId);
+//        return ResponseEntity.ok(
+//                AppResponse.builderResponse(
+//                SuccessCode.ADD_BRAND_PRODUCT,
+//                        "Check productId: " + productId
+//        ));
+//    }
 
 }

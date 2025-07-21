@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.dao.response.dto;
 
+import com.ecommerce.app.utils.Enum.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,4 +13,5 @@ public class AuthResponse {
     private String refreshToken;
     private String userId;
     private String role; // e.g., "USER", "ADMIN"
+    private Status status;
 }

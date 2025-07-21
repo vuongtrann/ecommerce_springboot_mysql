@@ -3,10 +3,12 @@ package com.ecommerce.app.controller;
 import com.ecommerce.app.model.dao.request.CategoryForm;
 import com.ecommerce.app.model.dao.response.AppResponse;
 import com.ecommerce.app.model.dao.response.dto.CategoryResponse;
+import com.ecommerce.app.model.dao.response.projection.CategoryWithTotalProductProjection;
 import com.ecommerce.app.model.entity.Category;
 import com.ecommerce.app.service.CategoryService;
 import com.ecommerce.app.utils.Enum.SuccessCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +31,36 @@ public class CategoryController {
         );
     }
 
-    @GetMapping()
-    public ResponseEntity<AppResponse<List<Category>>> findAll() {
-        return ResponseEntity.ok(
-                AppResponse.builderResponse(
-                        SuccessCode.FETCHED,
-                        categoryService.findAll()
-                )
-        );
+    @PutMapping("/changeStatus/{categoryId}")
+    public ResponseEntity<AppResponse<String>> changeStatus(@PathVariable String categoryId) {
+        categoryService.changeStatus(categoryId);
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.UPDATED,
+                "Status changed successfully"
+        ));
+    }
+
+
+//    @GetMapping()
+//    public ResponseEntity<AppResponse<List<Category>>> findAll() {
+//        return ResponseEntity.ok(
+//                AppResponse.builderResponse(
+//                        SuccessCode.FETCHED,
+//                        categoryService.findAll()
+//                )
+//        );
+//    }
+
+    @GetMapping
+    public ResponseEntity<AppResponse<Page<CategoryResponse>>> findAllCategoryWithTotalProduct(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(AppResponse.builderResponse(
+                SuccessCode.FETCHED,
+                categoryService.findAllCategoryWithTotalProduct(page, size)
+
+        ));
     }
 
     @GetMapping("/{id}")
@@ -60,7 +84,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AppResponse<Category>> update(@PathVariable String id, @RequestBody CategoryForm form) {
+    public ResponseEntity<AppResponse<CategoryResponse>> update(@PathVariable String id, @RequestBody CategoryForm form) {
         return ResponseEntity.ok(
                 AppResponse.builderResponse(
                         SuccessCode.UPDATED,

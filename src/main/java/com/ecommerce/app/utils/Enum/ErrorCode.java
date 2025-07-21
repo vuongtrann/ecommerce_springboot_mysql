@@ -13,7 +13,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(404, "Category not found", HttpStatus.NOT_FOUND),
     CATEGORY_ALREADY_EXISTS(400, "Category already exists", HttpStatus.BAD_REQUEST),
     CATEGORY_IN_USE_BY_PRODUCT(400, "Category in use by product" , HttpStatus.BAD_REQUEST ),
-    CATEGORY_CANNOT_DELETE(400, "Category cannot be deleted" , HttpStatus.BAD_REQUEST ),
+    CATEGORY_CANNOT_DELETE(400, "Trạng thái loại sản phẩm đang xóa, không xử lý tác vụ" , HttpStatus.BAD_REQUEST ),
 
 
     /** File */
@@ -31,7 +31,7 @@ public enum ErrorCode {
     PRODUCT_ALREADY_EXISTS(400,"Product already exists !" , HttpStatus.BAD_REQUEST ),
     PRODUCT_NAME_ALREADY_EXISTS(400,"Product name already exists !" , HttpStatus.BAD_REQUEST ),
     PRODUCT_NOT_FOUND_BY_SLUG(404,"Product not found by slug !" , HttpStatus.NOT_FOUND ),
-    PRODUCT_CANNOT_DELETE(400,"Can not delete this product, please change status first !" , HttpStatus.BAD_REQUEST ),
+    PRODUCT_CANNOT_DELETE(400,"Trạng thái sản phẩm đang xóa, không xử lý tác vụ" , HttpStatus.BAD_REQUEST ),
     NOT_ENOUGH_PRPDUCTS(400,"Not enough products !" , HttpStatus.BAD_REQUEST ),
 
     TAG_NOT_FOUND(404, "Tag not found !", HttpStatus.NOT_FOUND),
@@ -82,6 +82,8 @@ public enum ErrorCode {
 
     PASSWORD_NOT_EQUAL(400,"Password not equal !" , HttpStatus.BAD_REQUEST ),
     PASSWORD_NOT_MATCHES(400,"Password not matchces !" , HttpStatus.BAD_REQUEST ),
+
+
 
     PRODUCT_VARIANT_NOT_FOUND(404,"Product variant not found !" , HttpStatus.NOT_FOUND ),
     UNAUTHORIZED(401,"Unauthorized !" , HttpStatus.UNAUTHORIZED ),;

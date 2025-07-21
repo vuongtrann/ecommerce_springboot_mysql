@@ -29,13 +29,33 @@ public class ProductController {
 
     private final ProductSerice productService;
 
+//    @GetMapping("/search")
+//    public ResponseEntity<AppResponse<List<ProductResponse>>> search(@RequestParam(required = false) Double keywordInt1,
+//                                                                     @RequestParam(required = false) String keyword){
+//        return ResponseEntity.ok(AppResponse.builderResponse(
+//                SuccessCode.FETCHED,
+//                productService.search(keywordInt1,keyword)
+//        ));
+//    }
+
     @GetMapping("/search")
-    public ResponseEntity<AppResponse<List<ProductResponse>>> search(@RequestParam(required = false) String keyword){
+    public ResponseEntity<AppResponse<List<ProductResponse>>> searchProducts(@RequestParam String keyword) {
         return ResponseEntity.ok(AppResponse.builderResponse(
                 SuccessCode.FETCHED,
-                productService.search(keyword)
+                productService.searchProductsByKeywords(keyword)
         ));
     }
+
+//    @GetMapping("/searchPrice")
+//    public ResponseEntity<AppResponse<List<ProductResponse>>> searchPrice(@RequestParam(required = false) Double keyword,
+//                                                                          @RequestParam(required = false) Double keyword1){
+//        return ResponseEntity.ok(AppResponse.builderResponse(
+//                SuccessCode.FETCHED,
+//                productService.searchProductByPrice(keyword,keyword1)
+//        ));
+//    }
+
+
 
     @GetMapping
     public ResponseEntity<Page<ProductProjection>> getAllProducts(

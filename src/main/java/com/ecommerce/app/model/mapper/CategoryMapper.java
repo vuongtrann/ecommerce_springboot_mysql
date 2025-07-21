@@ -17,15 +17,10 @@ import java.util.List;
 public class CategoryMapper {
     private final CategoryRepository categoryRepository;
     public Category toEntity (CategoryForm request) {
-        List<Category> children = new ArrayList<>();
-        if (request.getChildId() != null) {
-            children.addAll(categoryRepository.findAllById(request.getChildId()));
-        }
+
         return Category.builder()
                 .name(request.getName()!= null ? request.getName() : null)
-                .slug(request.getSlug()!= null ? request.getSlug() : null)
-                .parent(request.getParentId() != null ? categoryRepository.findById(request.getParentId()).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_FOUND)) : null)
-                .children(request.getChildId()!= null ? children : null)
+                .status(request.getStatus())
                 .build();
     }
 
@@ -34,6 +29,7 @@ public class CategoryMapper {
                 .id(category.getId())
                 .name(category.getName())
                 .slug(category.getSlug())
+                .status(category.getStatus())
                 .build();
     }
 

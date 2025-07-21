@@ -58,9 +58,13 @@ public class CartServiceImpl implements CartService {
             Item item = existingItem.get();
             item.setQuantity(item.getQuantity() + quantity);
 
+
         } else {
             Item newItem = new Item();
             newItem.setProduct(product);
+            if(quantity == 0){
+                quantity = 1;
+            }
             newItem.setQuantity(quantity);
 //            product.setQuantity(product.getQuantity() - quantity);
             double price = product.getSellingPrice();
@@ -91,8 +95,11 @@ public class CartServiceImpl implements CartService {
         for (Item item : cart.getItems()) {
             if (item.getProduct().getId().equals(productId)) {
                 if (newQuantity <= 0) {
-                    cart.getItems().remove(item);
+                    newQuantity = 1;
+                    item.setQuantity(newQuantity);
                     break;
+//                    cart.getItems().remove(item);
+//                    break;
                 }
                 Product product = productRepository.findById(productId)
                         .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));

@@ -1,9 +1,8 @@
 package com.ecommerce.app.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +21,8 @@ public class Brand extends BaseEntity{
     private String description;
     private String slug;
 
-    @ManyToMany(mappedBy = "brands")
-    @JsonBackReference
+    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Product> products;
 
 }

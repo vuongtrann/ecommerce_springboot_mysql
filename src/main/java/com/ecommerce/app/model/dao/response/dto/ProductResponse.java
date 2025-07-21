@@ -19,6 +19,7 @@ public class ProductResponse {
     private String name;
     private String description;
     private String categoryName;
+    private String brandName;
     private String slug;
     private String primaryImageURL;
     private List<String> imageURLs;
@@ -41,7 +42,6 @@ public class ProductResponse {
 
     private List<TagResponse> tags;
     private List<CollectionResponse> collections;
-    private List<BrandResponse> brands;
     private List<ProductVariantResponse> variants;
     private List<String> images;
     private List<CommentResponse> comments;

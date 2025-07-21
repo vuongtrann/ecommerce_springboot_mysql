@@ -17,8 +17,17 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<ProductProjection> findAllProjectedBy(Pageable pageable);
     Optional<Product> findProductBySlug(String slug);
 
-    @Query("SELECT p FROM product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Product> searchProductByNameOrSlug(String keyword);
+    @Query("SELECT p FROM product p " +
+            "WHERE (p.sellingPrice BETWEEN :keywordInt1 AND :keywordInt1) " +
+            "OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Product> searchProductByNameOrSlug(Double keywordInt1,String keyword);
+
+
+
+
+    @Query("SELECT p FROM product p WHERE p.sellingPrice between (:keyword) and (:keyword1)")
+    List<Product> searchProductByPrice(Double keyword, Double keyword1);
 
     @Query(
             value = "SELECT " +

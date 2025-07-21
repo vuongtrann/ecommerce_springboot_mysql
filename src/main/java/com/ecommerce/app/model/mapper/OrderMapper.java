@@ -20,7 +20,7 @@ public class OrderMapper {
     public Order toEntity(OrderForm form, List<Item> items, User user) {
         Order order = new Order();
         order.setUserUid(form.getUserId());
-        order.setCardId(form.getCardId());
+
         order.setItems(items);
         order.setUser(user);
         order.setTotalPrice(items.stream().mapToDouble(Item::getTotalPrice).sum() + form.getShippingFee());
@@ -72,7 +72,7 @@ public class OrderMapper {
                 order.getId(),
                 order.getUserUid(),
                 userResponse,
-                order.getCardId(),
+
                 itemResponses,
                 order.getTotalPrice(),
                 order.getPayStatus(),

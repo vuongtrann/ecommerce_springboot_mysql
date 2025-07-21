@@ -18,7 +18,6 @@ import java.util.List;
 @Builder
 public class Order extends BaseEntityForBuying {
     private Long userUid;
-    private String cardId;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")

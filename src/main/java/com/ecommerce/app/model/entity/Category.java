@@ -1,5 +1,6 @@
 package com.ecommerce.app.model.entity;
 
+import com.ecommerce.app.utils.Enum.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -20,28 +21,16 @@ import java.util.List;
 public class Category extends BaseEntity {
     private String name;
     private String slug;
-
-    //Quan hệ many-to-one : một category có thể có nhiểu category cha
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id")
-    @JsonBackReference
-    private Category parent;
-
-    // Quan hệ One-to-Many: Một category có thể có nhiều category con
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<Category> children = new ArrayList<>();
-
+    private Status status;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonIgnore // Hoặc dùng @JsonBackReference nếu muốn kiểm soát vòng lặp
     private List<Product> products;
 
 
-    public Category(String name, Category parent, List<Category> children) {
+    public Category(String name, Status status) {
         this.name = name;
-        this.parent = parent;
-        this.children = children;
+        this.status = status;
     }
 
 }

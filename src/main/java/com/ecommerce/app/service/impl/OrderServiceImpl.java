@@ -150,17 +150,17 @@ public class OrderServiceImpl implements OrderService {
         return results.stream()
                 .map(r -> OrderResponseADM.builder()
                         .user(new UserResponse(
-                                null,                                 // id chưa có, để null hoặc query thêm nếu cần
-                                Long.valueOf(r.getUserUid()),         // hoặc giữ String nếu UID là String
+                                null,
+                                Long.valueOf(r.getUserUid()),
                                 r.getFirstName(),
                                 r.getLastName(),
                                 r.getAvatar(),
                                 r.getEmail(),
                                 r.getPhone(),
                                 null,
-                                null                                 // status chưa có
+                                null
                         ))
-                        .totalOrders(r.getTotalOrder())               // Tổng số order của user
+                        .totalOrders(r.getTotalOrder())
                         .build())
                 .collect(Collectors.toList());
     }

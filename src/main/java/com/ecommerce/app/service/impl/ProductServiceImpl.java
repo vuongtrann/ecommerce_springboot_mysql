@@ -18,6 +18,10 @@ import com.ecommerce.app.service.*;
 import com.ecommerce.app.service.utils.SlugifyService;
 import com.ecommerce.app.utils.Enum.ErrorCode;
 import com.ecommerce.app.utils.Enum.Status;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.persistence.EntityManager;
 
 import java.time.Instant;
 import java.util.*;
@@ -63,6 +68,33 @@ public class ProductServiceImpl implements ProductSerice {
     VariantOptionRepository variantOptionRepository;
     ProductVariantRepository productVariantRepository;
 
+    private final EntityManager entityManager;
+
+    @Override
+    public List<ProductResponse> searchProductsByKeywords(String keyword) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Product> query = cb.createQuery(Product.class);
+        Root<Product> root = query.from(Product.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        String[] words = keyword.toLowerCase().split("\\s+");
+
+        for (String word : words) {
+            Predicate nameLike = cb.like(cb.lower(root.get("name")), "%" + word + "%");
+            Predicate descLike = cb.like(cb.lower(root.get("description")), "%" + word + "%");
+            predicates.add(cb.or(nameLike, descLike));
+        }
+
+        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+        List<Product> products = entityManager.createQuery(query).getResultList();
+
+ 
+        return products.stream()
+                .map(ProductMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+
 
     @Override
     public Product save(Product product) {
@@ -77,16 +109,24 @@ public class ProductServiceImpl implements ProductSerice {
     }
 
     @Override
-    public List<ProductResponse> search(String keyword){
+    public List<ProductResponse> search(Double keywordInt1,String keyword){
         if(keyword == null || keyword.isEmpty()){
             return Collections.emptyList();
         }
-        List<Product> products = productRepository.searchProductByNameOrSlug(keyword);
+        List<Product> products = productRepository.searchProductByNameOrSlug(keywordInt1, keyword);
 
         return products.stream().map(
                 ProductMapper::toResponse
         ).collect(Collectors.toList());
     }
+
+
+    public List<ProductResponse> searchProductByPrice(Double keyword, Double keyword1) {
+       List<Product> products= productRepository.searchProductByPrice(keyword, keyword1);
+
+       return products.stream().map(ProductMapper::toResponse).collect(Collectors.toList());
+    }
+
 
     @Override
     public Page<ProductResponse> getTopViewedProducts(int page, int size, String direction) {
@@ -180,11 +220,12 @@ public class ProductServiceImpl implements ProductSerice {
     public Product create(ProductForm form) {
         Category category = categoryRepository.findById(form.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
-        List<Brand> brands = brandService.findByIdIn(form.getBrands());
+        Brand brand = brandRepository.findById(form.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));;
         List<Collection> collections = collectionService.findByIdIn(form.getCollections());
         List<Tag> tags = tagService.findByIdIn(form.getTags());
 
-        Product product = ProductMapper.toEntity(form, category, brands, collections, tags);
+        Product product = ProductMapper.toEntity(form, category, brand, collections, tags);
 
         String slug = slugify.generateSlug(form.getName());
         product.setSlug(slug);
@@ -192,24 +233,9 @@ public class ProductServiceImpl implements ProductSerice {
         product.setStatus(Status.ACTIVE);
         product.setCreatedAt(Instant.now().toEpochMilli());
         product.setUpdatedAt(Instant.now().toEpochMilli());
-
-        product = productRepository.save(product); // Lưu Product
-
-        if (form.isHasVariants()) {
-            List<ProductVariant> variants = new ArrayList<>();
-            for (ProductVariantForm variantForm : form.getVariants()) {
-                ProductVariant productVariant = createProductVariant(variantForm, product);
-                variants.add(productVariantRepository.save(productVariant));
-            }
-            if (product.getVariants() == null) {
-                product.setVariants(new ArrayList<>());
-            }
-            product.getVariants().clear();
-            product.getVariants().addAll(variants);
-            product.setHasVariants(true);
-        }
-
+        product = productRepository.save(product);
         return productRepository.save(product);
+
     }
 
 
@@ -263,8 +289,9 @@ public class ProductServiceImpl implements ProductSerice {
         product.setCategory(category);
 
         // Handle brands
-        List<Brand> updatedBrands = brandRepository.findAllByIdIn(form.getBrands());
-        product.setBrands(updatedBrands);
+        Brand updatedBrand = brandRepository.findById(form.getBrandId())
+                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));;
+        product.setBrand(updatedBrand);
 
         // Handle collections
         List<Collection> updatedCollections = collectionRepository.findAllByIdIn(form.getCollections());
@@ -335,11 +362,13 @@ public class ProductServiceImpl implements ProductSerice {
     @Override
     public void changeStatus(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        if (product.getStatus() == Status.ACTIVE) {
-            product.setStatus(Status.INACTIVE);
-        } else {
-            product.setStatus(Status.ACTIVE);
+        switch (product.getStatus()) {
+            case ACTIVE -> product.setStatus(Status.INACTIVE);
+            case INACTIVE -> product.setStatus(Status.ACTIVE);
+            case DELETED -> throw new AppException(ErrorCode.PRODUCT_CANNOT_DELETE);
         }
+
+        product.setUpdatedAt(Instant.now().toEpochMilli());
         productRepository.save(product);
     }
 

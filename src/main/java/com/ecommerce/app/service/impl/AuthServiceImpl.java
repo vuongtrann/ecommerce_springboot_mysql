@@ -100,30 +100,31 @@ public class AuthServiceImpl implements AuthService {
                 accessToken,
                 refreshToken.getToken(),
                 user.getUID().toString(),
-                null
+                null,
+                user.getStatus()
         );
     }
 
     @Override
     public AuthResponse loginAdmin(LoginForm loginForm) {
 
-        // Xác thực username + password qua Spring Security
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword())
         );
 
-        // Đẩy thông tin người dùng đã xác thực vào SecurityContext
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Tìm thông tin user trong database
+
         User user = userService.findByUsername(loginForm.getUsername());
 
-        // Check role phải là ADMIN
+
         if (!user.getRole().equals(Role.ADMIN)) {
-            throw new AppException(ErrorCode.ACCESS_DENIED); // Trả lỗi không cho login
+            throw new AppException(ErrorCode.ACCESS_DENIED);
         }
 
-        // Sinh access token và refresh token bình thường
+
         String accessToken = jwtUtil.generateToken(loginForm.getUsername());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginForm.getUsername());
 
@@ -131,7 +132,8 @@ public class AuthServiceImpl implements AuthService {
                 accessToken,
                 refreshToken.getToken(),
                 user.getUID().toString(),
-                "ADMIN"
+                "ADMIN",
+                user.getStatus()
         );
     }
 
@@ -144,7 +146,7 @@ public class AuthServiceImpl implements AuthService {
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     String accessToken = jwtUtil.generateToken(user.getEmail());
-                    return new AuthResponse(accessToken, refreshToken,null, null);
+                    return new AuthResponse(accessToken, refreshToken,null, null,null);
                 }).orElseThrow(() -> new RuntimeException("Invalid refresh token"));
     }
 

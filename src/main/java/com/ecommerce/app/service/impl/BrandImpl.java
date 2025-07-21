@@ -2,9 +2,10 @@ package com.ecommerce.app.service.impl;
 
 import com.ecommerce.app.exception.AppException;
 import com.ecommerce.app.model.dao.request.BrandForm;
+import com.ecommerce.app.model.dao.response.dto.BrandResponse;
 import com.ecommerce.app.model.dao.response.projection.BrandProjection;
 import com.ecommerce.app.model.entity.Brand;
-import com.ecommerce.app.model.entity.Product;
+import com.ecommerce.app.model.mapper.BrandMapper;
 import com.ecommerce.app.repository.BrandRepository;
 import com.ecommerce.app.repository.ProductRepository;
 import com.ecommerce.app.service.BrandService;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,15 +43,34 @@ public class BrandImpl implements BrandService {
 
     @Override
     @Cacheable(value = "BRAND_BY_ID", key = "#id")
-    public Brand findById(String id) {
-        Brand brand = brandRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
-
-        return brand;
+    public BrandResponse findById(String id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(()-> new AppException(ErrorCode.BRAND_NOT_FOUND));
+        BrandResponse brandResponse = BrandMapper.toBrandResponse(brand);
+        return brandResponse;
     }
 
+//    @Override
+//    public Brand findByIdIn(String id) {
+//        return brandRepository.findAllByIdIn(id);
+//    }
+
+
     @Override
-    public List<Brand> findByIdIn(List<String> ids) {
-        return brandRepository.findAllByIdIn(ids);
+    public Page<BrandResponse> findAllBrandWithTotalProduct(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<BrandProjection> projections = brandRepository.findAllBrandWithTotalProduct(pageable);
+
+        return projections.map(brand -> {
+            BrandResponse response = new BrandResponse();
+            response.setId(brand.getId());
+            response.setName(brand.getName());
+            System.out.println("Raw status from DB = " + brand.getStatus());
+            response.setStatus(Status.fromValue(brand.getStatus()));
+            response.setTotalProduct(brand.getTotalProduct());
+            return response;
+        });
     }
 
     @Override
@@ -119,19 +140,19 @@ public class BrandImpl implements BrandService {
         brandRepository.save(brand);
     }
 
-    public void addBrandToProduct(String productId, String brandId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-
-        Brand brand = brandRepository.findById(brandId)
-                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
-
-        // Tránh add trùng
-        if (!product.getBrands().contains(brand)) {
-            product.getBrands().add(brand);
-            productRepository.save(product);
-        }
-    }
+//    public void addBrandToProduct(String productId, String brandId) {
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+//
+//        Brand brand = brandRepository.findById(brandId)
+//                .orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_FOUND));
+//
+//        // Tránh add trùng
+//        if (!product.getBrands().contains(brand)) {
+//            product.getBrands().add(brand);
+//            productRepository.save(product);
+//        }
+//    }
 
     @Override
     @Cacheable(value = "BRAND_BY_SLUG", key = "#slug")
